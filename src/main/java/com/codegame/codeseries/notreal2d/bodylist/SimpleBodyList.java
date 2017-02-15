@@ -8,6 +8,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import static com.codeforces.commons.math.Math.sqr;
 
@@ -15,14 +16,14 @@ import static com.codeforces.commons.math.Math.sqr;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-@NotThreadSafe
-public class SimpleBodyList extends BodyListBase {
+public class SimpleBodyList implements BodyList {
+
+    //TODO just use Map<Long,Body> and this will give faster lookups
 
     private final Set<Body> bodies = Collections.newSetFromMap(new ConcurrentHashMap());
 
     @Override
     public void addBody(@NotNull Body body) {
-        validateBody(body);
 
         if (bodies.contains(body)) {
             throw new IllegalStateException(body + " is already added.");
@@ -33,7 +34,6 @@ public class SimpleBodyList extends BodyListBase {
 
     @Override
     public void removeBody(@NotNull Body body) {
-        validateBody(body);
 
         for (Iterator<Body> bodyIterator = bodies.iterator(); bodyIterator.hasNext(); ) {
             if (bodyIterator.next().equals(body)) {
@@ -83,8 +83,6 @@ public class SimpleBodyList extends BodyListBase {
 
     @Override
     public boolean contains(@NotNull Body body) {
-        validateBody(body);
-
         return bodies.contains(body);
     }
 
@@ -118,7 +116,6 @@ public class SimpleBodyList extends BodyListBase {
 
     @Override
     public List<Body> getPotentialIntersections(@NotNull Body body) {
-        validateBody(body);
 
         List<Body> potentialIntersections = new ArrayList<>();
         boolean exists = false;
@@ -146,5 +143,10 @@ public class SimpleBodyList extends BodyListBase {
         }
 
         return Collections.unmodifiableList(potentialIntersections);
+    }
+
+    @Override
+    public void forEach(Consumer<Body> each) {
+        bodies.forEach(each);
     }
 }

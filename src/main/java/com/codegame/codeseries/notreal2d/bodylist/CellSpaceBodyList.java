@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 import static com.codeforces.commons.math.Math.floor;
 import static com.codeforces.commons.math.Math.sqr;
@@ -24,7 +25,7 @@ import static com.codeforces.commons.math.Math.sqr;
  *         Date: 02.06.2015
  */
 @NotThreadSafe
-public class CellSpaceBodyList extends BodyListBase {
+public class CellSpaceBodyList implements BodyList {
     private static final int MIN_FAST_X = -1000;
     private static final int MAX_FAST_X = 1000;
     private static final int MIN_FAST_Y = -1000;
@@ -57,7 +58,7 @@ public class CellSpaceBodyList extends BodyListBase {
 
     @Override
     public void addBody(@NotNull Body body) {
-        validateBody(body);
+
         long id = body.id;
 
 //        if (contains(id)) {
@@ -148,18 +149,7 @@ public class CellSpaceBodyList extends BodyListBase {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public void removeBody(@NotNull Body body) {
-        validateBody(body);
-        long id = body.id;
-
-        if (bodyById.remove(id) == null) {
-            throw new IllegalStateException("Can't find " + body + '.');
-        }
-
-        removeBodyFromIndexes(body);
-
-        if (id >= 0L && id <= MAX_FAST_BODY_ID) {
-            fastBodies[(int) id] = null;
-        }
+        removeBody(body.id);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -217,10 +207,7 @@ public class CellSpaceBodyList extends BodyListBase {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public boolean contains(@NotNull Body body) {
-        validateBody(body);
-
-        long id = body.id;
-        return id >= 0L && id <= MAX_FAST_BODY_ID ? fastBodies[(int) id] != null : bodyById.containsKey(id);
+        return contains(body.id);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -240,13 +227,18 @@ public class CellSpaceBodyList extends BodyListBase {
         return bodyById.values();
     }
 
+    @Override
+    public void forEach(Consumer<Body> each) {
+        bodyById.values().forEach(each);
+    }
+
+
     /**
      * May not find all potential intersections for bodies whose size exceeds cell size.
      */
     @SuppressWarnings("OverlyLongMethod")
     @Override
     public List<Body> getPotentialIntersections(@NotNull Body body) {
-        validateBody(body);
         long id = body.id;
 
         if (!contains(id)) {

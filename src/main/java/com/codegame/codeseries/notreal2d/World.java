@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static com.codeforces.commons.math.Math.*;
 
@@ -180,6 +181,9 @@ public class World {
 
     public Collection<Body> getAll() {
         return bodyList.getBodies();
+    }
+    public void forEach(Consumer<Body> each) {
+        bodyList.forEach(each);
     }
 
     @Nullable
@@ -408,6 +412,10 @@ public class World {
         Body bodyA = collisionInfo.getBodyA();
         Body bodyB = collisionInfo.getBodyB();
 
+        if (!contains(bodyA) || !contains(bodyB)) {
+            return;
+        }
+
         if (bodyA.isStatic() && bodyB.isStatic()) {
             throw new IllegalArgumentException("Both " + bodyA + " and " + bodyB + " are static.");
         }
@@ -417,9 +425,7 @@ public class World {
                 return;
             }
 
-//            if (!contains(bodyA) || !contains(bodyB)) {
-//                return;
-//            }
+
         }
 
         logCollision(collisionInfo);

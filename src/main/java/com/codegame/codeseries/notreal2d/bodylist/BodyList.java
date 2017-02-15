@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Maxim Shipko (sladethe@gmail.com)
@@ -26,4 +27,6 @@ public interface BodyList {
     Collection<Body> getBodies();
 
     List<Body> getPotentialIntersections(@NotNull Body body);
+
+    void forEach(Consumer<Body> each);
 }

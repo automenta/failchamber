@@ -26,7 +26,7 @@ public class Space extends World {
 
     public Space(Hauto cells) {
         super(Defaults.ITERATION_COUNT_PER_STEP, 60, Defaults.EPSILON,
-            //new CellSpaceBodyList(4, 16)
+            //new CellSpaceBodyList(2, 4) //not working yet
             new SimpleBodyList()
         );
 
@@ -76,7 +76,7 @@ public class Space extends World {
 
         //if (time % agentPeriod == 0 || Chamba.executed) {
         //try {
-        for (Body b : getAll()) {
+        forEach(b -> {
             if (b instanceof Spatial) {
                 Spatial g = (Spatial) b;
                 g.update(view, dt);
@@ -92,7 +92,8 @@ public class Space extends World {
 
                 }
             }
-        }
+        });
+
 //            } catch (Exception ex) {
 //                ex.printStackTrace();
 //            }
@@ -112,19 +113,12 @@ public class Space extends World {
 
     //public void forEach(Consumer<Spatial> s)
     public void draw(View v) {
-        for (Body o : getAll()) {
+        forEach(o -> {
             if (o instanceof Spatial) {
-
                 Spatial s = (Spatial) o;
-
-                //v.pushMatrix();
-                {
-                    s.draw(v);
-                }
-                //v.popMatrix();
-
+                s.draw(v);
             }
-        }
+        });
     }
 
     public String what(int x, int y) {
