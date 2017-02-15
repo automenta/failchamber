@@ -4,8 +4,8 @@ import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
-import com.codegame.codeseries.notreal2d.form.LinearForm;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
+import com.codegame.codeseries.notreal2d.form.LinearGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +30,8 @@ public class LineAndCircleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        LinearForm linearFormA = (LinearForm) bodyA.form();
-        CircularForm circularFormB = (CircularForm) bodyB.form();
+        LinearGeom linearFormA = (LinearGeom) bodyA.form();
+        CircularGeom circularFormB = (CircularGeom) bodyB.form();
 
         Point2D point1A = linearFormA.getPoint1(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D point2A = linearFormA.getPoint2(bodyA.pos(), bodyA.angle(), epsilon);
@@ -43,7 +43,7 @@ public class LineAndCircleCollider extends ColliderBase {
     @Nullable
     static CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB,
                                        @NotNull Point2D point1A, @NotNull Point2D point2A,
-                                       @NotNull CircularForm circularFormB, double epsilon) {
+                                       @NotNull CircularGeom circularFormB, double epsilon) {
         Line2D lineA = Line2D.getLineByTwoPoints(point1A, point2A);
 
         double distanceFromB = lineA.getDistanceFrom(bodyB.pos());

@@ -12,12 +12,12 @@ import static com.codeforces.commons.math.Math.abs;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public abstract class Form {
+public abstract class Geom {
 
     @NotNull
     public final Shape shape;
 
-    protected Form(@NotNull Shape shape) {
+    protected Geom(@NotNull Shape shape) {
         Preconditions.checkNotNull(shape, "Argument 'shape' is null.");
 
         this.shape = shape;
@@ -39,8 +39,8 @@ public abstract class Form {
     public abstract String toString();
 
     @NotNull
-    public static String toString(@Nullable Form form) {
-        return form == null ? "Form {null}" : form.toString();
+    public static String toString(@Nullable Geom geom) {
+        return geom == null ? "Form {null}" : geom.toString();
     }
 
     //@Contract(pure = true)

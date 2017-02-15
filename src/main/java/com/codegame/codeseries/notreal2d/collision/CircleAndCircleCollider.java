@@ -3,7 +3,7 @@ package com.codegame.codeseries.notreal2d.collision;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +25,8 @@ public class CircleAndCircleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        CircularForm circularFormA = (CircularForm) bodyA.form();
-        CircularForm circularFormB = (CircularForm) bodyB.form();
+        CircularGeom circularFormA = (CircularGeom) bodyA.form();
+        CircularGeom circularFormB = (CircularGeom) bodyB.form();
 
         double radiusA = circularFormA.getRadius();
         double radiusB = circularFormB.getRadius();

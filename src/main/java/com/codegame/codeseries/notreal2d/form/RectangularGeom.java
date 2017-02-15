@@ -10,7 +10,7 @@ import static com.codeforces.commons.math.Math.*;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public class RectangularForm extends Form {
+public class RectangularGeom extends Geom {
     public final double width;
     public final double height;
     private final double halfWidth;
@@ -18,7 +18,7 @@ public class RectangularForm extends Form {
     private final double circumcircleRadius;
     private final double angularMassFactor;
 
-    public RectangularForm(double width, double height) {
+    public RectangularGeom(double width, double height) {
         super(Shape.RECTANGLE);
 
         if (Double.isNaN(width) || Double.isInfinite(width) || width <= 0.0D) {

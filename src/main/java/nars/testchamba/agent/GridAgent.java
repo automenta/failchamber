@@ -1,16 +1,12 @@
 package nars.testchamba.agent;
 
-import com.codegame.codeseries.notreal2d.form.CircularForm;
 import nars.testchamba.View;
 import nars.testchamba.object.Geometric;
 import nars.testchamba.state.Action;
 import nars.testchamba.state.Effect;
-import nars.testchamba.state.Spatial;
 
 import java.awt.*;
 import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class GridAgent extends Geometric.Circle {

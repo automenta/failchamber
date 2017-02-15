@@ -4,8 +4,8 @@ import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.LinearForm;
-import com.codegame.codeseries.notreal2d.form.RectangularForm;
+import com.codegame.codeseries.notreal2d.form.LinearGeom;
+import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import com.codegame.codeseries.notreal2d.util.GeometryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,8 @@ public class LineAndRectangleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        LinearForm linearFormA = (LinearForm) bodyA.form();
-        RectangularForm rectangularFormB = (RectangularForm) bodyB.form();
+        LinearGeom linearFormA = (LinearGeom) bodyA.form();
+        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.form();
 
         Point2D point1A = linearFormA.getPoint1(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D point2A = linearFormA.getPoint2(bodyA.pos(), bodyA.angle(), epsilon);

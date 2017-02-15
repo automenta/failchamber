@@ -1,20 +1,10 @@
 package nars.testchamba;
 
-import com.codeforces.commons.geometry.Point2D;
-import com.codegame.codeseries.notreal2d.Body;
 import com.codegame.codeseries.notreal2d.Defaults;
 import com.codegame.codeseries.notreal2d.World;
-import com.codegame.codeseries.notreal2d.bodylist.CellSpaceBodyList;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
-import com.codegame.codeseries.notreal2d.listener.PositionListener;
 import nars.testchamba.agent.GridAgent;
 import nars.testchamba.state.*;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by me on 2/15/17.

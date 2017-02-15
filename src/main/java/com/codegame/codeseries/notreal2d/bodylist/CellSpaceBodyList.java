@@ -21,6 +21,8 @@ import static com.codeforces.commons.math.Math.floor;
 import static com.codeforces.commons.math.Math.sqr;
 
 /**
+ * I BROKE IT -seh
+ *
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */

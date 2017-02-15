@@ -1,6 +1,6 @@
 package com.codegame.codeseries.notreal2d;
 
-import com.codegame.codeseries.notreal2d.form.CircularForm;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class WorldTest {
         World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body body = new Body();
-        body.form(new CircularForm(1.0D));
+        body.form(new CircularGeom(1.0D));
         body.mass(1.0D);
         world.add(body);
 
@@ -100,7 +100,7 @@ public class WorldTest {
         World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body bodyA = new Body();
-        bodyA.form(new CircularForm(1.0D));
+        bodyA.form(new CircularGeom(1.0D));
         bodyA.mass(1.0D);
         bodyA.setMomentumTransferFactor(0.5D);
         world.add(bodyA);
@@ -109,7 +109,7 @@ public class WorldTest {
         bodyA.vel(originalVelocityModule, 0.0D);
 
         Body bodyB = new Body();
-        bodyB.form(new CircularForm(1.0D));
+        bodyB.form(new CircularGeom(1.0D));
         bodyB.mass(1.0D);
         bodyB.setMomentumTransferFactor(0.5D);
         world.add(bodyB);

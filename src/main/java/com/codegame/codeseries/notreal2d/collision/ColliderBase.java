@@ -1,7 +1,7 @@
 package com.codegame.codeseries.notreal2d.collision;
 
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.Form;
+import com.codegame.codeseries.notreal2d.form.Geom;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public abstract class ColliderBase implements Collider {
 
         throw new IllegalArgumentException(String.format(
                 "Unsupported %s of %s or %s of %s.",
-                Form.toString(bodyA.form()), bodyA, Form.toString(bodyB.form()), bodyB
+                Geom.toString(bodyA.form()), bodyA, Geom.toString(bodyB.form()), bodyB
         ));
     }
 

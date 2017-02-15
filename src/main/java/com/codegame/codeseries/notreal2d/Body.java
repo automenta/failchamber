@@ -3,7 +3,7 @@ package com.codegame.codeseries.notreal2d;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codeforces.commons.text.StringUtil;
-import com.codegame.codeseries.notreal2d.form.Form;
+import com.codegame.codeseries.notreal2d.form.Geom;
 import com.codegame.codeseries.notreal2d.provider.ConstantMovementFrictionProvider;
 import com.codegame.codeseries.notreal2d.provider.MovementFrictionProvider;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public class Body {
     /**
      * The form (shape and size) of this body.
      */
-    private Form form;
+    private Geom geom;
 
     /**
      * The mass of this body.
@@ -110,12 +110,12 @@ public class Body {
         this.name = name;
     }
 
-    public Form form() {
-        return form;
+    public Geom form() {
+        return geom;
     }
 
-    public void form(Form form) {
-        this.form = form;
+    public void form(Geom geom) {
+        this.geom = geom;
     }
 
     public double mass() {
@@ -153,7 +153,7 @@ public class Body {
         if (Double.isInfinite(mass)) {
             return Double.POSITIVE_INFINITY;
         } else {
-            return form.getAngularMass(mass);
+            return geom.getAngularMass(mass);
         }
     }
 
@@ -541,11 +541,11 @@ public class Body {
             throw new IllegalStateException("Can't calculate center of mass for body with no position.");
         }
 
-        if (form == null) {
+        if (geom == null) {
             throw new IllegalStateException("Can't calculate center of mass for body with no form.");
         }
 
-        return form.centerOfMass(this);
+        return geom.centerOfMass(this);
     }
 
     public void normalizeAngle() {

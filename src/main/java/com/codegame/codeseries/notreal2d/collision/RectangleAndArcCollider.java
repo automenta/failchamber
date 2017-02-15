@@ -7,9 +7,9 @@ import com.codeforces.commons.holder.Mutable;
 import com.codeforces.commons.holder.SimpleMutable;
 import com.codeforces.commons.pair.Pair;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.ArcForm;
-import com.codegame.codeseries.notreal2d.form.Form;
-import com.codegame.codeseries.notreal2d.form.RectangularForm;
+import com.codegame.codeseries.notreal2d.form.ArcGeom;
+import com.codegame.codeseries.notreal2d.form.Geom;
+import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import com.codegame.codeseries.notreal2d.util.GeometryUtil;
 import org.apache.commons.lang3.mutable.MutableDouble;
@@ -39,8 +39,8 @@ public class RectangleAndArcCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularForm rectangularFormA = (RectangularForm) bodyA.form();
-        ArcForm arcFormB = (ArcForm) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
+        ArcGeom arcFormB = (ArcGeom) bodyB.form();
 
         double radiusA = rectangularFormA.radius();
         double radiusB = arcFormB.getRadius();
@@ -76,7 +76,7 @@ public class RectangleAndArcCollider extends ColliderBase {
             if (lineA.getSignedDistanceFrom(bodyA.pos()) > -epsilon) {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Form.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.form()), bodyA
                 ));
             }
 
@@ -166,7 +166,7 @@ public class RectangleAndArcCollider extends ColliderBase {
             } else {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Form.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.form()), bodyA
                 ));
             }
         } else {

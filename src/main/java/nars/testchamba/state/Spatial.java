@@ -1,10 +1,9 @@
 package nars.testchamba.state;
 
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
-import com.codegame.codeseries.notreal2d.form.Form;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
+import com.codegame.codeseries.notreal2d.form.Geom;
 import nars.testchamba.View;
-import nars.testchamba.agent.GridAgent;
 
 /**
  * GridObject with a specific position
@@ -13,13 +12,13 @@ public abstract class Spatial extends Body {
 
 
     @Deprecated public Spatial(double x, double y) {
-        this(new CircularForm(0.5f), x, y);
+        this(new CircularGeom(0.5f), x, y);
     }
 
-    public Spatial(Form form, double x, double y) {
+    public Spatial(Geom geom, double x, double y) {
         super();
 
-        form(form);
+        form(geom);
         mass(1);
         pos(x, y);
 

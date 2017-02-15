@@ -4,8 +4,8 @@ import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.ArcForm;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
+import com.codegame.codeseries.notreal2d.form.ArcGeom;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import com.codegame.codeseries.notreal2d.util.GeometryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +31,8 @@ public class ArcAndCircleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        ArcForm arcFormA = (ArcForm) bodyA.form();
-        CircularForm circularFormB = (CircularForm) bodyB.form();
+        ArcGeom arcFormA = (ArcGeom) bodyA.form();
+        CircularGeom circularFormB = (CircularGeom) bodyB.form();
 
         double radiusA = arcFormA.getRadius();
         double radiusB = circularFormB.getRadius();
@@ -200,7 +200,7 @@ public class ArcAndCircleCollider extends ColliderBase {
 
     @Nullable
     private CollisionInfo collideSameCenter(
-            @NotNull Body bodyB, @NotNull Body bodyA, ArcForm arcFormA,
+            @NotNull Body bodyB, @NotNull Body bodyA, ArcGeom arcFormA,
             double radiusA, double startAngleA, double finishAngleA, double radiusB) {
         if (radiusB >= radiusA) {
             Vector2D relativeVelocityB = bodyB.vel().copy().subtract(bodyA.vel());

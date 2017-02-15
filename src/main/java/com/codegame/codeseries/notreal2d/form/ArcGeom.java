@@ -11,12 +11,12 @@ import static com.codeforces.commons.math.Math.DOUBLE_PI;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 26.06.2015
  */
-public class ArcForm extends ThinForm {
+public class ArcGeom extends ThinGeom {
     private final double radius;
     private final double angle;
     private final double sector;
 
-    public ArcForm(double radius, double angle, double sector, boolean endpointCollisionEnabled) {
+    public ArcGeom(double radius, double angle, double sector, boolean endpointCollisionEnabled) {
         super(Shape.ARC, endpointCollisionEnabled);
 
         if (Double.isNaN(radius) || Double.isInfinite(radius) || radius <= 0.0D) {
@@ -42,7 +42,7 @@ public class ArcForm extends ThinForm {
         this.sector = sector;
     }
 
-    public ArcForm(double radius, double angle, double sector) {
+    public ArcGeom(double radius, double angle, double sector) {
         this(radius, angle, sector, true);
     }
 

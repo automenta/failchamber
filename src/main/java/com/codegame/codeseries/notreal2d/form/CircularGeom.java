@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public class CircularForm extends Form {
+public class CircularGeom extends Geom {
     private final double radius;
     private final double angularMassFactor;
 
-    public CircularForm(double radius) {
+    public CircularGeom(double radius) {
         super(Shape.CIRCLE);
 
         if (Double.isNaN(radius) || Double.isInfinite(radius) || radius <= 0.0D) {

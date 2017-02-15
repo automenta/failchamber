@@ -4,8 +4,8 @@ import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.Form;
-import com.codegame.codeseries.notreal2d.form.RectangularForm;
+import com.codegame.codeseries.notreal2d.form.Geom;
+import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +27,8 @@ public class RectangleAndRectangleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularForm rectangularFormA = (RectangularForm) bodyA.form();
-        RectangularForm rectangularFormB = (RectangularForm) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
+        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.form();
 
         Point2D[] pointsA = rectangularFormA.getPoints(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D[] pointsB = rectangularFormB.getPoints(bodyB.pos(), bodyB.angle(), epsilon);
@@ -73,7 +73,7 @@ public class RectangleAndRectangleCollider extends ColliderBase {
             if (lineA.getSignedDistanceFrom(bodyA.pos()) > -epsilon) {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Form.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.form()), bodyA
                 ));
             }
 

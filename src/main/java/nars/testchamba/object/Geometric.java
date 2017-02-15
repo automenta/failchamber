@@ -1,15 +1,15 @@
 package nars.testchamba.object;
 
-import com.codegame.codeseries.notreal2d.form.CircularForm;
-import com.codegame.codeseries.notreal2d.form.Form;
-import com.codegame.codeseries.notreal2d.form.RectangularForm;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
+import com.codegame.codeseries.notreal2d.form.Geom;
+import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import nars.testchamba.View;
 import nars.testchamba.state.Spatial;
 
 /**
  * Created by me on 2/15/17.
  */
-public abstract class Geometric<F extends Form> extends Spatial {
+public abstract class Geometric<F extends Geom> extends Spatial {
 
     protected float r, g, b;
 
@@ -45,7 +45,7 @@ public abstract class Geometric<F extends Form> extends Spatial {
 
     protected abstract void drawShape(View view);
 
-    public static class Rectangle extends Geometric<RectangularForm> {
+    public static class Rectangle extends Geometric<RectangularGeom> {
 
 
         public Rectangle(double x, double y, double w, double h) {
@@ -53,7 +53,7 @@ public abstract class Geometric<F extends Form> extends Spatial {
         }
 
         public Rectangle(double x, double y, double w, double h, double density) {
-            super(new RectangularForm(w, h), x, y);
+            super(new RectangularGeom(w, h), x, y);
 
             mass( w * h * density);
 
@@ -62,22 +62,22 @@ public abstract class Geometric<F extends Form> extends Spatial {
 
         @Override
         protected void drawShape(View view) {
-            RectangularForm rr = form();
+            RectangularGeom rr = form();
             float w = (float) rr.width;
             float h = (float) rr.height;
             view.rect(-w/2f, -h/2f, w, h);
         }
     }
 
-    public static class Circle extends Geometric<CircularForm> {
+    public static class Circle extends Geometric<CircularGeom> {
 
         public Circle(double radius, double x, double y) {
-            super(new CircularForm(radius), x, y);
+            super(new CircularGeom(radius), x, y);
         }
 
         @Override
         protected void drawShape(View view) {
-            CircularForm rr = form();
+            CircularGeom rr = form();
             float d = (float) rr.radius()*2f;
             view.ellipse(0, 0, d, d);
         }

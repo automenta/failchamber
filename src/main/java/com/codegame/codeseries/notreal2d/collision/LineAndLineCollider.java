@@ -4,7 +4,7 @@ import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.LinearForm;
+import com.codegame.codeseries.notreal2d.form.LinearGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +35,8 @@ public class LineAndLineCollider extends ColliderBase {
             throw new NotImplementedException("Soon, very soon. Maybe...");
         }
 
-        LinearForm linearFormA = (LinearForm) bodyA.form();
-        LinearForm linearFormB = (LinearForm) bodyB.form();
+        LinearGeom linearFormA = (LinearGeom) bodyA.form();
+        LinearGeom linearFormB = (LinearGeom) bodyB.form();
 
         Point2D point1A = linearFormA.getPoint1(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D point2A = linearFormA.getPoint2(bodyA.pos(), bodyA.angle(), epsilon);

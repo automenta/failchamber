@@ -1,7 +1,6 @@
 package nars.testchamba;
 
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
 import nars.testchamba.agent.GridAgent;
 import nars.testchamba.map.Maze;
 import nars.testchamba.state.Cell.Material;

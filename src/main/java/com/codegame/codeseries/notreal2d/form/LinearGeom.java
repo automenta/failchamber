@@ -10,7 +10,7 @@ import static com.codeforces.commons.math.Math.*;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public class LinearForm extends ThinForm {
+public class LinearGeom extends ThinGeom {
     private final double length;
     private final double halfLength;
     private final double angularMassFactor;
@@ -20,7 +20,7 @@ public class LinearForm extends ThinForm {
     private Double lastXOffset;
     private Double lastYOffset;
 
-    public LinearForm(double length, boolean endpointCollisionEnabled) {
+    public LinearGeom(double length, boolean endpointCollisionEnabled) {
         super(Shape.LINE, endpointCollisionEnabled);
 
         if (Double.isNaN(length) || Double.isInfinite(length) || length <= 0.0D) {
@@ -34,7 +34,7 @@ public class LinearForm extends ThinForm {
         this.angularMassFactor = length * length / 12.0D;
     }
 
-    public LinearForm(double length) {
+    public LinearGeom(double length) {
         this(length, true);
     }
 

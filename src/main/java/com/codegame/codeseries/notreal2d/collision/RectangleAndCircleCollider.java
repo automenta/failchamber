@@ -3,8 +3,8 @@ package com.codegame.codeseries.notreal2d.collision;
 import com.codeforces.commons.geometry.Line2D;
 import com.codeforces.commons.geometry.Point2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.form.CircularForm;
-import com.codegame.codeseries.notreal2d.form.RectangularForm;
+import com.codegame.codeseries.notreal2d.form.CircularGeom;
+import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import com.codegame.codeseries.notreal2d.form.Shape;
 import com.codegame.codeseries.notreal2d.util.GeometryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +29,8 @@ public class RectangleAndCircleCollider extends ColliderBase {
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularForm rectangularFormA = (RectangularForm) bodyA.form();
-        CircularForm circularFormB = (CircularForm) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
+        CircularGeom circularFormB = (CircularGeom) bodyB.form();
 
         Point2D[] pointsA = rectangularFormA.getPoints(bodyA.pos(), bodyA.angle(), epsilon);
         int pointACount = pointsA.length;
