@@ -23,7 +23,7 @@ public class Dungeon {
     public int Corridors;
 
     public Dungeon(Hauto a) {
-        this._dungeonMap = a.readCells;
+        this._dungeonMap = a.read;
         _xsize = xmax = a.w;
         _ysize = ymax = a.h;
     }

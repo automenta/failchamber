@@ -1,5 +1,6 @@
 package nars.testchamba;
 
+import nars.testchamba.agent.GridAgent;
 import nars.testchamba.util.Video;
 import nars.testchamba.grid.*;
 import nars.testchamba.grid.Cell.Logic;
@@ -91,7 +92,7 @@ public class TestChamba {
         goal = arg;
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
-                if (cells.readCells[i][j].name.equals(arg)) {
+                if (cells.read[i][j].name.equals(arg)) {
                     if (opname.equals("go-to"))
                         space.target.set(i, j);
                 }
@@ -131,7 +132,7 @@ public class TestChamba {
         Hauto cells = new Hauto(w, h);
         cells.forEach(0, 0, w, h, c -> {
 ///c.setHeight((int)(Math.random() * 12 + 1));
-            float smoothness = 20f;
+            float smoothness = 10f;
             c.material = Material.GrassFloor;
             double n = SimplexNoise.noise(c.state.x / smoothness, c.state.y / smoothness);
             if ((n * 64) > water_threshold) {
@@ -167,6 +168,7 @@ public class TestChamba {
 
         if (showWindow)
             space.newWindow(1000, 800, true);
+
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
 
         GridAgent a = new GridAgent(17, 17) {
@@ -258,7 +260,7 @@ public class TestChamba {
                                         }
                                     }
                                 }
-                                if (obi != null || cells.readCells[(int) space.current.x][(int) space.current.y].name.equals(goal)) { //only possible for existing ones
+                                if (obi != null || cells.read[(int) space.current.x][(int) space.current.y].name.equals(goal)) { //only possible for existing ones
                                     if ("pick".equals(opname)) {
                                         if (inventorybag != null && inventorybag instanceof LocalGridObject) {
                                             //we have to drop it
@@ -274,9 +276,9 @@ public class TestChamba {
                                                 keyn = Integer.parseInt(inventorybag.doorname.replaceAll("key", "").replace("}", "").replace("{", ""));
                                                 for (int i = 0; i < cells.h; i++) {
                                                     for (int j = 0; j < cells.w; j++) {
-                                                        if (Hauto.doornumber(cells.readCells[i][j]) == keyn) {
-                                                            cells.readCells[i][j].is_solid = false;
-                                                            cells.writeCells[i][j].is_solid = false;
+                                                        if (Hauto.doornumber(cells.read[i][j]) == keyn) {
+                                                            cells.read[i][j].is_solid = false;
+                                                            cells.write[i][j].is_solid = false;
                                                         }
                                                     }
                                                 }
@@ -286,12 +288,12 @@ public class TestChamba {
                                     } else if ("deactivate".equals(opname)) {
                                         for (int i = 0; i < cells.h; i++) {
                                             for (int j = 0; j < cells.w; j++) {
-                                                if (cells.readCells[i][j].name.equals(goal)) {
-                                                    if (cells.readCells[i][j].logic == Logic.SWITCH) {
-                                                        cells.readCells[i][j].logic = Logic.OFFSWITCH;
-                                                        cells.writeCells[i][j].logic = Logic.OFFSWITCH;
-                                                        cells.readCells[i][j].charge = 0.0f;
-                                                        cells.writeCells[i][j].charge = 0.0f;
+                                                if (cells.read[i][j].name.equals(goal)) {
+                                                    if (cells.read[i][j].logic == Logic.SWITCH) {
+                                                        cells.read[i][j].logic = Logic.OFFSWITCH;
+                                                        cells.write[i][j].logic = Logic.OFFSWITCH;
+                                                        cells.read[i][j].charge = 0.0f;
+                                                        cells.write[i][j].charge = 0.0f;
                                                         /*if(ComplexFeedback)
                                                             nar.addInput("(--,<"+goal+" --> [on]>). :|: %1.00;0.90%");*/
                                                     }
@@ -302,12 +304,12 @@ public class TestChamba {
                                     } else if ("activate".equals(opname)) {
                                         for (int i = 0; i < cells.h; i++) {
                                             for (int j = 0; j < cells.w; j++) {
-                                                if (cells.readCells[i][j].name.equals(goal)) {
-                                                    if (cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                                                        cells.readCells[i][j].logic = Logic.SWITCH;
-                                                        cells.writeCells[i][j].logic = Logic.SWITCH;
-                                                        cells.readCells[i][j].charge = 1.0f;
-                                                        cells.writeCells[i][j].charge = 1.0f;
+                                                if (cells.read[i][j].name.equals(goal)) {
+                                                    if (cells.read[i][j].logic == Logic.OFFSWITCH) {
+                                                        cells.read[i][j].logic = Logic.SWITCH;
+                                                        cells.write[i][j].logic = Logic.SWITCH;
+                                                        cells.read[i][j].charge = 1.0f;
+                                                        cells.write[i][j].charge = 1.0f;
                                                         /*if(ComplexFeedback)
                                                             nar.addInput("<"+goal+" --> [on]>. :|:");*/
                                                     }

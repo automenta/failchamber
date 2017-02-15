@@ -1,4 +1,8 @@
-package nars.testchamba.grid;
+package nars.testchamba.agent;
+
+import nars.testchamba.grid.Action;
+import nars.testchamba.grid.Effect;
+import nars.testchamba.grid.LocalGridObject;
 
 import java.awt.*;
 import java.util.ArrayDeque;

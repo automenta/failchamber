@@ -6,15 +6,20 @@ import nars.testchamba.grid.Hauto;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 public class ParticleSystem {
 
+    float lightDecayFactor = .9f;
+    float velocityDecayFactor = .97f;
+
     final Random r = new Random();
     float oldX, oldY;
     public final List<Particle> p = new ArrayList<>();
     final List<Graviton> gravitonAL = new ArrayList<>();
+
     private long lastTime;
     private final boolean pause = false;
     private boolean emit = false;
@@ -33,7 +38,7 @@ public class ParticleSystem {
         gravitonAL.add(new Graviton());
 
         this.cells = p.cells;
-        this.blockArray = p.cells.readCells;
+        this.blockArray = p.cells.read;
 
 
         WIDTH = p.cells.w;
@@ -124,12 +129,15 @@ public class ParticleSystem {
     public void emitParticles(float particleSpeed, float spread, float heading, float angle, float px, float py, int numberSquare) {
 
         for (int x = 0; x <= numberSquare; x++) {
+
+            float xPos = (px + spread * (x - numberSquare / 2));
+            int ix = (int) ((xPos));
+
             for (int y = 0; y <= numberSquare; y++) {
 
                 Particle p = new Particle();
 
                 p.rgba = Color.WHITE.getRGB();
-                float xPos = (px + spread * (x - numberSquare / 2));
                 float yPos = (py + spread * (y - numberSquare / 2));
 
                 float Vel = r.nextFloat() * particleSpeed;
@@ -145,9 +153,10 @@ public class ParticleSystem {
                 p.age = 20000;
 
                 p.setParticle(xPos, yPos, xVel, yVel);
-                if (!blockArray[(int) ((xPos))][(int) ((yPos))].isSolid()) { // if in air then add particle
+                int iy = (int) ((yPos));
+                if (!blockArray[ix][iy].isSolid()) { // if in air then add particle
                     if (xPos < WIDTH && xPos > 0 && yPos < HEIGHT && yPos > 0) {
-                        densityArray[(int) ((xPos))][(int) ((yPos))] += 2;
+                        densityArray[ix][iy] += 2;
                         this.p.add(p);
                     }
                 }
@@ -160,48 +169,48 @@ public class ParticleSystem {
         return (A > 255 ? 0xff000000 : A << 24) + (R > 255 ? 0xff0000 : R << 16) + (G > 255 ? 0xff00 : G << 8) + (B > 255 ? 0xff : B);
     }
 
-    /*
-    public void paintBlock(int x, int y) {
-        int light = (int) (.1 * blockArray[x][y].state.light);
-        if (light > 200) {
-            light = 200;
-        }
-        if (light < 0) {
-            light = 0;
-        }
 
-        if (blockArray[x][y].type == 0) {
-            for (int x_I = 0; x_I < 8; x_I++) {
-                for (int y_I = 0; y_I < 8; y_I++) {
+//    public void paintBlock(int x, int y) {
+//        int light = (int) (.1 * blockArray[x][y].state.light);
+//        if (light > 200) {
+//            light = 200;
+//        }
+//        if (light < 0) {
+//            light = 0;
+//        }
+//
+//        if (blockArray[x][y].type == 0) {
+//            for (int x_I = 0; x_I < 8; x_I++) {
+//                for (int y_I = 0; y_I < 8; y_I++) {
+//
+//                    blockRaster[x * 8 + x_I + (y * 8 + y_I) * WIDTH / 4] = makeIntColor(255, light, light / 3, 0);
+//
+//                }
+//            }
+//        } else if (blockArray[x][y].type == Block.GRYSTONE) {
+//
+//            float leftBright = blockArray[x - 1][y].state.light + .5f * blockArray[x - 2][y].state.light + .25f * blockArray[x - 3][y].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
+//            float rightBright = blockArray[x + 1][y].state.light + .5f * blockArray[x + 2][y].state.light + .25f * blockArray[x + 3][y].state.light + .125f * blockArray[x + 1][y - 1].state.light + .125f * blockArray[x + 1][y + 1].state.light;
+//            float upBright = blockArray[x][y - 1].state.light + .5f * blockArray[x][y - 2].state.light + .25f * blockArray[x][y - 3].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x + 1][y - 1].state.light;
+//            float downBright = blockArray[x][y + 1].state.light + .5f * blockArray[x][y + 2].state.light + .25f * blockArray[x][y + 3].state.light + .125f * blockArray[x - 1][y + 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
+//
+//            for (int x_I = 0; x_I < 8; x_I++) {
+//                for (int y_I = 0; y_I < 8; y_I++) {
+//
+//                    int normal = Block.normalIndentMap[y_I][x_I];
+//
+//                    int bright = 0;
+//                    bright += leftBright * ((0xff000000 & normal) >>> 24) / 0xff;
+//                    bright += rightBright * ((0x00ff0000 & normal) >> 16) / 0xff;
+//                    bright += upBright * ((0x0000ff00 & normal) >> 8) / 0xff;
+//                    bright += downBright * (0x000000ff & normal) / 0xff;
+//
+//                    blockRaster[x * 8 + x_I + (y * 8 + y_I) * WIDTH / 4] = additiveColor(Block.GRYSTONEINDENT_TEX[y_I][x_I], makeIntColor(255, bright / 12, bright / 24, bright / 64));
+//                }
+//            }
+//        }
+//    }
 
-                    blockRaster[x * 8 + x_I + (y * 8 + y_I) * WIDTH / 4] = makeIntColor(255, light, light / 3, 0);
-
-                }
-            }
-        } else if (blockArray[x][y].type == Block.GRYSTONE) {
-
-            float leftBright = blockArray[x - 1][y].state.light + .5f * blockArray[x - 2][y].state.light + .25f * blockArray[x - 3][y].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
-            float rightBright = blockArray[x + 1][y].state.light + .5f * blockArray[x + 2][y].state.light + .25f * blockArray[x + 3][y].state.light + .125f * blockArray[x + 1][y - 1].state.light + .125f * blockArray[x + 1][y + 1].state.light;
-            float upBright = blockArray[x][y - 1].state.light + .5f * blockArray[x][y - 2].state.light + .25f * blockArray[x][y - 3].state.light + .125f * blockArray[x - 1][y - 1].state.light + .125f * blockArray[x + 1][y - 1].state.light;
-            float downBright = blockArray[x][y + 1].state.light + .5f * blockArray[x][y + 2].state.light + .25f * blockArray[x][y + 3].state.light + .125f * blockArray[x - 1][y + 1].state.light + .125f * blockArray[x - 1][y + 1].state.light;
-
-            for (int x_I = 0; x_I < 8; x_I++) {
-                for (int y_I = 0; y_I < 8; y_I++) {
-
-                    int normal = Block.normalIndentMap[y_I][x_I];
-
-                    int bright = 0;
-                    bright += leftBright * ((0xff000000 & normal) >>> 24) / 0xff;
-                    bright += rightBright * ((0x00ff0000 & normal) >> 16) / 0xff;
-                    bright += upBright * ((0x0000ff00 & normal) >> 8) / 0xff;
-                    bright += downBright * (0x000000ff & normal) / 0xff;
-
-                    blockRaster[x * 8 + x_I + (y * 8 + y_I) * WIDTH / 4] = additiveColor(Block.GRYSTONEINDENT_TEX[y_I][x_I], makeIntColor(255, bright / 12, bright / 24, bright / 64));
-                }
-            }
-        }
-    }
-    */
 
     public void tick() {
 
@@ -212,24 +221,27 @@ public class ParticleSystem {
         int height = HEIGHT;
         
 
-        /*
-        for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //Draw previous frame's lighting, then clear lightArray
-            for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
-                paintBlock(x_I, y_I);
-            }
-        }*/
+
+//        for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //Draw previous frame's lighting, then clear lightArray
+//            for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
+//                paintBlock(x_I, y_I);
+//            }
+//        }
+
 
         if (!pause) {
 
             for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //clear lightArray
                 for (int y_I = 0, lightHeight = (HEIGHT); y_I < lightHeight; y_I++) {
 
-                    blockArray[x_I][y_I].state.light = (.9f * blockArray[x_I][y_I].state.light);
+                    blockArray[x_I][y_I].state.light *= lightDecayFactor;
                 }
             }
 
-            for (int particle_I = 0; particle_I < p.size(); particle_I++) {
-                Particle p = this.p.get(particle_I);
+
+            Iterator<Particle> pp = p.iterator();
+            while (pp.hasNext()) {
+                Particle p = pp.next();
 
                 xPos = p.xPos;
                 yPos = p.yPos;
@@ -245,8 +257,8 @@ public class ParticleSystem {
                 p.pyVel = yVel;
 
                 if (gravitonAL.isEmpty()) { // if not pulling, slow the particle down
-                    xVel = .97f * xVel;
-                    yVel = .97f * yVel;
+                    xVel = velocityDecayFactor * xVel;
+                    yVel = velocityDecayFactor * yVel;
                 } else {
 
                     for (Graviton v : gravitonAL) { // for every graviton
@@ -340,7 +352,7 @@ public class ParticleSystem {
 
 
                     if (life < 0) {
-                        this.p.remove(particle_I);
+                        pp.remove();
                     } else {
                         densityArray[(int) ((xPos))][(int) ((yPos))] += 2;
                     }
@@ -348,7 +360,7 @@ public class ParticleSystem {
                 } else { // outside of canvas
                     life -= 20;
                     if (life < 0) {
-                        this.p.remove(particle_I);
+                        pp.remove();
                     }
                 }
 

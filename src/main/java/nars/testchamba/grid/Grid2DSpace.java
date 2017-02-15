@@ -1,6 +1,8 @@
 package nars.testchamba.grid;
 
 import nars.testchamba.TestChamba;
+import nars.testchamba.agent.GridAgent;
+import nars.testchamba.particle.Particle;
 import nars.testchamba.util.NWindow;
 import nars.testchamba.particle.ParticleSystem;
 import processing.core.PApplet;
@@ -16,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Grid2DSpace extends PApplet {
 
-
-    public static boolean world_used = false;
 
     public final PVector target = new PVector(25, 25); //need to be init equal else feedback will
     public final PVector current = new PVector(0, 0);
@@ -36,6 +36,7 @@ public class Grid2DSpace extends PApplet {
     float selection_distance = 10;
     public float maxNodeSize = 40f;
 
+    float ambientLight = 0.5f;
 
     public int automataPeriod = 1; //how many cycles between each automata update
     public int agentPeriod = 1;  //how many cycles between each agent update
@@ -50,11 +51,11 @@ public class Grid2DSpace extends PApplet {
     double realtime;
     public ParticleSystem particles;
     private Container contentPane;
+    private EditorPanel editor;
 
     public Grid2DSpace(Hauto cells) {
         super();
         this.cells = cells;
-        world_used = true;
 
         initSurface();
         startSurface();
@@ -81,8 +82,12 @@ public class Grid2DSpace extends PApplet {
             }
         };
 
+
         contentPane = j.getContentPane();
         contentPane.setLayout(new BorderLayout());
+
+        j.setIgnoreRepaint(true);
+        contentPane.setIgnoreRepaint(true);
 
         //JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -95,10 +100,10 @@ public class Grid2DSpace extends PApplet {
         menu.add(syntaxEnable);
          */
 
-        EditorPanel editor = new EditorPanel(this);
-        NWindow editorWindow = new NWindow("Edit", editor);
-        editorWindow.setSize(200, 400);
-        editorWindow.setVisible(true);
+        editor = new EditorPanel(this);
+//        NWindow editorWindow = new NWindow("Edit", editor);
+//        editorWindow.setSize(200, 400);
+//        editorWindow.setVisible(true);
 
 
 //        contentPane.add(menu, BorderLayout.NORTH);
@@ -114,6 +119,15 @@ public class Grid2DSpace extends PApplet {
         component().addMouseWheelListener(evt -> {
             mouseScroll = -evt.getWheelRotation();
             mouseScrolled();
+        });
+        component().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton()==MouseEvent.BUTTON3) {
+                    editor.popup(component(), e.getPoint());
+                    editor.show();
+                }
+            }
         });
 
         j.setSize(width, height);//initial size of the window
@@ -155,17 +169,24 @@ public class Grid2DSpace extends PApplet {
 
     @Override
     public void mouseReleased() {
-        hamlib.mouseReleased();
+        if (mouseActive())
+            hamlib.mouseReleased();
     }
 
     @Override
     public void mouseDragged() {
-        hamlib.mouseDragged();
+        if (mouseActive())
+            hamlib.mouseDragged();
     }
 
     @Override
     public void mousePressed() {
-        hamlib.mousePressed();
+        if (mouseActive())
+            hamlib.mousePressed();
+    }
+
+    private boolean mouseActive() {
+        return !editor.isVisible();
     }
 
     public void automataclicked(float x, float y) {
@@ -180,16 +201,13 @@ public class Grid2DSpace extends PApplet {
         cells.clicked((int) realx, (int) realy, this);
     }
 
-    public void updateAutomata() {
-        cells.Exec();
-    }
-
     public void update(TestChamba s) {
         realtime = System.nanoTime() / 1.0e9;
 
         if (time % automataPeriod == 0 || TestChamba.executed) {
-            updateAutomata();
+            cells.update();
         }
+
         if (time % agentPeriod == 0 || TestChamba.executed) {
             try {
                 for (GridObject g : objects) {
@@ -198,11 +216,11 @@ public class Grid2DSpace extends PApplet {
 
                     if (g instanceof GridAgent) {
                         GridAgent b = (GridAgent) g;
-                        if (b.actions.size() > 0) {
+                        if (!b.actions.isEmpty()) {
                             Action a = b.actions.pop();
-                            if (a != null) {
+                            //if (a != null) {
                                 process(b, a);
-                            }
+                            //}
                         }
 
                     }
@@ -246,13 +264,6 @@ public class Grid2DSpace extends PApplet {
     }
 
 
-
-
-    public void hrend_DrawGUI() {
-        //fill(255);
-        // rect(10,10,10,10);
-    }
-
     @Override
     public void setup() {
         particles = new ParticleSystem(this);
@@ -284,7 +295,6 @@ public class Grid2DSpace extends PApplet {
         if ((tx < 0) || (ty < 0) || (tx >= cells.w) || (ty >= cells.h))
             return "Out of bounds: " + tx + ' ' + ty;
 
-        Cell from = cells.at(x, y);
         Cell to = cells.at(tx, ty);
 
         //System.out.println(to + " " + to.material);
@@ -292,6 +302,8 @@ public class Grid2DSpace extends PApplet {
             return "Too solid";
 
         final float maxTraversableHeight = 8;
+
+        Cell from = cells.at(x, y);
         float dHeight = to.height - from.height;
         //if (dHeight > maxTraversableHeight)
         //    return "Too high";
@@ -299,17 +311,6 @@ public class Grid2DSpace extends PApplet {
         return null;
     }
 
-
-    public Effect getMotionEffect(GridAgent agent, Action a, int x, int y, int tx, int ty) {
-        String reason = whyNonTraversible(agent, x, y, tx, ty);
-        if (reason == null) {
-            return new Effect(a, true, getTime(), "Moved");
-        } else {
-            return new Effect(a, false, getTime(), reason);
-        }
-
-
-    }
 
     public void drawObjects() {
         pushMatrix();
@@ -325,11 +326,11 @@ public class Grid2DSpace extends PApplet {
         //PImage b = particles.particleImage;
         //this.blend(b, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), PImage.ADD);
         
-       /* particles.tick(); //crashes
+        particles.tick(); //crashes
         for (Particle p : particles.p) {
             fill(p.rgba);
             rect(p.xPos, p.yPos, 0.1f,0.1f);
-        }*/
+        }
     }
 
     public void drawGround() {
@@ -372,11 +373,11 @@ public class Grid2DSpace extends PApplet {
                             tx = 0;
                         }
 
-                        Cell c = cells.readCells[i][j];
+                        Cell c = cells.read[i][j];
 
                         c.draw(this, j == 0 || i == 0 || i == cells.w - 1 || j == cells.w - 1,
                                 hnav.MouseToWorldCoordX(width / 2), hnav.MouseToWorldCoordY(height / 2),
-                                x, y, hnav.zoom);
+                                x, y, hnav.zoom, ambientLight);
 
 
                     }

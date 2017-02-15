@@ -46,8 +46,8 @@ public class Maze {
                 if (m.at(lx, ly).material != Cell.Material.StoneWall) {
                     m.at(x, y, new SetMaterial(Cell.Material.DirtFloor));
                     m.at(x + dx, y + dy, new SetMaterial(Cell.Material.DirtFloor));
-                    m.readCells[x][y].setHeight((int) (Math.random() * 24 + 1));
-                    m.writeCells[x][y].setHeight((int) (Math.random() * 24 + 1));
+                    m.read[x][y].setHeight((int) (Math.random() * 24 + 1));
+                    m.write[x][y].setHeight((int) (Math.random() * 24 + 1));
                     finishedCount++;
                 }
             }

@@ -5,12 +5,15 @@ import nars.testchamba.TestChamba;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * @author me
  */
-public class EditorPanel extends JPanel {
+public class EditorPanel extends JPopupMenu {
 
     //final String levelPath = "./nars_lab/nars/lab/grid2d/level/";
 
@@ -23,8 +26,81 @@ public class EditorPanel extends JPanel {
         abstract public void run();
     }
 
+    public void popup(Component component, Point point) {
+        int w = getWidth();
+        int h = getHeight();
+        this.show(component, (int)point.getX() - w/2, (int)point.getY() - h/2);
+    }
+
+
     public EditorPanel(final Grid2DSpace s) {
-        super(new BorderLayout());
+        //super(new BorderLayout());
+        super();
+
+
+        setOpaque(false);
+        setBorderPainted(false);
+
+
+
+        TreeNode root = build(s);
+
+        DefaultTreeModel model = new DefaultTreeModel(root);
+
+        final JTree toolTree = new JTree(model);
+
+        toolTree.setOpaque(false);
+
+        toolTree.expandRow(0);
+
+        JScrollPane scroll = new JScrollPane(toolTree);
+
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+
+        add(scroll, BorderLayout.CENTER);
+
+        toolTree.addTreeSelectionListener(e -> {
+            Object o = toolTree.getLastSelectedPathComponent();
+            if (o instanceof EditorMode) {
+                EditorMode m = (EditorMode) o;
+                m.run();
+            }
+        });
+        toolTree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.getClickCount()==2) {
+                    Object o = toolTree.getLastSelectedPathComponent();
+
+                    boolean hide = false;
+                    if (o instanceof DefaultMutableTreeNode) {
+                        if (((DefaultMutableTreeNode)o).getChildCount() == 0) { //leaf
+                            hide = true;
+                        }
+                    }
+
+                    if (hide) {
+                        SwingUtilities.invokeLater(()->
+                            EditorPanel.this.setVisible(false)
+                        );
+                    }
+                }
+            }
+
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                System.out.println(e);
+//                if (e.getClickCount()==2) {
+//                    Object o = toolTree.getLastSelectedPathComponent();
+//                    System.out.println(o);
+//                }
+//            }
+        });
+
+    }
+
+    private TreeNode build(Grid2DSpace s) {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
@@ -390,20 +466,6 @@ public class EditorPanel extends JPanel {
         // DefaultMutableTreeNode extraMenu = new DefaultMutableTreeNode("Extra");
         // root.add(extraMenu);
 
-        DefaultTreeModel model = new DefaultTreeModel(root);
-
-        final JTree toolTree = new JTree(model);
-        toolTree.expandRow(0);
-        add(new JScrollPane(toolTree), BorderLayout.CENTER);
-
-        toolTree.addTreeSelectionListener(e -> {
-            Object o = toolTree.getLastSelectedPathComponent();
-            if (o instanceof EditorMode) {
-                EditorMode m = (EditorMode) o;
-                m.run();
-            }
-        });
-
         structMenu.add(new EditorMode("Stone Wall") {
             @Override
             public void run() {
@@ -723,6 +785,8 @@ public class EditorPanel extends JPanel {
                 s.cells.click("Pizza", "", "");
             }
         });
+
+        return root;
     }
 
 }

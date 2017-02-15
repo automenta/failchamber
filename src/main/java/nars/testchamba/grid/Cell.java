@@ -15,6 +15,8 @@ public class Cell {
     public final CellState state;
     public boolean is_solid = false;
 
+    final static float COLOR_RATE = 0.19f;
+
     public boolean isSolid() {
         return is_solid;
     }
@@ -74,6 +76,7 @@ public class Cell {
     public void setHeightInfinity() {
         height = Float.MAX_VALUE;
         material = Material.StoneWall;
+        is_solid = true;
     }
 
     public static void drawtext(Grid2DSpace s, String str) {
@@ -88,21 +91,27 @@ public class Cell {
         return current * (1.0f - speed) + next * (speed);
     }
 
+    final static int defaultOpacity = 200;
 
-    public void draw(Grid2DSpace s, boolean edge, float wx, float wy, float x, float y, float z) {
+    public void draw(Grid2DSpace s, boolean edge, float wx, float wy, float x, float y, float z, float ambientLight) {
 
-        int ambientLight = 100;
 
         //draw ground height
-        int r = 0, g = 0, b = 0, a = 1;
-        a = ambientLight;
+        int r = 0, g = 0, b = 0;
+
+        float light = ambientLight + this.light;
+
+
+
+        int a = defaultOpacity;
+
 
         if (material == Material.Empty) {
         } else if (material == Material.Machine) {
             g = b = 127;
             r = 200;
-        } else if (material == Material.StoneWall || (material == Material.Door && is_solid)) {
-            r = g = b = 255;
+        } else if ((material == Material.Door && is_solid)) {
+            r = g = b = 230;
         } else if (material == Material.DirtFloor || material == Material.GrassFloor || material == Material.Door) {
             if (height == Float.MAX_VALUE) {
                 r = g = b = 255;
@@ -110,6 +119,12 @@ public class Cell {
                 r = g = b = (int) (128 + height);
             }
         }
+
+        if (material == Material.GrassFloor) {
+            r += 8;
+            g += 16;
+        }
+
         if (material == Material.Door && is_solid) {
             b = 0;
             g = (int) (g / 2.0f);
@@ -120,7 +135,7 @@ public class Cell {
         if ((charge > 0) || (chargeFront)) {
             {
                 float freq = 4;
-                int chargeBright = (int) ((Math.cos(s.getRealtime() * freq) + 1) * 25);
+                float chargeBright = (int) ((Math.cos(s.getRealtime() * freq) + 1) * 0.25f);
 
                 if (charge > 0) {
                     r += chargeBright;
@@ -133,43 +148,35 @@ public class Cell {
                     freq = 7;
                     b += 25;
                 }
-                a += 150;
 
+                light += chargeBright;
             }
         }
-        if (edge) {
-            light = 255;
-        }
+//        if (edge) {
+//            light = 255;
+//        }
 
-        a += light * 255;
+
         //g+=light*128;
         //b+=light*128;
         //r+=light*128;
 
 
         if (material == Material.StoneWall) {
-            a = r = g = b = (int) (200 + light * 255);
+            r = g = b = (int) (200 + light * 55);
 
         }
         if (material == Material.Water) {
-            b = 64;
+            b = 64 + (int)(light * 20);
             g = 32;
         }
 
-        r = Math.min(255, r);
-        g = Math.min(255, g);
-        b = Math.min(255, b);
-        a = Math.min(255, a);
 
-        state.cr = lerp(state.cr, r, 0.19f);
-        state.cg = lerp(state.cg, g, 0.19f);
-        state.cb = lerp(state.cb, b, 0.19f);
-        state.ca = lerp(state.ca, a, 0.19f);
+        state.cr = lerp(state.cr, Math.min(255, Math.round(light * r)), COLOR_RATE);
+        state.cg = lerp(state.cg, Math.min(255, Math.round(light * g)), COLOR_RATE);
+        state.cb = lerp(state.cb, Math.min(255, Math.round(light * b)), COLOR_RATE);
+        state.ca = lerp(state.ca, Math.min(255, a), COLOR_RATE);
 
-        if (material == Material.GrassFloor) {
-            state.cr += 8;
-            state.cg += 16;
-        }
         s.fill(state.cr, state.cg, state.cb, state.ca);
 
         boolean full3d = false;
@@ -198,7 +205,6 @@ public class Cell {
             //s.rect(0.2f,0.0f,1.0f,1.0f);
         }
 
-        s.textSize(1);
         if (logic == Logic.SWITCH || logic == Logic.OFFSWITCH) {
             s.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
             s.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
@@ -220,46 +226,56 @@ public class Cell {
             s.rect(0, 0.3f, 1, 0.4f);
         }
 
-        s.fill(255, 255, 255, 128);
-        if (logic == Logic.AND) {
-            drawtext(s, "^");
+        String textIcon;
+
+        switch (logic) {
+            case AND:
+                textIcon = "^";
+                break;
+            case OR:
+                textIcon = "v";
+                break;
+            case XOR:
+                textIcon = "x";
+                break;
+            case NOT:
+                textIcon = "~";
+                break;
+            case BRIDGE:
+                textIcon = "H";
+                break;
+            case UNCERTAINBRIDGE:
+                textIcon = "U";
+                break;
+            case SWITCH:
+                textIcon = "1";
+                break;
+            case OFFSWITCH:
+                textIcon = "0";
+                break;
+            default:
+                textIcon = null;
+                break;
         }
-        if (logic == Logic.OR) {
-            drawtext(s, "v");
+        if (textIcon!=null) {
+            s.fill(255, 255, 255, 128);
+            s.textSize(1);
+            drawtext(s, textIcon);
         }
-        if (logic == Logic.XOR) {
-            drawtext(s, "x");
-        }
-        if (logic == Logic.NOT) {
-            drawtext(s, "~");
-        }
-        if (logic == Logic.BRIDGE) {
-            drawtext(s, "H");
-        }
-        if (logic == Logic.UNCERTAINBRIDGE) {
-            drawtext(s, "U");
-        }
-        if (logic == Logic.SWITCH) {
-            drawtext(s, "1");
-        }
-        if (logic == Logic.OFFSWITCH) {
-            drawtext(s, "0");
-        }
+
 
         if (machine != null) {
             switch (machine) {
                 case Light:
-                    if (charge > 0)
-                        drawtext(s, "+");
-                    else
-                        drawtext(s, "-");
+                    drawtext(s, (charge > 0) ? "+" : "-");
                     break;
                 case Turret:
                     if (charge > 0)
-                        s.particles.emitParticles(0.5f, 0.3f, s.getTime() / 40f, 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
+                        s.particles.emitParticles(0.5f, 0.2f, s.getTime() / 20f, 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
                     break;
             }
         }
+
         if (name != null && !name.isEmpty()) {
             s.textSize(0.2f);
             s.fill(255, 0, 0);
@@ -269,18 +285,7 @@ public class Cell {
 
     }
 
-    static long rseed = System.nanoTime();
 
-    public static int nextInt() {
-        final int nbits = 32;
-        long x = rseed;
-        x ^= (x << 21);
-        x ^= (x >>> 35);
-        x ^= (x << 4);
-        rseed = x;
-        x &= ((1L << nbits) - 1);
-        return (int) x;
-    }
 
     void setBoundary() {
         setHeightInfinity();
@@ -294,6 +299,7 @@ public class Cell {
         this.chargeFront = c.chargeFront;
         this.light = c.light;
         this.name = c.name;
+        this.is_solid = c.is_solid;
     }
 
     public void setHeight(int h) {

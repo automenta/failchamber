@@ -1,6 +1,8 @@
 package nars.testchamba.grid;
 
 
+import nars.testchamba.agent.GridAgent;
+
 public class RayVision implements GridObject {
 
     public final GridAgent body;

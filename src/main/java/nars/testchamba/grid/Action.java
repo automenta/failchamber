@@ -1,12 +1,14 @@
 package nars.testchamba.grid;
 
+import nars.testchamba.agent.GridAgent;
+
 /**
  * Defines an action that may or may not be allowed by the game engine.
  * A corresponding Effect will be returned to the agent's buffer
  */
 abstract public class Action {
 
-    long createdAt; //when created
+    public long createdAt; //when created
     int expiresAt = -1; //allows an agent to set a time limit on the action
 
 
@@ -75,7 +77,15 @@ abstract public class Action {
                     break;
             }
 
-            Effect e = p.getMotionEffect(a, this, a.x, a.y, tx, ty);
+            Effect result;
+            String reason = p.whyNonTraversible(a, a.x, a.y, tx, ty);
+            if (reason == null) {
+                result = new Effect(this, true, p.time, "Moved");
+            } else {
+                result = new Effect(this, false, p.time, reason);
+            }
+
+            Effect e = result;
             if (e.success) {
                 a.x = tx;
                 a.y = ty;

@@ -28,8 +28,8 @@ public class Hauto {
     }
 
     //put to beginning because we will need this one most often
-    public void ExecutionFunction(int t, int i, int j, Cell w, Cell r, Cell left, Cell right, Cell up,
-                                  Cell down, Cell left_up, Cell left_down, Cell right_up, Cell right_down, Cell[][] readcells) {
+    public void update(int t, int i, int j, Cell w, Cell r, Cell left, Cell right, Cell up,
+                       Cell down, Cell left_up, Cell left_down, Cell right_up, Cell right_down, Cell[][] readcells) {
         w.charge = r.charge;
         w.value = r.value;
         w.value2 = r.value2;
@@ -155,8 +155,8 @@ public class Hauto {
         }
 
         if (oper.equals("perceive")) {
-            readCells[x][y].name = "place" + entityID.toString();
-            writeCells[x][y].name = "place" + entityID.toString();
+            read[x][y].name = "place" + entityID.toString();
+            write[x][y].name = "place" + entityID.toString();
             if (TestChamba.staticInformation)
             /*
             nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
@@ -170,7 +170,7 @@ public class Hauto {
         }
 
         if (oper != null && !oper.isEmpty()) {
-            if (readCells[x][y].name != null && !readCells[x][y].name.isEmpty() && !"pick".equals(oper)) {
+            if (read[x][y].name != null && !read[x][y].name.isEmpty() && !"pick".equals(oper)) {
                 /*
                 if(allow_imitating) {
                     nar.addInput("(^" + oper + ","+readCells[x][y].name+")! :|:"); //we will force the action
@@ -210,7 +210,7 @@ public class Hauto {
                 inverse = true;
             }
             String wishreal = wish.replace("closed", "opened").replace("off", "on");
-            if (readCells[x][y].name != null && !readCells[x][y].name.isEmpty()) {
+            if (read[x][y].name != null && !read[x][y].name.isEmpty()) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 /*
                 if(!inverse) {
@@ -269,14 +269,14 @@ public class Hauto {
         if (!(selected.material == Cell.Material.Door) && !(selected.material == Cell.Material.Pizza))
             doorname = "";
 
-        readCells[x][y].charge = selected.charge;
-        writeCells[x][y].charge = selected.charge;
-        readCells[x][y].logic = selected.logic;
-        writeCells[x][y].logic = selected.logic;
-        readCells[x][y].material = selected.material;
-        writeCells[x][y].material = selected.material;
-        readCells[x][y].machine = selected.machine;
-        writeCells[x][y].machine = selected.machine;
+        read[x][y].charge = selected.charge;
+        write[x][y].charge = selected.charge;
+        read[x][y].logic = selected.logic;
+        write[x][y].logic = selected.logic;
+        read[x][y].material = selected.material;
+        write[x][y].material = selected.material;
+        read[x][y].machine = selected.machine;
+        write[x][y].machine = selected.machine;
 
         if (selected.material == Cell.Material.Pizza || selected.material == Cell.Material.Door || selected.logic == Cell.Logic.OFFSWITCH || selected.logic == Cell.Logic.SWITCH || selected.machine == Cell.Machine.Light || selected.machine == Cell.Machine.Turret) //or other entity...
         {
@@ -299,13 +299,13 @@ public class Hauto {
             name = '{' + name + '}';
             //if it has name already, dont allow overwrite
 
-            if (readCells[x][y].name.isEmpty()) {
+            if (read[x][y].name.isEmpty()) {
                 /*
                 if (TestChamba.staticInformation)
                     nar.addInput("<" + name + " --> " + Klass + ">.");
                     */
-                readCells[x][y].name = name;
-                writeCells[x][y].name = name;
+                read[x][y].name = name;
+                write[x][y].name = name;
                 /*
                 if (selected.logic == OFFSWITCH) {
                     nar.addInput("(--,<" + name + " --> " + "[on]>). :|: %1.00;0.90%");
@@ -362,31 +362,30 @@ public class Hauto {
         if (label != null && label.isEmpty()) {
             return;
         }
-        selected.is_solid = false;
-        if ("StoneWall".equals(label)) {
-            selected.material = Cell.Material.StoneWall;
-            selected.is_solid = true;
-            selected.logic = Cell.Logic.NotALogicBlock;
-            selected.charge = 0;
+        switch (label) {
+            case "StoneWall":
+                selected.material = Cell.Material.StoneWall;
+                selected.is_solid = true;
+                selected.logic = Cell.Logic.NotALogicBlock;
+                selected.charge = 0;
+                break;
+            case "Water":
+                selected.material = Cell.Material.Water;
+                selected.logic = Cell.Logic.NotALogicBlock;
+                selected.charge = 0;
+                break;
+            //TODO
         }
 
-        if ("Water".equals(label)) {
-            selected.material = Cell.Material.Water;
-            selected.is_solid = false;
-            selected.logic = Cell.Logic.NotALogicBlock;
-            selected.charge = 0;
-        }
 
         if ("DirtFloor".equals(label)) {
             selected.material = Cell.Material.DirtFloor;
-            selected.is_solid = false;
             selected.logic = Cell.Logic.NotALogicBlock;
             selected.charge = 0;
         }
 
         if ("GrassFloor".equals(label)) {
             selected.material = Cell.Material.GrassFloor;
-            selected.is_solid = false;
             selected.logic = Cell.Logic.NotALogicBlock;
             selected.charge = 0;
         }
@@ -429,7 +428,6 @@ public class Hauto {
         if ("Pizza".equals(label)) {
             selected.logic = Cell.Logic.NotALogicBlock;
             selected.material = Cell.Material.Pizza;
-            selected.is_solid = false;
         }
         if ("Door".equals(label)) {
             selected.logic = Cell.Logic.NotALogicBlock;
@@ -477,8 +475,8 @@ public class Hauto {
     final public static int DOWNRIGHT = (DOWN + RIGHT) / 2;
 
     public int t = 0;
-    public Cell[][] readCells; //2D-array(**) of Cell objects(*)
-    public Cell[][] writeCells; //2D-array(**) of Cell objects(*)
+    public Cell[][] read; //2D-array(**) of Cell objects(*)
+    public Cell[][] write; //2D-array(**) of Cell objects(*)
     public final int w;
     public final int h;
 
@@ -491,18 +489,18 @@ public class Hauto {
 
         this.w = w;
         this.h = h;
-        readCells = new Cell[w][h];
-        writeCells = new Cell[w][h];
+        read = new Cell[w][h];
+        write = new Cell[w][h];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 CellState s = new CellState(i, j);
-                readCells[i][j] = new Cell(s);
-                writeCells[i][j] = new Cell(s);
+                read[i][j] = new Cell(s);
+                write[i][j] = new Cell(s);
 
                 if ((i == 0) || (i == w - 1))
-                    readCells[i][j].setBoundary();
+                    read[i][j].setBoundary();
                 else if ((j == 0) || (j == h - 1))
-                    readCells[i][j].setBoundary();
+                    read[i][j].setBoundary();
             }
         }
 
@@ -513,23 +511,25 @@ public class Hauto {
 
     public void copyReadToWrite() {
         for (int i = 0; i < w; i++) {
+            Cell[] wi = write[i];
+            Cell[] ri = read[i];
             for (int j = 0; j < h; j++) {
-                writeCells[i][j].copyFrom(readCells[i][j]);
+                wi[j].copyFrom(ri[j]);
             }
         }
     }
 
-    public void Exec() {
+    public void update() {
         this.t++;
         for (int i = 1; i < this.w - 1; i++) {
             for (int j = 1; j < this.h - 1; j++) {
-                ExecutionFunction(this.t, i, j, this.writeCells[i][j], this.readCells[i][j], this.readCells[i - 1][j], this.readCells[i + 1][j], this.readCells[i][j + 1], this.readCells[i][j - 1], this.readCells[i - 1][j + 1], this.readCells[i - 1][j - 1], this.readCells[i + 1][j + 1], this.readCells[i + 1][j - 1], this.readCells);
+                update(this.t, i, j, this.write[i][j], this.read[i][j], this.read[i - 1][j], this.read[i + 1][j], this.read[i][j + 1], this.read[i][j - 1], this.read[i - 1][j + 1], this.read[i - 1][j - 1], this.read[i + 1][j + 1], this.read[i + 1][j - 1], this.read);
             }
         }
         //change write to read and read to write
-        Cell[][] temp2 = this.readCells;
-        this.readCells = this.writeCells;
-        this.writeCells = temp2;
+        Cell[][] temp2 = this.read;
+        this.read = this.write;
+        this.write = temp2;
     }
 
     public static Cell FirstNeighbor(int i, int j, Cell[][] readCells, String Condition, float data) {
@@ -556,25 +556,22 @@ public class Hauto {
     }
 
     public static float Op(String op, float a, float b) {
-        if ("op_or".equals(op)) {
-            return (a == 1.0f || b == 1.0f) ? 1.0f : 0.0f;
+        switch (op) {
+            case "op_or":
+                return (a == 1.0f || b == 1.0f) ? 1.0f : 0.0f;
+            case "op_and":
+                return (a == 1.0f && b == 1.0f) ? 1.0f : 0.0f;
+            case "op_max":
+                return Math.max(a, b);
+            case "op_min":
+                return Math.min(a, b);
+            case "op_plus":
+                return a + b;
+            case "op_mul":
+                return a * b;
+            default:
+                return 0;
         }
-        if ("op_and".equals(op)) {
-            return (a == 1.0f && b == 1.0f) ? 1.0f : 0.0f;
-        }
-        if ("op_max".equals(op)) {
-            return Math.max(a, b);
-        }
-        if ("op_min".equals(op)) {
-            return Math.min(a, b);
-        }
-        if ("op_plus".equals(op)) {
-            return a + b;
-        }
-        if ("op_mul".equals(op)) {
-            return a * b;
-        }
-        return 0.0f;
     }
 
     public void forEach(int x1, int y1, int x2, int y2, Consumer<Cell> c) {
@@ -585,20 +582,22 @@ public class Hauto {
         y2 = Math.min(h - 1, y2);
         y2 = Math.max(y1, y2);
 
-        for (int tx = x1; tx < x2; tx++)
+        for (int tx = x1; tx < x2; tx++) {
+            Cell[] rx = read[tx];
             for (int ty = y1; ty < y2; ty++) {
-                c.accept(readCells[tx][ty]);
+                c.accept(rx[ty]);
             }
+        }
         copyReadToWrite();
     }
 
     public void at(int x, int y, Consumer<Cell> c) {
-        c.accept(readCells[x][y]);
-        copyReadToWrite();
+        c.accept(read[x][y]);
+        //copyReadToWrite();
     }
 
     public Cell at(int x, int y) {
-        return readCells[x][y];
+        return read[x][y];
     }
 
     public static class SetMaterial implements Consumer<Cell> {
@@ -612,6 +611,7 @@ public class Hauto {
         public void accept(Cell cell) {
             cell.material = material;
             cell.height = (material == Cell.Material.StoneWall) ? 64 : 1;
+            cell.is_solid = material == Cell.Material.StoneWall;
         }
 
     }
