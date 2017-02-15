@@ -1,5 +1,6 @@
 package nars.testchamba.grid;
 
+import nars.testchamba.View;
 import nars.testchamba.agent.GridAgent;
 
 /**
@@ -12,7 +13,7 @@ abstract public class Action {
     int expiresAt = -1; //allows an agent to set a time limit on the action
 
 
-    public Effect process(Grid2DSpace p, GridAgent a) {
+    public Effect process(View p, GridAgent a) {
         return null;
     }
 
@@ -37,7 +38,7 @@ abstract public class Action {
          * rounds to the nearest cardinal direction and moves. steps can be postive or negative
          */
         @Override
-        public Effect process(Grid2DSpace p, GridAgent a) {
+        public Effect process(View p, GridAgent a) {
             int tx = a.x;
             int ty = a.y;
             int heading = a.heading;
@@ -110,7 +111,7 @@ abstract public class Action {
         }
 
         @Override
-        public Effect process(Grid2DSpace p, GridAgent a) {
+        public Effect process(View p, GridAgent a) {
             a.heading = angle;
             return new Effect(this, true, p.getTime());
         }

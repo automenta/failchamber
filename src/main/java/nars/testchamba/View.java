@@ -1,11 +1,12 @@
-package nars.testchamba.grid;
+package nars.testchamba;
 
-import nars.testchamba.TestChamba;
 import nars.testchamba.agent.GridAgent;
+import nars.testchamba.grid.*;
 import nars.testchamba.particle.Particle;
 import nars.testchamba.util.NWindow;
 import nars.testchamba.particle.ParticleSystem;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PVector;
 
 import javax.swing.*;
@@ -15,8 +16,10 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static nars.testchamba.Chamba.space;
 
-public class Grid2DSpace extends PApplet {
+
+public class View extends PApplet {
 
 
     public final PVector target = new PVector(25, 25); //need to be init equal else feedback will
@@ -45,21 +48,21 @@ public class Grid2DSpace extends PApplet {
     final Hsim hsim = new Hsim();
     final Hamlib hamlib = new Hamlib();
 
-    float sx = 800;
-    float sy = 800;
-    long lasttime = -1;
+
     double realtime;
     public ParticleSystem particles;
     private Container contentPane;
-    private EditorPanel editor;
+    private nars.testchamba.Menu editor;
 
-    public Grid2DSpace(Hauto cells) {
+    public View(Hauto cells) {
         super();
         this.cells = cells;
 
         initSurface();
         startSurface();
 
+        textAlign(CENTER);
+        textFont(new PFont(new Font(Font.MONOSPACED, Font.BOLD, 12), true));
     }
 
 
@@ -86,6 +89,7 @@ public class Grid2DSpace extends PApplet {
         contentPane = j.getContentPane();
         contentPane.setLayout(new BorderLayout());
 
+
         j.setIgnoreRepaint(true);
         contentPane.setIgnoreRepaint(true);
 
@@ -100,7 +104,7 @@ public class Grid2DSpace extends PApplet {
         menu.add(syntaxEnable);
          */
 
-        editor = new EditorPanel(this);
+        editor = new nars.testchamba.Menu(this);
 //        NWindow editorWindow = new NWindow("Edit", editor);
 //        editorWindow.setSize(200, 400);
 //        editorWindow.setVisible(true);
@@ -125,7 +129,6 @@ public class Grid2DSpace extends PApplet {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton()==MouseEvent.BUTTON3) {
                     editor.popup(component(), e.getPoint());
-                    editor.show();
                 }
             }
         });
@@ -201,14 +204,14 @@ public class Grid2DSpace extends PApplet {
         cells.clicked((int) realx, (int) realy, this);
     }
 
-    public void update(TestChamba s) {
+    public void update(Chamba s, double dt /* seconds */) {
         realtime = System.nanoTime() / 1.0e9;
 
-        if (time % automataPeriod == 0 || TestChamba.executed) {
+        if (time % automataPeriod == 0 || Chamba.executed) {
             cells.update();
         }
 
-        if (time % agentPeriod == 0 || TestChamba.executed) {
+        if (time % agentPeriod == 0 || Chamba.executed) {
             try {
                 for (GridObject g : objects) {
                     Effect e = (g instanceof GridAgent) ? ((GridAgent) g).perceiveNext() : null;
@@ -217,7 +220,7 @@ public class Grid2DSpace extends PApplet {
                     if (g instanceof GridAgent) {
                         GridAgent b = (GridAgent) g;
                         if (!b.actions.isEmpty()) {
-                            Action a = b.actions.pop();
+                            nars.testchamba.grid.Action a = b.actions.pop();
                             //if (a != null) {
                                 process(b, a);
                             //}
@@ -229,34 +232,43 @@ public class Grid2DSpace extends PApplet {
                 ex.printStackTrace();
             }
         }
-        TestChamba.executed = false;
+        Chamba.executed = false;
     }
 
     @Override
     public void draw() {
 
+        {
+            fade();
+        }
+
+        pushMatrix();
+        {
+            hnav.Transform();
+
+            drawGround();
+            drawObjects();
+            drawParticles();
+        }
+        popMatrix();
+
+        {
+            drawHUD();
+        }
+    }
+
+    private void fade() {
         //background(50f, 0.1f);
         fill(0, 25f);
         rect(0, 0, width, height);
+    }
 
-        pushMatrix();
-
-        hnav.Transform();
-
-
-        drawGround();
-        drawObjects();
-        drawParticles();
-
-        //popMatrix();
-
-
-        popMatrix();
-        //hrend_DrawGUI();
+    private void drawHUD() {
+        HUD.drawCursorCrossHair(this, mouseX, mouseY, this.cells.label);
     }
 
 
-    public void process(GridAgent agent, Action action) {
+    public void process(GridAgent agent, nars.testchamba.grid.Action action) {
         Effect e = action.process(this, agent);
         if (e != null) {
             agent.perceive(e);
@@ -269,7 +281,7 @@ public class Grid2DSpace extends PApplet {
         particles = new ParticleSystem(this);
     }
 
-    int time = 0;
+    public int time = 0;
     final float cellSize = 1;
 
     public int getTime() {
@@ -631,7 +643,7 @@ public class Grid2DSpace extends PApplet {
         return path;
     }
 
-    public static List<PVector> Shortest_Path(Grid2DSpace s, GridAgent a, PVector start, PVector target) {
+    public static List<PVector> Shortest_Path(View s, GridAgent a, PVector start, PVector target) {
         Set<PVector> avoid = new HashSet<>();
         Map<PVector, PVector> parent = new HashMap<>();
         ArrayDeque<PVector> queue = new ArrayDeque<>();

@@ -1,7 +1,7 @@
 package nars.testchamba.particle;
 
 import nars.testchamba.grid.Cell;
-import nars.testchamba.grid.Grid2DSpace;
+import nars.testchamba.View;
 import nars.testchamba.grid.Hauto;
 
 import java.awt.*;
@@ -30,7 +30,7 @@ public class ParticleSystem {
     private final int HEIGHT;
     private final Hauto cells;
 
-    public ParticleSystem(Grid2DSpace p) {
+    public ParticleSystem(View p) {
 //        int w = p.getWidth();
 //        int h = p.getHeight();
 

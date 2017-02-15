@@ -1,5 +1,7 @@
 package nars.testchamba.grid;
 
+import nars.testchamba.View;
+
 /**
  * GridObject with a specific position
  */
@@ -11,7 +13,7 @@ public abstract class LocalGridObject implements GridObject {
     public int x;
     public int y;
     public int heading; //in degrees
-    public Grid2DSpace space;
+    public View space;
 
     public LocalGridObject(int x, int y) {
         setPosition(x, y);
@@ -21,7 +23,7 @@ public abstract class LocalGridObject implements GridObject {
      * set by space when added
      */
     @Override
-    public void init(Grid2DSpace space) {
+    public void init(View space) {
         this.space = space;
     }
 

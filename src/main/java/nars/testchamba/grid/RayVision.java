@@ -1,6 +1,7 @@
 package nars.testchamba.grid;
 
 
+import nars.testchamba.View;
 import nars.testchamba.agent.GridAgent;
 
 public class RayVision implements GridObject {
@@ -12,7 +13,7 @@ public class RayVision implements GridObject {
     }
 
     @Override
-    public void init(Grid2DSpace p) {
+    public void init(View p) {
 
     }
 

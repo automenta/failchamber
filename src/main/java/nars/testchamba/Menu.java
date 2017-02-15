@@ -1,6 +1,6 @@
-package nars.testchamba.grid;
+package nars.testchamba;
 
-import nars.testchamba.TestChamba;
+import nars.testchamba.grid.Hauto;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
 /**
  * @author me
  */
-public class EditorPanel extends JPopupMenu {
+public class Menu extends JPopupMenu {
 
     //final String levelPath = "./nars_lab/nars/lab/grid2d/level/";
 
@@ -27,13 +27,13 @@ public class EditorPanel extends JPopupMenu {
     }
 
     public void popup(Component component, Point point) {
-        int w = getWidth();
-        int h = getHeight();
+        int w = (int) getPreferredSize().getWidth();
+        int h = (int) getPreferredSize().getHeight();
         this.show(component, (int)point.getX() - w/2, (int)point.getY() - h/2);
     }
 
 
-    public EditorPanel(final Grid2DSpace s) {
+    public Menu(final View s) {
         //super(new BorderLayout());
         super();
 
@@ -57,6 +57,7 @@ public class EditorPanel extends JPopupMenu {
 
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
+
 
         add(scroll, BorderLayout.CENTER);
 
@@ -82,25 +83,17 @@ public class EditorPanel extends JPopupMenu {
 
                     if (hide) {
                         SwingUtilities.invokeLater(()->
-                            EditorPanel.this.setVisible(false)
+                            Menu.this.setVisible(false)
                         );
                     }
                 }
             }
 
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                System.out.println(e);
-//                if (e.getClickCount()==2) {
-//                    Object o = toolTree.getLastSelectedPathComponent();
-//                    System.out.println(o);
-//                }
-//            }
         });
 
     }
 
-    private TreeNode build(Grid2DSpace s) {
+    private TreeNode build(View s) {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
@@ -166,14 +159,14 @@ public class EditorPanel extends JPopupMenu {
         mindSettings.add(new EditorMode("Tell object categories") {
             @Override
             public void run() {
-                TestChamba.staticInformation = true;
+                Chamba.staticInformation = true;
             }
         });
 
         mindSettings.add(new EditorMode("Don't tell object categories") {
             @Override
             public void run() {
-                TestChamba.staticInformation = false;
+                Chamba.staticInformation = false;
             }
         });
 
@@ -181,14 +174,14 @@ public class EditorPanel extends JPopupMenu {
         mindSettings.add(new EditorMode("Use complex feedback") {
             @Override
             public void run() {
-                TestChamba.ComplexFeedback = true;
+                Chamba.ComplexFeedback = true;
             }
         });
 
         mindSettings.add(new EditorMode("Don't use complex feedback") {
             @Override
             public void run() {
-                TestChamba.ComplexFeedback = false;
+                Chamba.ComplexFeedback = false;
             }
         });
 
@@ -579,7 +572,7 @@ public class EditorPanel extends JPopupMenu {
             @Override
             public void run() {
                 s.cells.click("", "go-to", "");
-                TestChamba.active = true;
+                Chamba.active = true;
             }
         });
 
@@ -587,7 +580,7 @@ public class EditorPanel extends JPopupMenu {
             @Override
             public void run() {
                 s.cells.click("", "pick", "");
-                TestChamba.active = true;
+                Chamba.active = true;
             }
         });
 
@@ -595,7 +588,7 @@ public class EditorPanel extends JPopupMenu {
             @Override
             public void run() {
                 s.cells.click("", "activate", "");
-                TestChamba.active = true;
+                Chamba.active = true;
             }
         });
 
@@ -603,7 +596,7 @@ public class EditorPanel extends JPopupMenu {
             @Override
             public void run() {
                 s.cells.click("", "deactivate", "");
-                TestChamba.active = true;
+                Chamba.active = true;
             }
         });
 
@@ -662,7 +655,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "at");
             }
         });
@@ -670,7 +663,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("hold something") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "hold");
             }
         });
@@ -678,7 +671,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("make switched on") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "on");
             }
         });
@@ -686,7 +679,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("make switched off") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "off");
             }
         });
@@ -694,7 +687,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("make opened") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "opened");
             }
         });
@@ -702,7 +695,7 @@ public class EditorPanel extends JPopupMenu {
         goalMenu.add(new EditorMode("make closed") {
             @Override
             public void run() {
-                TestChamba.active = true;
+                Chamba.active = true;
                 s.cells.click("", "", "closed");
             }
         });

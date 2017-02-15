@@ -1,5 +1,7 @@
 package nars.testchamba.grid;
 
+import nars.testchamba.View;
+
 /**
  * @author me
  */
@@ -7,7 +9,7 @@ package nars.testchamba.grid;
 
 public interface GridObject {
 
-    void init(Grid2DSpace space);
+    void init(View space);
 
     void update(Effect nextEffect);
 

@@ -15,15 +15,15 @@ import java.util.TimerTask;
 
 import static nars.testchamba.grid.Hauto.*;
 
-public class TestChamba {
+public class Chamba {
 
     static {
         Video.init();
     }
 
     public static boolean staticInformation = false;
+
     //TIMING
-    static int narUpdatePeriod = 1; /*milliseconds */
     final int gridUpdatePeriod = 20;
     final int automataPeriod = 20;
     final int agentPeriod = 20;
@@ -57,7 +57,7 @@ public class TestChamba {
 //        (nar.param).noiseLevel.set(0);
 //        new NARSwing(nar);
 
-        new TestChamba();
+        new Chamba();
 
         //nar.start(narUpdatePeriod);
 
@@ -65,7 +65,7 @@ public class TestChamba {
 
 
     //TODO un-static
-    public static Grid2DSpace space;
+    public static View space;
 
     public PVector lasttarget = new PVector(5, 25); //not work
     public static boolean executed_going = false;
@@ -118,11 +118,11 @@ public class TestChamba {
     public static boolean ComplexFeedback = true; //false is minimal feedback
 
 
-    public TestChamba() {
+    public Chamba() {
         this(true);
     }
 
-    public TestChamba(boolean showWindow) {
+    public Chamba(boolean showWindow) {
         super();
 
 
@@ -143,7 +143,7 @@ public class TestChamba {
 
         Maze.buildMaze(cells, 3, 3, 23, 23);
 
-        space = new Grid2DSpace(cells);
+        space = new View(cells);
         space.automataPeriod = automataPeriod / gridUpdatePeriod;
         space.agentPeriod = agentPeriod / gridUpdatePeriod;
         space.frameRate(FRAMERATE);
@@ -151,17 +151,20 @@ public class TestChamba {
 
         Timer s = new Timer();
         s.scheduleAtFixedRate(new TimerTask() {
-            private long lastDrawn = 0;
+
+            public long lastDrawn = System.nanoTime();
 
             @Override
             public void run() {
-                space.update(TestChamba.this);
+
+                long prev = lastDrawn;
 
                 long now = System.nanoTime();
-                if (now - lastDrawn > guiUpdateTime * 1e6) {
+                double dtSeconds = (now - prev) / 1.0e9;
 
-                    lastDrawn = now;
-                }
+                space.update(Chamba.this, dtSeconds);
+
+                lastDrawn = now;
             }
         }, 0, automataPeriod);
 
@@ -223,7 +226,7 @@ public class TestChamba {
                 space.current.set(x, y);
                 // System.out.println(nextEffect);
                 if (nextEffect == null) {
-                    path = Grid2DSpace.Shortest_Path(space, this, space.current, space.target);
+                    path = View.Shortest_Path(space, this, space.current, space.target);
                     actions.clear();
                     // System.out.println(path);
                     if (path == null) {

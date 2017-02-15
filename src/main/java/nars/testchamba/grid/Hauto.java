@@ -1,6 +1,7 @@
 package nars.testchamba.grid;
 
-import nars.testchamba.TestChamba;
+import nars.testchamba.Chamba;
+import nars.testchamba.View;
 import nars.testchamba.object.Key;
 import nars.testchamba.object.Pizza;
 
@@ -40,7 +41,7 @@ public class Hauto {
             if (r.light != 1.0f) {
                 boolean nope = false;
                 if (r.machine == Cell.Machine.Turret) {
-                    for (GridObject gr : TestChamba.space.objects) {
+                    for (GridObject gr : Chamba.space.objects) {
                         if (gr instanceof LocalGridObject) {
                             LocalGridObject o = (LocalGridObject) gr;
                             if (o.x == i && o.y == j) {
@@ -71,7 +72,7 @@ public class Hauto {
 //                    nar.addInput("<"+r.name+" --> [opened]>. :|:");
                 }
             } else {
-                if (!r.is_solid && TestChamba.keyn != doornumber(r)) {
+                if (!r.is_solid && Chamba.keyn != doornumber(r)) {
                     w.is_solid = true;
 //                    nar.addInput("(--,<"+r.name+" --> [opened]>). :|: %1.00;0.90%");
                 }
@@ -146,7 +147,7 @@ public class Hauto {
     public static Integer entityID = 0;
     public static boolean allow_imitating = false;
 
-    public void clicked(int x, int y, Grid2DSpace space) {
+    public void clicked(int x, int y, View space) {
         if (x == 0 || y == 0 || x == w - 1 || y == h - 1)
             return;
 
@@ -157,7 +158,7 @@ public class Hauto {
         if (oper.equals("perceive")) {
             read[x][y].name = "place" + entityID.toString();
             write[x][y].name = "place" + entityID.toString();
-            if (TestChamba.staticInformation)
+            if (Chamba.staticInformation)
             /*
             nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
 
@@ -185,7 +186,7 @@ public class Hauto {
                 //--nar.step(1);
                 //.operateObj(readCells[x][y].name, oper);
             }
-            String s = TestChamba.what(x, y);
+            String s = Chamba.what(x, y);
             if (!s.isEmpty()) {
                 /*
                 if(allow_imitating) {
@@ -221,7 +222,7 @@ public class Hauto {
                 */
                 //--nar.step(1);
             }
-            String s = TestChamba.what(x, y);
+            String s = Chamba.what(x, y);
             if (!s.isEmpty()) {
                 //ar.addInput("(^" + oper + ","+s+")!");
                 /*
@@ -351,9 +352,9 @@ public class Hauto {
     }
 
     final Cell selected = new Cell();
-    String oper = "";
-    String label = "";
-    String wish = "";
+    public String oper = "";
+    public String label = "";
+    public String wish = "";
 
     public void click(String label, String oper, String wish) {
         this.label = label;

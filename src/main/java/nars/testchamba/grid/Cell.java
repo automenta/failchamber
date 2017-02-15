@@ -1,5 +1,7 @@
 package nars.testchamba.grid;
 
+import nars.testchamba.View;
+
 public class Cell {
 
     public String name = "";
@@ -79,7 +81,7 @@ public class Cell {
         is_solid = true;
     }
 
-    public static void drawtext(Grid2DSpace s, String str) {
+    public static void drawtext(View s, String str) {
         s.pushMatrix();
         //
         s.translate(0.2f, 0.9f);
@@ -93,7 +95,7 @@ public class Cell {
 
     final static int defaultOpacity = 200;
 
-    public void draw(Grid2DSpace s, boolean edge, float wx, float wy, float x, float y, float z, float ambientLight) {
+    public void draw(View s, boolean edge, float wx, float wy, float x, float y, float z, float ambientLight) {
 
 
         //draw ground height
