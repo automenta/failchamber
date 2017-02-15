@@ -18,8 +18,6 @@ public abstract class Geom {
     public final Shape shape;
 
     protected Geom(@NotNull Shape shape) {
-        Preconditions.checkNotNull(shape, "Argument 'shape' is null.");
-
         this.shape = shape;
     }
 
