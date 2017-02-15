@@ -1,9 +1,12 @@
-package nars.testchamba.grid;
+package nars.testchamba.state;
 
 import nars.testchamba.View;
 
 public class Cell {
 
+    final static int defaultOpacity = 200;
+    final static float COLOR_RATE = 0.19f;
+    public final CellState state;
     public String name = "";
     public float light = 0.0f;
     public float charge = 0;
@@ -14,49 +17,7 @@ public class Cell {
     public float height = 0;
     public Material material;
     public Logic logic;
-    public final CellState state;
-    public boolean is_solid = false;
-
-    final static float COLOR_RATE = 0.19f;
-
-    public boolean isSolid() {
-        return is_solid;
-    }
-
-    public enum Material {
-        DirtFloor,
-        GrassFloor,
-        StoneWall,
-        Corridor,
-        Door,
-        Empty, DirtWall,
-        Machine,
-        Water,
-        Pizza
-        //case Tile.Upstairs:
-        //case Tile.Downstairs:
-        //case Tile.Chest:        
-    }
-
-    public enum Logic {
-        NotALogicBlock,
-        AND,
-        OR,
-        XOR,
-        NOT,
-        BRIDGE,
-        SWITCH,
-        OFFSWITCH,
-        WIRE,
-        Load,
-        UNCERTAINBRIDGE,
-    }
-
-    public enum Machine {
-        Light,
-        Turret
-    }
-
+    public boolean solid = false;
     public Machine machine;
 
     public Cell() {
@@ -74,13 +35,6 @@ public class Cell {
         charge = -0.5f; //undefined charge by default
     }
 
-
-    public void setHeightInfinity() {
-        height = Float.MAX_VALUE;
-        material = Material.StoneWall;
-        is_solid = true;
-    }
-
     public static void drawtext(View s, String str) {
         s.pushMatrix();
         //
@@ -93,16 +47,19 @@ public class Cell {
         return current * (1.0f - speed) + next * (speed);
     }
 
-    final static int defaultOpacity = 200;
+    public void setHeightInfinity() {
+        height = Float.MAX_VALUE;
+        material = Material.StoneWall;
+        solid = true;
+    }
 
-    public void draw(View s, boolean edge, float wx, float wy, float x, float y, float z, float ambientLight) {
+    public void draw(View view, boolean edge, float wx, float wy, float x, float y, float z, float ambientLight) {
 
 
         //draw ground height
         int r = 0, g = 0, b = 0;
 
         float light = ambientLight + this.light;
-
 
 
         int a = defaultOpacity;
@@ -112,7 +69,7 @@ public class Cell {
         } else if (material == Material.Machine) {
             g = b = 127;
             r = 200;
-        } else if ((material == Material.Door && is_solid)) {
+        } else if ((material == Material.Door && solid)) {
             r = g = b = 230;
         } else if (material == Material.DirtFloor || material == Material.GrassFloor || material == Material.Door) {
             if (height == Float.MAX_VALUE) {
@@ -127,7 +84,7 @@ public class Cell {
             g += 16;
         }
 
-        if (material == Material.Door && is_solid) {
+        if (material == Material.Door && solid) {
             b = 0;
             g = (int) (g / 2.0f);
         }
@@ -137,7 +94,7 @@ public class Cell {
         if ((charge > 0) || (chargeFront)) {
             {
                 float freq = 4;
-                float chargeBright = (int) ((Math.cos(s.getRealtime() * freq) + 1) * 0.25f);
+                float chargeBright = (int) ((Math.cos(view.getRealtime() * freq) + 1) * 0.25f);
 
                 if (charge > 0) {
                     r += chargeBright;
@@ -169,7 +126,7 @@ public class Cell {
 
         }
         if (material == Material.Water) {
-            b = 64 + (int)(light * 20);
+            b = 64 + (int) (light * 20);
             g = 32;
         }
 
@@ -179,27 +136,27 @@ public class Cell {
         state.cb = lerp(state.cb, Math.min(255, Math.round(light * b)), COLOR_RATE);
         state.ca = lerp(state.ca, Math.min(255, a), COLOR_RATE);
 
-        s.fill(state.cr, state.cg, state.cb, state.ca);
+        view.fill(state.cr, state.cg, state.cb, state.ca);
 
         boolean full3d = false;
         double v = full3d ? 0.5f : 0.0f;
 
         if (logic != Logic.NotALogicBlock) {
-            s.fill(state.cr / 2.0f);
-            s.rect(0, 0, 1.0f, 1.0f);
+            view.fill(state.cr / 2.0f);
+            view.rect(0, 0, 1.0f, 1.0f);
         } else if (material != Material.Water && material != Material.StoneWall) {
-            s.rect(0, 0, 1.0f, 1.0f);
+            view.rect(0, 0, 1.0f, 1.0f);
         } else if (material == Material.Water) {
             float verschx = (float) Math.max(-0.5f, Math.min(v, 0.05 * (x - wx)));
             float verschy = (float) Math.max(-0.5f, Math.min(v, 0.05 * (y - wy)));
             float add = 0.0f; //0.2
-            s.rect(add - verschx, add - verschy, 1.05f, 1.05f);
+            view.rect(add - verschx, add - verschy, 1.05f, 1.05f);
         } else if (material == Material.StoneWall || material == Material.Water) {
             float verschx = (float) Math.max(-0.3f, Math.min(v, 0.05 * (x - wx)));
             float verschy = (float) Math.max(-0.3f, Math.min(v, 0.05 * (y - wy)));
             float add = -0.2f; //0.2
-            s.rect(add + verschx, add + verschy, 1.1f, 1.1f);
-            s.rect(add + verschx, add + verschy, 1.1f, 1.1f);
+            view.rect(add + verschx, add + verschy, 1.1f, 1.1f);
+            view.rect(add + verschx, add + verschy, 1.1f, 1.1f);
 
 
             //also try this one, it looks more seamless but less 3d:
@@ -208,24 +165,24 @@ public class Cell {
         }
 
         if (logic == Logic.SWITCH || logic == Logic.OFFSWITCH) {
-            s.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
-            s.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
+            view.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
+            view.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
         } else if (logic != Logic.BRIDGE && logic != Logic.UNCERTAINBRIDGE && logic != Logic.NotALogicBlock && logic != Logic.WIRE) {
             //s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
-            s.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
-            s.triangle(0.25f, 1.0f, 0.5f, 0.5f, 0.75f, 1.0f);
-            s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
-            s.rect(0, 0.3f, 1, 0.4f);
+            view.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
+            view.triangle(0.25f, 1.0f, 0.5f, 0.5f, 0.75f, 1.0f);
+            view.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
+            view.rect(0, 0.3f, 1, 0.4f);
         } else if (logic == Logic.WIRE || logic == Logic.BRIDGE || logic == Logic.UNCERTAINBRIDGE) {
-            s.fill(state.cr, state.cg, state.cb, state.ca);
+            view.fill(state.cr, state.cg, state.cb, state.ca);
             if (logic == Logic.BRIDGE || logic == Logic.UNCERTAINBRIDGE) {
-                s.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
-                s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
-                s.rect(0.3f, 0.3f, 0.4f, 0.7f);
+                view.fill(state.cr + 30, state.cg + 30, 0, state.ca + 30);
+                view.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
+                view.rect(0.3f, 0.3f, 0.4f, 0.7f);
             } else {
-                s.rect(0.3f, 0, 0.4f, 1);
+                view.rect(0.3f, 0, 0.4f, 1);
             }
-            s.rect(0, 0.3f, 1, 0.4f);
+            view.rect(0, 0.3f, 1, 0.4f);
         }
 
         String textIcon;
@@ -259,35 +216,33 @@ public class Cell {
                 textIcon = null;
                 break;
         }
-        if (textIcon!=null) {
-            s.fill(255, 255, 255, 128);
-            s.textSize(1);
-            drawtext(s, textIcon);
+        if (textIcon != null) {
+            view.fill(255, 255, 255, 128);
+            view.textSize(1);
+            drawtext(view, textIcon);
         }
 
 
         if (machine != null) {
             switch (machine) {
                 case Light:
-                    drawtext(s, (charge > 0) ? "+" : "-");
+                    drawtext(view, (charge > 0) ? "+" : "-");
                     break;
                 case Turret:
                     if (charge > 0)
-                        s.particles.emitParticles(0.5f, 0.2f, s.getTime() / 20f, 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
+                        view.space.particles.emitParticles(0.5f, 0.2f, view.getTime() / 20f, 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
                     break;
             }
         }
 
         if (name != null && !name.isEmpty()) {
-            s.textSize(0.2f);
-            s.fill(255, 0, 0);
-            drawtext(s, name);
+            view.textSize(0.2f);
+            view.fill(255, 0, 0);
+            drawtext(view, name);
         }
 
 
     }
-
-
 
     void setBoundary() {
         setHeightInfinity();
@@ -301,7 +256,7 @@ public class Cell {
         this.chargeFront = c.chargeFront;
         this.light = c.light;
         this.name = c.name;
-        this.is_solid = c.is_solid;
+        this.solid = c.solid;
     }
 
     public void setHeight(int h) {
@@ -312,7 +267,43 @@ public class Cell {
         this.material = Material.Machine;
         this.logic = logic;
         this.charge = initialCharge;
-        this.is_solid = false;
+        this.solid = false;
+    }
+
+    public enum Material {
+        DirtFloor,
+        GrassFloor,
+        StoneWall,
+        Corridor,
+        Door,
+        Empty, DirtWall,
+        Machine,
+        Water,
+        Pizza
+        //case Tile.Upstairs:
+        //case Tile.Downstairs:
+        //case Tile.Chest:
+    }
+
+    public enum Logic {
+        NotALogicBlock,
+        AND,
+        OR,
+        XOR,
+        NOT,
+        BRIDGE,
+        SWITCH,
+        OFFSWITCH,
+        WIRE,
+        Load,
+        UNCERTAINBRIDGE,
+    }
+
+    //TODO these will be separate agents attached to some parent agent (or not)
+    @Deprecated
+    public enum Machine {
+        Light,
+        Turret
     }
 
 

@@ -1,4 +1,4 @@
-package nars.testchamba.grid;
+package nars.testchamba.state;
 
 import nars.testchamba.View;
 import nars.testchamba.agent.GridAgent;
@@ -9,7 +9,7 @@ import nars.testchamba.agent.GridAgent;
  */
 abstract public class Action {
 
-    public long createdAt; //when created
+
     int expiresAt = -1; //allows an agent to set a time limit on the action
 
 
@@ -39,47 +39,49 @@ abstract public class Action {
          */
         @Override
         public Effect process(View p, GridAgent a) {
-            int tx = a.x;
-            int ty = a.y;
-            int heading = a.heading;
+            int tx = (int) Math.round(a.x());
+            int ty = (int) Math.round(a.y());
+            double angle = a.angle();
 
-            boolean allowDiagonal = false;
+            int heading = (int)Math.round((angle / (Math.PI*2))*4);
+
+            //boolean allowDiagonal = false;
             switch (heading) {
-                case Hauto.LEFT:
+                case 2:
                     tx -= steps;
                     break;
-                case Hauto.RIGHT:
+                case 0:
                     tx += steps;
                     break;
-                case Hauto.UP:
+                case 1:
                     ty += steps;
                     break;
-                case Hauto.DOWN:
+                case 3:
                     ty -= steps;
                     break;
                 default:
-                    if (allowDiagonal) {
-                        switch (heading) {
-                            case Hauto.UPLEFT:
-                                tx -= steps;
-                                ty += steps;
-                                break;
-                            case Hauto.UPRIGHT:
-                                tx += steps;
-                                ty += steps;
-                                break;
-                            case Hauto.DOWNLEFT:
-                                tx -= steps;
-                                ty -= steps;
-                                break;
-                            //case DOWNRIGHT: x+=steps; y+=steps;  break;
-                        }
-                    }
-                    break;
+//                    if (allowDiagonal) {
+//                        switch (heading) {
+//                            case Hauto.UPLEFT:
+//                                tx -= steps;
+//                                ty += steps;
+//                                break;
+//                            case Hauto.UPRIGHT:
+//                                tx += steps;
+//                                ty += steps;
+//                                break;
+//                            case Hauto.DOWNLEFT:
+//                                tx -= steps;
+//                                ty -= steps;
+//                                break;
+//                            //case DOWNRIGHT: x+=steps; y+=steps;  break;
+//                        }
+//                    }
+                    throw new UnsupportedOperationException();
             }
 
             Effect result;
-            String reason = p.whyNonTraversible(a, a.x, a.y, tx, ty);
+            String reason = p.whyNonTraversible(a, tx, ty, tx, ty);
             if (reason == null) {
                 result = new Effect(this, true, p.time, "Moved");
             } else {
@@ -88,8 +90,7 @@ abstract public class Action {
 
             Effect e = result;
             if (e.success) {
-                a.x = tx;
-                a.y = ty;
+                a.pos(tx, ty);
             }
             return e;
         }
@@ -99,10 +100,10 @@ abstract public class Action {
     }
 
     public static class Turn extends Action {
-        public final int angle;
+        public final float angle;
 
-        public Turn(int angle) {
-            this.angle = angle;
+        public Turn(float degrees) {
+            this.angle = (float) Math.toRadians(degrees);
         }
 
         @Override
@@ -112,7 +113,7 @@ abstract public class Action {
 
         @Override
         public Effect process(View p, GridAgent a) {
-            a.heading = angle;
+            a.angle(angle);
             return new Effect(this, true, p.getTime());
         }
 
@@ -122,26 +123,26 @@ abstract public class Action {
     public static class Pickup extends Action {
         public final Object o;
 
+        public Pickup(Object o) {
+            this.o = o;
+        }
+
         @Override
         public String toParamString() {
             return o.getClass().getSimpleName();
-        }
-
-        public Pickup(Object o) {
-            this.o = o;
         }
     }
 
     public static class Drop extends Action {
         public final Object o;
 
+        public Drop(Object o) {
+            this.o = o;
+        }
+
         @Override
         public String toParamString() {
             return o.getClass().getSimpleName();
-        }
-
-        public Drop(Object o) {
-            this.o = o;
         }
     }
 
@@ -149,15 +150,15 @@ abstract public class Action {
         public final int x, y;
         public final boolean open;
 
-        @Override
-        public String toParamString() {
-            return String.valueOf(open) + ", n" + x + ", n" + y;
-        }
-
         public Door(int x, int y, boolean open) {
             this.x = x;
             this.y = y;
             this.open = open;
+        }
+
+        @Override
+        public String toParamString() {
+            return String.valueOf(open) + ", n" + x + ", n" + y;
         }
     }
 

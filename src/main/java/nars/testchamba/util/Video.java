@@ -5,8 +5,7 @@
  */
 package nars.testchamba.util;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 
 /**
  * @author me

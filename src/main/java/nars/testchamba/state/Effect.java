@@ -1,4 +1,4 @@
-package nars.testchamba.grid;
+package nars.testchamba.state;
 
 
 /*

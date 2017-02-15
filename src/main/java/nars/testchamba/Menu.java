@@ -1,6 +1,6 @@
 package nars.testchamba;
 
-import nars.testchamba.grid.Hauto;
+import nars.testchamba.state.Hauto;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -17,22 +17,6 @@ public class Menu extends JPopupMenu {
 
     //final String levelPath = "./nars_lab/nars/lab/grid2d/level/";
 
-    abstract public static class EditorMode extends DefaultMutableTreeNode {
-
-        public EditorMode(String label) {
-            super(label);
-        }
-
-        abstract public void run();
-    }
-
-    public void popup(Component component, Point point) {
-        int w = (int) getPreferredSize().getWidth();
-        int h = (int) getPreferredSize().getHeight();
-        this.show(component, (int)point.getX() - w/2, (int)point.getY() - h/2);
-    }
-
-
     public Menu(final View s) {
         //super(new BorderLayout());
         super();
@@ -40,7 +24,6 @@ public class Menu extends JPopupMenu {
 
         setOpaque(false);
         setBorderPainted(false);
-
 
 
         TreeNode root = build(s);
@@ -71,19 +54,19 @@ public class Menu extends JPopupMenu {
         toolTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (e.getClickCount()==2) {
+                if (e.getClickCount() == 2) {
                     Object o = toolTree.getLastSelectedPathComponent();
 
                     boolean hide = false;
                     if (o instanceof DefaultMutableTreeNode) {
-                        if (((DefaultMutableTreeNode)o).getChildCount() == 0) { //leaf
+                        if (((DefaultMutableTreeNode) o).getChildCount() == 0) { //leaf
                             hide = true;
                         }
                     }
 
                     if (hide) {
-                        SwingUtilities.invokeLater(()->
-                            Menu.this.setVisible(false)
+                        SwingUtilities.invokeLater(() ->
+                                Menu.this.setVisible(false)
                         );
                     }
                 }
@@ -93,7 +76,13 @@ public class Menu extends JPopupMenu {
 
     }
 
-    private TreeNode build(View s) {
+    public void popup(Component component, Point point) {
+        int w = (int) getPreferredSize().getWidth();
+        int h = (int) getPreferredSize().getHeight();
+        this.show(component, (int) point.getX() - w / 2, (int) point.getY() - h / 2);
+    }
+
+    private TreeNode build(View view) {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
@@ -222,40 +211,40 @@ public class Menu extends JPopupMenu {
 //
 //                                    int i=Integer.valueOf(c[0]);
 //                                    int j=Integer.valueOf(c[1]);
-//                                    s.cells.readCells[i][j].charge=Float.valueOf(c[2]);
-//                                    s.cells.writeCells[i][j].charge=Float.valueOf(c[2]);
+//                                    s.space.cells.readCells[i][j].charge=Float.valueOf(c[2]);
+//                                    s.space.cells.writeCells[i][j].charge=Float.valueOf(c[2]);
 //
-//                                    s.cells.readCells[i][j].chargeFront=Boolean.valueOf(c[3]);
-//                                    s.cells.writeCells[i][j].chargeFront=Boolean.valueOf(c[3]);
+//                                    s.space.cells.readCells[i][j].chargeFront=Boolean.valueOf(c[3]);
+//                                    s.space.cells.writeCells[i][j].chargeFront=Boolean.valueOf(c[3]);
 //
-//                                    s.cells.readCells[i][j].conductivity=Float.valueOf(c[4]);
-//                                    s.cells.writeCells[i][j].conductivity=Float.valueOf(c[4]);
+//                                    s.space.cells.readCells[i][j].conductivity=Float.valueOf(c[4]);
+//                                    s.space.cells.writeCells[i][j].conductivity=Float.valueOf(c[4]);
 //
-//                                    s.cells.readCells[i][j].height=Float.valueOf(c[5]);
-//                                    s.cells.writeCells[i][j].height=Float.valueOf(c[5]);
+//                                    s.space.cells.readCells[i][j].height=Float.valueOf(c[5]);
+//                                    s.space.cells.writeCells[i][j].height=Float.valueOf(c[5]);
 //
-//                                    s.cells.readCells[i][j].is_solid=Boolean.valueOf(c[6]);
-//                                    s.cells.writeCells[i][j].is_solid=Boolean.valueOf(c[6]);
+//                                    s.space.cells.readCells[i][j].is_solid=Boolean.valueOf(c[6]);
+//                                    s.space.cells.writeCells[i][j].is_solid=Boolean.valueOf(c[6]);
 //
-//                                    s.cells.readCells[i][j].light=Float.valueOf(c[7]);
-//                                    s.cells.writeCells[i][j].light=Float.valueOf(c[7]);
+//                                    s.space.cells.readCells[i][j].light=Float.valueOf(c[7]);
+//                                    s.space.cells.writeCells[i][j].light=Float.valueOf(c[7]);
 //
-//                                    s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
-//                                    s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
-//                                    if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
+//                                    s.space.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
+//                                    s.space.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
+//                                    if(s.space.cells.readCells[i][j].logic==Logic.SWITCH) {
 //                                        if(TestChamba.staticInformation)
 //                                        s.nar.addInput("<"+c[11]+" --> switch>.");
-//                                        if(s.cells.readCells[i][j].light==1.0f) {
+//                                        if(s.space.cells.readCells[i][j].light==1.0f) {
 //                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
 //                                        }
 //                                        else {
 //                                            //s.nar.addInput("<"+c[11]+" --> off>.");
 //                                        }
 //                                    }
-//                                    if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
+//                                    if(s.space.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
 //                                        if(TestChamba.staticInformation)
 //                                        s.nar.addInput("<"+c[11]+" --> switch>.");
-//                                        if(s.cells.readCells[i][j].light==1.0f) {
+//                                        if(s.space.cells.readCells[i][j].light==1.0f) {
 //                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
 //                                        }
 //                                        else {
@@ -264,22 +253,22 @@ public class Menu extends JPopupMenu {
 //                                    }
 //
 //                                    if(!c[9].equals("")) {
-//                                        s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
-//                                        s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
-//                                        if(s.cells.readCells[i][j].machine==Machine.Turret) {
+//                                        s.space.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+//                                        s.space.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
+//                                        if(s.space.cells.readCells[i][j].machine==Machine.Turret) {
 //                                            if(TestChamba.staticInformation)
 //                                                s.nar.addInput("<"+c[11]+" --> firework>.");
-//                                            if(s.cells.readCells[i][j].light==1.0f) {
+//                                            if(s.space.cells.readCells[i][j].light==1.0f) {
 //                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
 //                                            }
 //                                            else {
 //                                                //s.nar.addInput("<"+c[11]+" --> off>. :|:");
 //                                            }
 //                                        }
-//                                        if(s.cells.readCells[i][j].machine==Machine.Light) {
+//                                        if(s.space.cells.readCells[i][j].machine==Machine.Light) {
 //                                            if(TestChamba.staticInformation)
 //                                            s.nar.addInput("<"+c[11]+" --> light>.");
-//                                            if(s.cells.readCells[i][j].light==1.0f) {
+//                                            if(s.space.cells.readCells[i][j].light==1.0f) {
 //                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
 //                                            }
 //                                            else {
@@ -287,21 +276,21 @@ public class Menu extends JPopupMenu {
 //                                            }
 //                                        }
 //                                    } else {
-//                                        s.cells.readCells[i][j].machine=null;
-//                                        s.cells.writeCells[i][j].machine=null;
+//                                        s.space.cells.readCells[i][j].machine=null;
+//                                        s.space.cells.writeCells[i][j].machine=null;
 //                                    }
 //
-//                                    s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
-//                                    s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
+//                                    s.space.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
+//                                    s.space.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
 //
-//                                    if(s.cells.readCells[i][j].material==Material.Door) {
+//                                    if(s.space.cells.readCells[i][j].material==Material.Door) {
 //                                        if(TestChamba.staticInformation)
 //                                        s.nar.addInput("<"+c[11]+" --> door>.");
 //                                        //s.nar.addInput("<"+c[11]+" --> closed>. :|:");
 //                                    }
 //
-//                                    s.cells.readCells[i][j].name=c[11];
-//                                    s.cells.writeCells[i][j].name=c[11];
+//                                    s.space.cells.readCells[i][j].name=c[11];
+//                                    s.space.cells.writeCells[i][j].name=c[11];
 //
 //                                    try {
 //                                        if(!c[11].equals("")) {
@@ -315,11 +304,11 @@ public class Menu extends JPopupMenu {
 //                                    catch(Exception ex){}
 //
 //
-//                                    s.cells.readCells[i][j].value=Float.valueOf(c[12]);
-//                                    s.cells.writeCells[i][j].value=Float.valueOf(c[12]);
+//                                    s.space.cells.readCells[i][j].value=Float.valueOf(c[12]);
+//                                    s.space.cells.writeCells[i][j].value=Float.valueOf(c[12]);
 //
-//                                    s.cells.readCells[i][j].value2=Float.valueOf(c[13]);
-//                                    s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
+//                                    s.space.cells.readCells[i][j].value2=Float.valueOf(c[13]);
+//                                    s.space.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
 //                                }
 //                                String[] objs=allText.split("OBJECTS")[1].split(";");
 //                                ArrayList<GridObject> newobj=new ArrayList<>(); //new ArrayList we have to fill
@@ -398,26 +387,26 @@ public class Menu extends JPopupMenu {
 //                String filename= JOptionPane.showInputDialog("What is the name of the level?: ")+".lvl";
 //                filename = levelPath + filename;
 //                StringBuilder wr=new StringBuilder();
-//                for(int i=0;i<s.cells.h;i++) { //its not python, we have to export it to file ourselves:
-//                    for(int j=0;j<s.cells.w;j++) {
+//                for(int i=0;i<s.space.cells.h;i++) { //its not python, we have to export it to file ourselves:
+//                    for(int j=0;j<s.space.cells.w;j++) {
 //                        wr.append(String.valueOf(i)).append(","); //also store coordinates, for case we may change size one day
 //                        wr.append(String.valueOf(j)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].charge)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].chargeFront)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].conductivity)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].height)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].is_solid)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].light)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].logic.ordinal())).append(",");
-//                        if(s.cells.readCells[i][j].machine!=null) { //wtf enum can be null? kk its java..
-//                            wr.append(String.valueOf(s.cells.readCells[i][j].machine.ordinal())).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].charge)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].chargeFront)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].conductivity)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].height)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].is_solid)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].light)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].logic.ordinal())).append(",");
+//                        if(s.space.cells.readCells[i][j].machine!=null) { //wtf enum can be null? kk its java..
+//                            wr.append(String.valueOf(s.space.cells.readCells[i][j].machine.ordinal())).append(",");
 //                        }
 //                        else
 //                            wr.append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].material.ordinal())).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].name)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].value)).append(",");
-//                        wr.append(String.valueOf(s.cells.readCells[i][j].value2)).append(";");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].material.ordinal())).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].name)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].value)).append(",");
+//                        wr.append(String.valueOf(s.space.cells.readCells[i][j].value2)).append(";");
 //                    }
 //                }
 //                wr.append("OBJECTS");
@@ -462,108 +451,108 @@ public class Menu extends JPopupMenu {
         structMenu.add(new EditorMode("Stone Wall") {
             @Override
             public void run() {
-                s.cells.click("StoneWall", "", "");
+                view.space.cells.click("StoneWall", "", "");
             }
         });
         structMenu.add(new EditorMode("Dirt Floor") {
             @Override
             public void run() {
-                s.cells.click("DirtFloor", "", "");
+                view.space.cells.click("DirtFloor", "", "");
             }
         });
         structMenu.add(new EditorMode("Grass Floor") {
             @Override
             public void run() {
-                s.cells.click("GrassFloor", "", "");
+                view.space.cells.click("GrassFloor", "", "");
             }
         });
 
         structMenu.add(new EditorMode("Water") {
             @Override
             public void run() {
-                s.cells.click("Water", "", "");
+                view.space.cells.click("Water", "", "");
             }
         });
 
         logicMenu.add(new EditorMode("On Wire") {
             @Override
             public void run() {
-                s.cells.click("OnWire", "", "");
+                view.space.cells.click("OnWire", "", "");
             }
         });
         logicMenu.add(new EditorMode("Off Wire") {
             @Override
             public void run() {
-                s.cells.click("OffWire", "", "");
+                view.space.cells.click("OffWire", "", "");
             }
         });
         logicMenu.add(new EditorMode("And") {
             @Override
             public void run() {
-                s.cells.click("AND", "", "");
+                view.space.cells.click("AND", "", "");
             }
         });
         logicMenu.add(new EditorMode("Or") {
             @Override
             public void run() {
-                s.cells.click("OR", "", "");
+                view.space.cells.click("OR", "", "");
             }
         });
         logicMenu.add(new EditorMode("Xor") {
             @Override
             public void run() {
-                s.cells.click("XOR", "", "");
+                view.space.cells.click("XOR", "", "");
             }
         });
         logicMenu.add(new EditorMode("Not") {
             @Override
             public void run() {
-                s.cells.click("NOT", "", "");
+                view.space.cells.click("NOT", "", "");
             }
         });
         logicMenu.add(new EditorMode("Bridge") {
             @Override
             public void run() {
-                s.cells.click("bridge", "", "");
+                view.space.cells.click("bridge", "", "");
             }
         });
         logicMenu.add(new EditorMode("Uncertain50PercentBridge") {
             @Override
             public void run() {
-                s.cells.click("uncertainbridge", "", "");
+                view.space.cells.click("uncertainbridge", "", "");
             }
         });
         logicMenu.add(new EditorMode("Off Switch") {
             @Override
             public void run() {
-                s.cells.click("offswitch", "", "");
+                view.space.cells.click("offswitch", "", "");
             }
         });
         logicMenu.add(new EditorMode("On Switch") {
             @Override
             public void run() {
-                s.cells.click("onswitch", "", "");
+                view.space.cells.click("onswitch", "", "");
             }
         });
 
         machineMenu.add(new EditorMode("Light") {
             @Override
             public void run() {
-                s.cells.click("Light", "", "");
+                view.space.cells.click("Light", "", "");
             }
         });
         //since firework doesnt serve a special functionality yet
         machineMenu.add(new EditorMode("Firework") {
             @Override
             public void run() {
-                s.cells.click("Turret", "", "");
+                view.space.cells.click("Turret", "", "");
             }
         });
 
         machineMenu.add(new EditorMode("Door and Key") {
             @Override
             public void run() {
-                s.cells.click("Door", "", "");
+                view.space.cells.click("Door", "", "");
             }
         });
 
@@ -571,7 +560,7 @@ public class Menu extends JPopupMenu {
 
             @Override
             public void run() {
-                s.cells.click("", "go-to", "");
+                view.space.cells.click("", "go-to", "");
                 Chamba.active = true;
             }
         });
@@ -579,7 +568,7 @@ public class Menu extends JPopupMenu {
         actionMenu.add(new EditorMode("Pick named") {
             @Override
             public void run() {
-                s.cells.click("", "pick", "");
+                view.space.cells.click("", "pick", "");
                 Chamba.active = true;
             }
         });
@@ -587,7 +576,7 @@ public class Menu extends JPopupMenu {
         actionMenu.add(new EditorMode("activate switch") {
             @Override
             public void run() {
-                s.cells.click("", "activate", "");
+                view.space.cells.click("", "activate", "");
                 Chamba.active = true;
             }
         });
@@ -595,7 +584,7 @@ public class Menu extends JPopupMenu {
         actionMenu.add(new EditorMode("deactivate switch") {
             @Override
             public void run() {
-                s.cells.click("", "deactivate", "");
+                view.space.cells.click("", "deactivate", "");
                 Chamba.active = true;
             }
         });
@@ -603,7 +592,7 @@ public class Menu extends JPopupMenu {
         actionMenu.add(new EditorMode("perceive/name") {
             @Override
             public void run() {
-                s.cells.click("", "perceive", "");
+                view.space.cells.click("", "perceive", "");
             }
         });
 
@@ -628,15 +617,15 @@ public class Menu extends JPopupMenu {
 //                        }
 //                    }
 //                }
-//                for (int i = 0; i < s.cells.w; i++) {
-//                    for (int j = 0; j < s.cells.h; j++) {
-//                        if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-//                            //s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+//                for (int i = 0; i < s.space.cells.w; i++) {
+//                    for (int j = 0; j < s.space.cells.h; j++) {
+//                        if (s.space.cells.readCells[i][j].name.startsWith("switch") || s.space.cells.readCells[i][j].name.startsWith("place")) {
+//                            //s.nar.addInput("<(^go-to," + s.space.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
 //                            cnt+=1;
 //                        }
-//                        if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-//                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
-//                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+//                        if (s.space.cells.readCells[i][j].logic == Logic.SWITCH || s.space.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
+//                            s.nar.addInput("<(&/,"+"(^go-to,"+s.space.cells.readCells[i][j].name+"),(^activate," + s.space.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+//                            s.nar.addInput("<(&/,"+"(^go-to,"+s.space.cells.readCells[i][j].name+"),(^deactivate," + s.space.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
 //                            cnt+=1;
 //                        }
 //                    }
@@ -656,7 +645,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "at");
+                view.space.cells.click("", "", "at");
             }
         });
 
@@ -664,7 +653,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "hold");
+                view.space.cells.click("", "", "hold");
             }
         });
 
@@ -672,7 +661,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "on");
+                view.space.cells.click("", "", "on");
             }
         });
 
@@ -680,7 +669,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "off");
+                view.space.cells.click("", "", "off");
             }
         });
 
@@ -688,7 +677,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "opened");
+                view.space.cells.click("", "", "opened");
             }
         });
 
@@ -696,7 +685,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 Chamba.active = true;
-                s.cells.click("", "", "closed");
+                view.space.cells.click("", "", "closed");
             }
         });
 
@@ -775,11 +764,20 @@ public class Menu extends JPopupMenu {
         resourceMenu.add(new EditorMode("pizza") {
             @Override
             public void run() {
-                s.cells.click("Pizza", "", "");
+                view.space.cells.click("Pizza", "", "");
             }
         });
 
         return root;
+    }
+
+    abstract public static class EditorMode extends DefaultMutableTreeNode {
+
+        public EditorMode(String label) {
+            super(label);
+        }
+
+        abstract public void run();
     }
 
 }

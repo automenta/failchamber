@@ -1,7 +1,6 @@
 package nars.testchamba;
 
 import processing.core.PApplet;
-import processing.core.PSurface;
 
 /**
  * overlay HUD (heads up display)
@@ -15,7 +14,7 @@ public class HUD {
         a.line(0, my, a.width, my);
         a.noStroke();
 
-        if (label!=null && !label.isEmpty()) {
+        if (label != null && !label.isEmpty()) {
             a.textSize(24f);
             a.fill(150, 0, 255, 150);
             a.text(label, mx, my);

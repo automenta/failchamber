@@ -1,4 +1,3 @@
-
 package nars.testchamba.particle;
 
 public class Node {

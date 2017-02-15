@@ -1,7 +1,8 @@
 package nars.testchamba.object;
 
-import nars.testchamba.grid.Effect;
-import nars.testchamba.grid.LocalGridObject;
+import nars.testchamba.View;
+import nars.testchamba.state.Effect;
+import nars.testchamba.state.Spatial;
 
 import java.awt.*;
 
@@ -10,25 +11,20 @@ import java.awt.*;
  */
 
 
-public class Key extends LocalGridObject {
+public class Key extends Spatial {
 
 
-    public Key(int x, int y, String doorname) {
+    public Key(int x, int y, String name) {
         super(x, y);
-        this.doorname = doorname;
+        setName(name);
     }
 
-    @Override
-    public void update(Effect nextEffect) {
-    }
 
     @Override
-    public void draw() {
+    public void draw(View space) {
         float scale = (float) Math.sin(space.getTime() / 7f) * 0.05f + 1.0f;
         float a = space.getTime() / 10;
 
-        space.pushMatrix();
-        space.translate(cx, cy);
 
         space.pushMatrix();
         space.rotate(a);
@@ -40,6 +36,8 @@ public class Key extends LocalGridObject {
         space.rect(0.3f, 0, 0.1f, 0.15f);
         space.rect(0.1f, 0, 0.1f, 0.15f);
         space.popMatrix();
+
+        String doorname = getName();
         if (doorname != null && !doorname.isEmpty()) {
             space.textSize(0.2f);
             space.fill(255, 0, 0);
@@ -48,7 +46,6 @@ public class Key extends LocalGridObject {
             space.popMatrix();
         }
 
-        space.popMatrix();
 
     }
 

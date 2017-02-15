@@ -1,62 +1,52 @@
 package nars.testchamba;
 
 import nars.testchamba.agent.GridAgent;
-import nars.testchamba.grid.*;
 import nars.testchamba.particle.Particle;
+import nars.testchamba.state.*;
 import nars.testchamba.util.NWindow;
-import nars.testchamba.particle.ParticleSystem;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static nars.testchamba.Chamba.space;
 
 
 public class View extends PApplet {
 
+    public final Space space;
 
     public final PVector target = new PVector(25, 25); //need to be init equal else feedback will
     public final PVector current = new PVector(0, 0);
 
-    ///////////////HAMLIB
-    //processingjs compatibility layer
-    int mouseScroll = 0;
-    public final Hauto cells;
-    public final Set<GridObject> objects = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    //ProcessingJs processingjs = new ProcessingJs();
+    private Menu editor;
 
-    //Hnav 2D navigation system
     final Hnav hnav = new Hnav();
-
-    //Object
-    float selection_distance = 10;
-    public float maxNodeSize = 40f;
-
-    float ambientLight = 0.5f;
-
-    public int automataPeriod = 1; //how many cycles between each automata update
-    public int agentPeriod = 1;  //how many cycles between each agent update
-
-    boolean drawn = false;
     final Hsim hsim = new Hsim();
     final Hamlib hamlib = new Hamlib();
 
+    final float cellSize = 1;
 
+    public int time = 0;
+
+    int mouseScroll = 0;
+
+    //float selection_distance = 10;
+    float ambientLight = 0.5f;
+    boolean drawn = false;
     double realtime;
-    public ParticleSystem particles;
     private Container contentPane;
-    private nars.testchamba.Menu editor;
 
-    public View(Hauto cells) {
+    public View(Space space) {
         super();
-        this.cells = cells;
+
+        this.space = space;
 
         initSurface();
         startSurface();
@@ -66,10 +56,77 @@ public class View extends PApplet {
     }
 
 
-    public void add(GridObject g) {
-        objects.add(g);
-        g.init(this);
+    public String what(int x, int y) {
+        return space.what(x, y);
     }
+
+    static List<PVector> pathTaken(Map<PVector, PVector> parent, PVector start, PVector target) {
+        List<PVector> path = new ArrayList<>();
+        path.add(target);
+        while (!path.get(path.size() - 1).equals(start)) {
+            //since bfs found a solution, start is included for sure and thus this loop terminates for sure
+            path.add(parent.get(path.get(path.size() - 1)));
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    public static List<PVector> pathShortest(View s, GridAgent a, PVector start, PVector target) {
+        Set<PVector> avoid = new HashSet<>();
+        Map<PVector, PVector> parent = new HashMap<>();
+        ArrayDeque<PVector> queue = new ArrayDeque<>();
+        queue.add(start);
+
+
+        while (!queue.isEmpty()) {
+            PVector active = queue.removeFirst();
+
+            if (avoid.contains(active))
+                continue;
+
+            avoid.add(active);
+
+
+            if (active.equals(target)) {
+                return pathTaken(parent, start, target);
+            }
+
+            for (int i = 0; i < 4; i++) {
+                PVector x = new PVector();
+                switch (i) {
+                    case 0:
+                        x.set(active.x + 1, active.y);
+                        break;
+                    case 1:
+                        x.set(active.x - 1, active.y);
+                        break;
+                    case 2:
+                        x.set(active.x, active.y + 1);
+                        break;
+                    case 3:
+                        x.set(active.x, active.y - 1);
+                        break;
+                }
+
+
+                if (avoid.contains(x) ||
+                        s.whyNonTraversible(a, (int) active.x, (int) active.y, (int) x.x, (int) x.y) != null)
+                    continue;
+
+                parent.put(x, active);
+                queue.add(x);
+            }
+        }
+        return null;
+    }
+
+
+//    @Override
+//    protected void resizeRenderer(int newWidth, int newHeight) {
+//        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
+//        drawn = false;
+//    }
+
 
     public NWindow newWindow(int width, int height, final boolean exitOnClose) {
 
@@ -94,8 +151,8 @@ public class View extends PApplet {
         contentPane.setIgnoreRepaint(true);
 
         //JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        
-        
+
+
         /*final JCheckBox syntaxEnable = new JCheckBox("Syntax");
         syntaxEnable.addActionListener(new ActionListener() {
         @Override public void actionPerformed(ActionEvent e) {
@@ -104,7 +161,7 @@ public class View extends PApplet {
         menu.add(syntaxEnable);
          */
 
-        editor = new nars.testchamba.Menu(this);
+        editor = new Menu(this);
 //        NWindow editorWindow = new NWindow("Edit", editor);
 //        editorWindow.setSize(200, 400);
 //        editorWindow.setVisible(true);
@@ -127,7 +184,7 @@ public class View extends PApplet {
         component().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getButton()==MouseEvent.BUTTON3) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
                     editor.popup(component(), e.getPoint());
                 }
             }
@@ -148,13 +205,6 @@ public class View extends PApplet {
     private Component component() {
         return (Component) (getSurface().getNative());
     }
-
-
-//    @Override
-//    protected void resizeRenderer(int newWidth, int newHeight) {
-//        super.resizeRenderer(newWidth, newHeight); //To change body of generated methods, choose Tools | Templates.
-//        drawn = false;
-//    }
 
     public void mouseScrolled() {
         hamlib.mouseScrolled();
@@ -198,41 +248,16 @@ public class View extends PApplet {
         }
         float realx = x / cellSize;
         float realy = y / cellSize;
+
+        Hauto cells = space.cells;
         if (realx >= cells.w || realy >= cells.h) {
             return;
         }
         cells.clicked((int) realx, (int) realy, this);
     }
 
-    public void update(Chamba s, double dt /* seconds */) {
-        realtime = System.nanoTime() / 1.0e9;
-
-        if (time % automataPeriod == 0 || Chamba.executed) {
-            cells.update();
-        }
-
-        if (time % agentPeriod == 0 || Chamba.executed) {
-            try {
-                for (GridObject g : objects) {
-                    Effect e = (g instanceof GridAgent) ? ((GridAgent) g).perceiveNext() : null;
-                    g.update(e);
-
-                    if (g instanceof GridAgent) {
-                        GridAgent b = (GridAgent) g;
-                        if (!b.actions.isEmpty()) {
-                            nars.testchamba.grid.Action a = b.actions.pop();
-                            //if (a != null) {
-                                process(b, a);
-                            //}
-                        }
-
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        Chamba.executed = false;
+    public void update(double dt /* seconds */) {
+        space.update(this, dt);
     }
 
     @Override
@@ -264,25 +289,19 @@ public class View extends PApplet {
     }
 
     private void drawHUD() {
-        HUD.drawCursorCrossHair(this, mouseX, mouseY, this.cells.label);
-    }
-
-
-    public void process(GridAgent agent, nars.testchamba.grid.Action action) {
-        Effect e = action.process(this, agent);
-        if (e != null) {
-            agent.perceive(e);
-        }
+        HUD.drawCursorCrossHair(this, mouseX, mouseY, space.cells.label);
     }
 
 
     @Override
     public void setup() {
-        particles = new ParticleSystem(this);
+
     }
 
-    public int time = 0;
-    final float cellSize = 1;
+
+//    enum MotionEffect {
+//        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
+//    }
 
     public int getTime() {
         return time;
@@ -292,12 +311,10 @@ public class View extends PApplet {
         return realtime;
     }
 
-
-//    enum MotionEffect {
-//        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
-//    }
-
     public String whyNonTraversible(GridAgent agent, int x, int y, int tx, int ty) {
+
+        Hauto cells = space.cells;
+
         int dx = Math.abs(tx - x);
         int dy = Math.abs(ty - y);
 
@@ -310,7 +327,7 @@ public class View extends PApplet {
         Cell to = cells.at(tx, ty);
 
         //System.out.println(to + " " + to.material);
-        if ((to.material == Cell.Material.StoneWall) || to.is_solid || to.material == Cell.Material.Water || to.logic == Cell.Logic.BRIDGE || to.logic == Cell.Logic.UNCERTAINBRIDGE)
+        if ((to.material == Cell.Material.StoneWall) || to.solid || to.material == Cell.Material.Water || to.logic == Cell.Logic.BRIDGE || to.logic == Cell.Logic.UNCERTAINBRIDGE)
             return "Too solid";
 
         final float maxTraversableHeight = 8;
@@ -323,25 +340,35 @@ public class View extends PApplet {
         return null;
     }
 
-
     public void drawObjects() {
         pushMatrix();
 
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
-        translate(cellSize / 4f, cellSize / 4f);
+        //translate(cellSize / 4f, cellSize / 4f);
 
-        for (GridObject object : objects) object.draw();
+//        float tx = hnav.WorldToScreenX(0);
+//        float ty = hnav.WorldToScreenY(0);
+//        float sx = (hnav.WorldToScreenX(1) - tx)/2f;
+
+
+        //scale(0.5f, 0.5f);
+        //scale(sx, sx);
+        //translate(-0.5f, -0.5f);
+        space.draw(this);
+
         popMatrix();
     }
 
     public void drawParticles() {
         //PImage b = particles.particleImage;
         //this.blend(b, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), PImage.ADD);
-        
-        particles.tick(); //crashes
+
+        ParticleSystem particles = space.particles;
+
+        particles.tick();
         for (Particle p : particles.p) {
             fill(p.rgba);
-            rect(p.xPos, p.yPos, 0.1f,0.1f);
+            rect(p.xPos, p.yPos, 0.1f, 0.1f);
         }
     }
 
@@ -361,6 +388,8 @@ public class View extends PApplet {
         pushMatrix();
 
         float gw = hnav.WorldToScreenX(cellSize) - hnav.WorldToScreenX(0);
+
+        Hauto cells = space.cells;
 
         for (int j = 0; j < cells.h; j++) {
 
@@ -417,9 +446,13 @@ public class View extends PApplet {
         return height;
     }
 
-
     class Hnav {
 
+        final boolean keyToo = true;
+        private final boolean EnableZooming = true;
+        private final float scrollcamspeed = 1.1f;
+        private final float camspeed = 0.25f;
+        private final float scrollcammult = 0.92f;
         private float savepx = 0;
         private float savepy = 0;
         private int selID = 0;
@@ -427,24 +460,23 @@ public class View extends PApplet {
         private float difx = -750;
         private float dify = -1300;
         private int lastscr = 0;
-        private final boolean EnableZooming = true;
-        private final float scrollcamspeed = 1.1f;
+        private boolean md = false;
 
         float MouseToWorldCoordX(int x) {
-            return (x - difx - width/2f) / zoom;
+            return (x - difx - width / 2f) / zoom;
         }
 
-        float MouseToWorldCoordY(int y) { return (y - dify - height/2f) / zoom;        }
+        float MouseToWorldCoordY(int y) {
+            return (y - dify - height / 2f) / zoom;
+        }
 
         float WorldToScreenX(float x) {
-            return (x*zoom) + difx + width/2f;
+            return (x * zoom) + difx + width / 2f;
         }
 
         float WorldToScreenY(float y) {
-            return (y*zoom) + dify + height/2f;
+            return (y * zoom) + dify + height / 2f;
         }
-
-        private boolean md = false;
 
         void mousePressed() {
             md = true;
@@ -468,10 +500,6 @@ public class View extends PApplet {
             }
             drawn = false;
         }
-
-        private final float camspeed = 0.25f;
-        private final float scrollcammult = 0.92f;
-        final boolean keyToo = true;
 
         void keyPressed() {
             if ((keyToo && key == 'w') || keyCode == UP) {
@@ -535,6 +563,8 @@ public class View extends PApplet {
 
         //ArrayList obj = new ArrayList();
 
+        boolean dragged = false;
+
         void Init() {
             smooth();
         }
@@ -547,8 +577,6 @@ public class View extends PApplet {
                 automataclicked(x, y);
             }
         }
-
-        boolean dragged = false;
 
         void mouseDragged() {
             if (mouseButton == LEFT) {
@@ -630,66 +658,6 @@ public class View extends PApplet {
 
         void Camera() {
         }
-    }
-
-    static List<PVector> Reconstruct_Taken_Path(Map<PVector, PVector> parent, PVector start, PVector target) {
-        List<PVector> path = new ArrayList<>();
-        path.add(target);
-        while (!path.get(path.size() - 1).equals(start)) {
-            //since bfs found a solution, start is included for sure and thus this loop terminates for sure
-            path.add(parent.get(path.get(path.size() - 1)));
-        }
-        Collections.reverse(path);
-        return path;
-    }
-
-    public static List<PVector> Shortest_Path(View s, GridAgent a, PVector start, PVector target) {
-        Set<PVector> avoid = new HashSet<>();
-        Map<PVector, PVector> parent = new HashMap<>();
-        ArrayDeque<PVector> queue = new ArrayDeque<>();
-        queue.add(start);
-
-
-        while (!queue.isEmpty()) {
-            PVector active = queue.removeFirst();
-
-            if (avoid.contains(active))
-                continue;
-
-            avoid.add(active);
-
-
-            if (active.equals(target)) {
-                return Reconstruct_Taken_Path(parent, start, target);
-            }
-
-            for (int i = 0; i < 4; i++) {
-                PVector x = new PVector();
-                switch (i) {
-                    case 0:
-                        x.set(active.x + 1, active.y);
-                        break;
-                    case 1:
-                        x.set(active.x - 1, active.y);
-                        break;
-                    case 2:
-                        x.set(active.x, active.y + 1);
-                        break;
-                    case 3:
-                        x.set(active.x, active.y - 1);
-                        break;
-                }
-
-
-                if (avoid.contains(x) ||
-                        s.whyNonTraversible(a, (int) active.x, (int) active.y, (int) x.x, (int) x.y) != null)
-                    continue;
-
-                parent.put(x, active);
-                queue.add(x);
-            }
-        }
-        return null;
     }
 
 }

@@ -1,8 +1,8 @@
 package nars.testchamba.map;
 
-import nars.testchamba.grid.Cell;
-import nars.testchamba.grid.Cell.Material;
-import nars.testchamba.grid.Hauto;
+import nars.testchamba.state.Cell;
+import nars.testchamba.state.Cell.Material;
+import nars.testchamba.state.Hauto;
 
 
 public class Dungeon {
@@ -14,13 +14,11 @@ public class Dungeon {
     // size of the map
     final int _xsize;
     final int _ysize;
-
-    // number of "objects" to generate on the map
-    int _objects;
-
-    double ChanceRoom = 75;
     private final Cell[][] _dungeonMap;
     public int Corridors;
+    // number of "objects" to generate on the map
+    int _objects;
+    double ChanceRoom = 75;
 
     public Dungeon(Hauto a) {
         this._dungeonMap = a.read;
@@ -28,26 +26,8 @@ public class Dungeon {
         _ysize = ymax = a.h;
     }
 
-
-    // setting a tile's type
-    void SetCell(int x, int y, Material m) {
-        float h;
-        switch (m) {
-            case Door:
-                h = 100;
-                break;
-            case StoneWall:
-                h = 150;
-                break;
-            case DirtFloor:
-                h = 1;
-                break;
-            default:
-                h = 1;
-        }
-
-        _dungeonMap[x][y].height = h;
-        _dungeonMap[x][y].material = m;
+    public static int GetFeatureLowerBound(int c, int len) {
+        return c - len / 2;
     }
     
 
@@ -70,16 +50,16 @@ public class Dungeon {
         }
         */
 
-    public static int GetFeatureLowerBound(int c, int len) {
-        return c - len / 2;
-    }
-
     public static int IsFeatureWallBound(int c, int len) {
         return c + (len - 1) / 2;
     }
 
     public static int GetFeatureUpperBound(int c, int len) {
         return c + (len + 1) / 2;
+    }
+
+    public static int GetRand(int min, int max) {
+        return (int) (Math.random() * (max - min) + min);
     }
  
         /*
@@ -110,12 +90,29 @@ public class Dungeon {
         }
         */
 
-    public Material GetCellType(int x, int y) {
-        return this._dungeonMap[x][y].material;
+    // setting a tile's type
+    void SetCell(int x, int y, Material m) {
+        float h;
+        switch (m) {
+            case Door:
+                h = 100;
+                break;
+            case StoneWall:
+                h = 150;
+                break;
+            case DirtFloor:
+                h = 1;
+                break;
+            default:
+                h = 1;
+        }
+
+        _dungeonMap[x][y].height = h;
+        _dungeonMap[x][y].material = m;
     }
 
-    public static int GetRand(int min, int max) {
-        return (int) (Math.random() * (max - min) + min);
+    public Material GetCellType(int x, int y) {
+        return this._dungeonMap[x][y].material;
     }
 
     public boolean MakeCorridor(int x, int y, int length, int direction) {

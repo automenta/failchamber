@@ -1,8 +1,8 @@
-package nars.testchamba.particle;
+package nars.testchamba.state;
 
-import nars.testchamba.grid.Cell;
 import nars.testchamba.View;
-import nars.testchamba.grid.Hauto;
+import nars.testchamba.particle.Graviton;
+import nars.testchamba.particle.Particle;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,37 +12,34 @@ import java.util.Random;
 
 public class ParticleSystem {
 
-    float lightDecayFactor = .9f;
-    float velocityDecayFactor = .97f;
-
-    final Random r = new Random();
-    float oldX, oldY;
     public final List<Particle> p = new ArrayList<>();
+    final Random r = new Random();
     final List<Graviton> gravitonAL = new ArrayList<>();
-
-    private long lastTime;
     private final boolean pause = false;
-    private boolean emit = false;
-
     private final int[][] densityArray;
     private final Cell[][] blockArray;
     private final int WIDTH;
     private final int HEIGHT;
     private final Hauto cells;
+    float lightDecayFactor = .9f;
+    float velocityDecayFactor = .97f;
+    float oldX, oldY;
+    private long lastTime;
+    private boolean emit = false;
 
-    public ParticleSystem(View p) {
+    public ParticleSystem(Hauto p) {
 //        int w = p.getWidth();
 //        int h = p.getHeight();
 
 
         gravitonAL.add(new Graviton());
 
-        this.cells = p.cells;
-        this.blockArray = p.cells.read;
+        this.cells = p;
+        this.blockArray = p.read;
 
 
-        WIDTH = p.cells.w;
-        HEIGHT = p.cells.h;
+        WIDTH = p.w;
+        HEIGHT = p.h;
         densityArray = new int[WIDTH][HEIGHT];
 
 
@@ -59,6 +56,10 @@ public class ParticleSystem {
         return 0xff000000 + (red > 0x00ff0000 ? 0x00ff0000 : red) + (grn > 0x0000ff00 ? 0x0000ff00 : grn) + (blu > 0x000000ff ? 0x000000ff : blu);
     }
 
+    public static int makeIntColor(int A, int R, int G, int B) {
+        return (A > 255 ? 0xff000000 : A << 24) + (R > 255 ? 0xff0000 : R << 16) + (G > 255 ? 0xff00 : G << 8) + (B > 255 ? 0xff : B);
+    }
+
     public void glow(int light, int x, int y) {
 
         int lightCutoff = 90;
@@ -68,7 +69,7 @@ public class ParticleSystem {
             light = lightCap;
         }
 
-        if (!blockArray[x][y].isSolid()) {
+        if (!blockArray[x][y].solid) {
 
             if (blockArray[x][y].state.light <= light) {
                 blockArray[x][y].state.light = light;
@@ -154,7 +155,7 @@ public class ParticleSystem {
 
                 p.setParticle(xPos, yPos, xVel, yVel);
                 int iy = (int) ((yPos));
-                if (!blockArray[ix][iy].isSolid()) { // if in air then add particle
+                if (!blockArray[ix][iy].solid) { // if in air then add particle
                     if (xPos < WIDTH && xPos > 0 && yPos < HEIGHT && yPos > 0) {
                         densityArray[ix][iy] += 2;
                         this.p.add(p);
@@ -163,10 +164,6 @@ public class ParticleSystem {
 
             }
         }
-    }
-
-    public static int makeIntColor(int A, int R, int G, int B) {
-        return (A > 255 ? 0xff000000 : A << 24) + (R > 255 ? 0xff0000 : R << 16) + (G > 255 ? 0xff00 : G << 8) + (B > 255 ? 0xff : B);
     }
 
 
@@ -211,7 +208,6 @@ public class ParticleSystem {
 //        }
 //    }
 
-
     public void tick() {
 
         float xPos, yPos, xVel, yVel;
@@ -219,7 +215,6 @@ public class ParticleSystem {
         float ClickToX, ClickToY, InvClickToP;
         int width = WIDTH;
         int height = HEIGHT;
-        
 
 
 //        for (int x_I = 0, lightWidth = (WIDTH); x_I < lightWidth; x_I++) {  //Draw previous frame's lighting, then clear lightArray
@@ -289,7 +284,7 @@ public class ParticleSystem {
                     int ty = (int) ((yPos + yVel));
                     tx = Math.max(0, Math.min(tx, cells.w - 1));
                     ty = Math.max(0, Math.min(ty, cells.h - 1));
-                    if (!blockArray[tx][ty].isSolid()) { // if no collision
+                    if (!blockArray[tx][ty].solid) { // if no collision
 
                         xPos += xVel;
                         yPos += yVel;
@@ -307,14 +302,14 @@ public class ParticleSystem {
                             life -= 10000;
                         }
 
-                        if (blockArray[(int) (xPos)][ty].isSolid()) {
+                        if (blockArray[(int) (xPos)][ty].solid) {
                             xVel = xVel > 0 ? Vel : -Vel;
                             yVel = r.nextFloat() - .5f;
                         } else {
                             yPos += yVel;
                         }
 
-                        if (blockArray[tx][(int) (yPos)].isSolid()) {
+                        if (blockArray[tx][(int) (yPos)].solid) {
                             yVel = yVel > 0 ? Vel : -Vel;
                             xVel = r.nextFloat() - .5f;
                         } else {

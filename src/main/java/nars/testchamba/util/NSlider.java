@@ -33,12 +33,12 @@ import java.text.NumberFormat;
  */
 public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
     public final AtomicDouble value;
-    protected float min;
-    protected float max;
     protected final Color barColor = null;
     protected final Color backgroundColor = Color.BLACK;
-    protected boolean dragging;
     protected final NumberFormat nf = NumberFormat.getInstance();
+    protected float min;
+    protected float max;
+    protected boolean dragging;
     protected String prefix = "";
 
     public NSlider() {
@@ -138,22 +138,21 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         }
     }
 
-    public void setMin(float min) {
-        this.min = min;
-    }
-
-    public void setMax(float max) {
-        this.max = max;
-    }
-
     public float getMin() {
         return min;
+    }
+
+    public void setMin(float min) {
+        this.min = min;
     }
 
     public float getMax() {
         return max;
     }
 
+    public void setMax(float max) {
+        this.max = max;
+    }
 
     public void onChange(float v) {
 

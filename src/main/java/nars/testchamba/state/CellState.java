@@ -1,14 +1,18 @@
-package nars.testchamba.grid;
+package nars.testchamba.state;
 
 
 public class CellState {
-    public float light;
+
     public final int x;
     public final int y;
-    boolean is_solid;
-
-    //display color
+    public float light;
+    //boolean is_solid;
+    /**
+     * display color
+     */
     transient float cr, cg, cb, ca;
+
+    //disintegration, toxicity, heat, charge, wind pressure etc
 
 
     public CellState(int x, int y) {
