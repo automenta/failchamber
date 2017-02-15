@@ -344,16 +344,13 @@ public class View extends PApplet {
         pushMatrix();
 
         //shift half a cell down and right so that when an object draws, it's centerd in the middle of a cell.
-        //translate(cellSize / 4f, cellSize / 4f);
+        translate(cellSize / 4f, cellSize / 4f);
 
 //        float tx = hnav.WorldToScreenX(0);
 //        float ty = hnav.WorldToScreenY(0);
 //        float sx = (hnav.WorldToScreenX(1) - tx)/2f;
 
 
-        //scale(0.5f, 0.5f);
-        //scale(sx, sx);
-        //translate(-0.5f, -0.5f);
         space.draw(this);
 
         popMatrix();

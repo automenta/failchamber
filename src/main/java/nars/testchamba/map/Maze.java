@@ -61,7 +61,7 @@ public class Maze {
         for (int x = x1; x < x2; x++) {
             for (int y = y1; y < y2; y++) {
                 if (m.at(x, y).material==StoneWall) {
-                    s.add(new Geometric.Square(x, y, 0.9f, 0.9f, 10.0));
+                    s.add(new Geometric.Rectangle(x, y, 0.9f, 0.9f, 10.0));
                 }
             }
         }

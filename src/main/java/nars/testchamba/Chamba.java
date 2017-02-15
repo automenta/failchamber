@@ -105,16 +105,12 @@ public class Chamba {
     }
 
     protected GridAgent newDummy() {
-        GridAgent a = new GridAgent(Math.random()*8, Math.random()*8) {
-
-            {
-                form(new CircularForm(2));
-            }
+        GridAgent a = new GridAgent(0.5 + 2 * Math.random(), 5 + Math.random()*8, 5 + Math.random()*8) {
 
             @Override
             public void update(View space, double dt) {
-                vel(5.5 * (Math.random()-0.5), 0.5 * (Math.random()-0.5) );
-                torque(0.5f * (Math.random()-0.5f));
+                vel(6.5 * (Math.random()-0.5), 4.5 * (Math.random()-0.5) );
+                torque(1.9f * (Math.random()-0.5f));
             }
 
 

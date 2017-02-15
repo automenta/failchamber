@@ -23,6 +23,7 @@ public abstract class Spatial extends Body {
         mass(1);
         pos(x, y);
 
+        setMovementFrictionFactor(0.9f);
         //setMomentumTransferFactor(0.5D);
 
     }

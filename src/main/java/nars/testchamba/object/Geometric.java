@@ -1,5 +1,7 @@
 package nars.testchamba.object;
 
+import com.codegame.codeseries.notreal2d.form.CircularForm;
+import com.codegame.codeseries.notreal2d.form.Form;
 import com.codegame.codeseries.notreal2d.form.RectangularForm;
 import nars.testchamba.View;
 import nars.testchamba.state.Spatial;
@@ -7,17 +9,50 @@ import nars.testchamba.state.Spatial;
 /**
  * Created by me on 2/15/17.
  */
-public enum Geometric { ;
+public abstract class Geometric<F extends Form> extends Spatial {
 
-    public static class Square extends Spatial {
+    protected float r, g, b;
 
-        float r, g, b;
+    public Geometric(F f, double x, double y) {
+        super(f, x, y);
+    }
 
-        public Square(double x, double y, double w, double h) {
+    public void color(float R, float G, float B) {
+        r = R; g = G; b = B;
+    }
+
+    @Override
+    public void draw(View view) {
+
+
+
+        //normalizeAngle();
+        view.pushMatrix();
+        view.translate(xF(), yF());
+        view.rotate((float)angle());
+
+        view.fill(r, g, b);
+
+        drawShape(view);
+
+        view.popMatrix();
+    }
+
+    @Override
+    public F form() {
+        return (F) super.form();
+    }
+
+    protected abstract void drawShape(View view);
+
+    public static class Rectangle extends Geometric<RectangularForm> {
+
+
+        public Rectangle(double x, double y, double w, double h) {
             this(x, y, w, h, 1);
         }
 
-        public Square(double x, double y, double w, double h, double density) {
+        public Rectangle(double x, double y, double w, double h, double density) {
             super(new RectangularForm(w, h), x, y);
 
             mass( w * h * density);
@@ -26,17 +61,25 @@ public enum Geometric { ;
         }
 
         @Override
-        public void draw(View view) {
-            RectangularForm rr = (RectangularForm) form();
+        protected void drawShape(View view) {
+            RectangularForm rr = form();
             float w = (float) rr.width;
             float h = (float) rr.height;
+            view.rect(-w/2f, -h/2f, w, h);
+        }
+    }
 
-            //normalizeAngle();
-            //view.rotate((float)angle());
+    public static class Circle extends Geometric<CircularForm> {
 
-            view.fill(r, g, b);
-            view.rect(xF(), yF(), w, h);
+        public Circle(double radius, double x, double y) {
+            super(new CircularForm(radius), x, y);
         }
 
+        @Override
+        protected void drawShape(View view) {
+            CircularForm rr = form();
+            float d = (float) rr.radius()*2f;
+            view.ellipse(0, 0, d, d);
+        }
     }
 }
