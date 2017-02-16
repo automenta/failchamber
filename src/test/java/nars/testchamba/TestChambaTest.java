@@ -10,6 +10,7 @@ import nars.testchamba.util.Video;
 
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.Random;
 
 
 public class TestChambaTest {
@@ -68,17 +69,38 @@ public class TestChambaTest {
 
         new Chamba(space, true, 10000);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 16; i++) {
             newDummyClient(15000+i);
         }
     }
 
     protected static void newDummyClient(int port) {
+        Random random = new Random();
         try {
             UDP u = new UDP(port) {
-                @Override
-                protected void onStart() {
-                    out("i.pos()", 10000);
+                @Override protected void onStart() {
+                    new Thread(()->{
+                        out("i.pos()", 10000);
+
+                        while (running) {
+
+                            switch (random.nextInt(3)) {
+                                case 0:
+                                    float x = 100;// * random.nextFloat();
+                                    float y = 0; //100 * random.nextFloat();
+                                    out("i.force(" + x + "," + y + ")", 10000);
+                                    break;
+                                case 1:
+                                    float t = 16 * (random.nextFloat() - 0.5f);
+                                    out("i.torque(" + t + ")", 10000);
+                                    break;
+                            }
+                            pause(500);
+                        }
+                        //pause((long) (5000 + 1000 * 12 * Math.random()));
+
+                        //out(";", 10000); //close connection
+                    }).start();
                 }
 
                 @Override
@@ -89,6 +111,12 @@ public class TestChambaTest {
         } catch (SocketException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void pause(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {                    }
     }
 
     protected static PacManAgent newDummy() {

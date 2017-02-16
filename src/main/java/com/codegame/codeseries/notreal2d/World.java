@@ -306,6 +306,9 @@ public class World {
     private static void beforeStep(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
         for (int bodyIndex = leftIndex; bodyIndex < rightIndex; ++bodyIndex) {
             Body body = bodies[bodyIndex];
+            if (body == null)
+                continue;
+
 //            if (!contains(body)) {
 //                continue;
 //            }

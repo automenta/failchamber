@@ -634,13 +634,18 @@ public class Body {
     @NotNull
     @Override
     public String toString() {
-        return toString(this);
+        return getName(); /*toString(this);*/
     }
 
     @NotNull
     public static String toString(Body body) {
         return StringUtil.toString(
-                Body.class, body, true, "id", "name", "position", "angle", "velocity", "angularVelocity"
+                Body.class, body, true, "id", "name", "pos", "angle", "vel", "angVel"
         );
+    }
+
+    /** applies force relative to the angle heading */
+    public void forceLocal(float x, float y) {
+        force(new Vector2D(x, y).rotate(angle()));
     }
 }

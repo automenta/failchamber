@@ -1,5 +1,7 @@
 package nars.testchamba;
 
+import com.codeforces.commons.geometry.Point2D;
+import com.codeforces.commons.pair.DoublePair;
 import com.codegame.codeseries.notreal2d.Defaults;
 import com.codegame.codeseries.notreal2d.World;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
@@ -94,6 +96,10 @@ public class Space extends World {
 
         super.next();
 
+    }
+
+    public static float[] f(DoublePair pos) {
+        return new float[] { (float) pos.getFirst(), (float) pos.getSecond()};
     }
 
 

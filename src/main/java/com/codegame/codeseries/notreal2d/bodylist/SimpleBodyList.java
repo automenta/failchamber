@@ -137,7 +137,8 @@ public class SimpleBodyList implements BodyList {
         }
 
         if (!exists) {
-            throw new IllegalStateException("Can't find " + body + '.');
+            //throw new IllegalStateException("Can't find " + body + '.');
+            return Collections.emptyList();
         }
 
         return Collections.unmodifiableList(potentialIntersections);

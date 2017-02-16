@@ -7,6 +7,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import nars.net.JsServer;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,8 +47,8 @@ public class Chamba extends View {
     int renderPeriodMS = 25;
     int updatePeriodMS = 25;
 
-    protected Client newClient() {
-        return new Client(this.space);
+    protected Client newClient(SocketAddress a) {
+        return new Client(a, this.space);
     }
 
     public Chamba(Space space, boolean showWindow, int port) throws SocketException {

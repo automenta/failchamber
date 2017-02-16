@@ -17,7 +17,7 @@ public abstract class UDP implements Runnable {
 
     private final DatagramSocket in;
     public final Thread thread;
-    private boolean running = true;
+    protected boolean running = true;
     private static final Logger logger = LoggerFactory.getLogger(UDP.class);
 
     //final BidiMap<UUID,IntObjectPair<InetAddress>> who = new DualHashBidiMap<>();

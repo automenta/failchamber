@@ -13,6 +13,7 @@ import java.net.SocketException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -25,16 +26,20 @@ public class JsServer<A> extends SessionUDP<JsServer<A>.JsSession> {
     static transient final ScriptEngineManager engineManager = new ScriptEngineManager();
     static transient final NashornScriptEngine JS = (NashornScriptEngine) engineManager.getEngineByName("nashorn");
 
-    private final Supplier<A> api;
+    private final Function<SocketAddress, A> api;
 
     public JsServer(int port, Supplier<A> api) throws SocketException {
+        this(port, (a) -> api.get());
+    }
+
+    public JsServer(int port, Function<SocketAddress, A> api) throws SocketException {
         super(port);
         this.api = api;
     }
 
     @Override
     protected JsSession get(SocketAddress a) {
-        return new JsSession(a, api.get());
+        return new JsSession(a, api.apply(a));
     }
 
 
