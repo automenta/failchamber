@@ -1,11 +1,15 @@
 package nars.testchamba;
 
-import nars.testchamba.agent.GridAgent;
+import nars.net.UDP;
+import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.map.Maze;
 import nars.testchamba.state.Cell;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.SimplexNoise;
 import nars.testchamba.util.Video;
+
+import java.net.SocketAddress;
+import java.net.SocketException;
 
 
 public class TestChambaTest {
@@ -60,15 +64,35 @@ public class TestChambaTest {
 
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Cell.Material.DirtFloor));
 
-        for (int i = 0; i < 16; i++) {
-            space.add(newDummy());
-        }
+
 
         new Chamba(space, true, 10000);
+
+        for (int i = 0; i < 4; i++) {
+            newDummyClient(15000+i);
+        }
     }
 
-    protected static GridAgent newDummy() {
-        GridAgent a = new GridAgent(0.5 + 2 * Math.random(), 5 + Math.random()*8, 5 + Math.random()*8) {
+    protected static void newDummyClient(int port) {
+        try {
+            UDP u = new UDP(port) {
+                @Override
+                protected void onStart() {
+                    out("i.pos()", 10000);
+                }
+
+                @Override
+                protected void in(byte[] data, SocketAddress from) {
+                    System.out.println(from + ": " + new String(data));
+                }
+            };
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static PacManAgent newDummy() {
+        PacManAgent a = new PacManAgent(0.5 + 2 * Math.random(), 5 + Math.random()*8, 5 + Math.random()*8) {
 
             @Override
             public void update(View space, double dt) {

@@ -35,6 +35,9 @@ public abstract class UDP implements Runnable {
     @Override
     public void run() {
         byte[] receiveData = new byte[MAX_PACKET_SIZE];
+
+        onStart();
+
         while (running) {
             DatagramPacket p = new DatagramPacket(receiveData, receiveData.length);
             try {
@@ -46,9 +49,15 @@ public abstract class UDP implements Runnable {
         }
     }
 
-    public void stop() {
-        running = false;
-        thread.stop();
+    protected void onStart() {
+
+    }
+
+    public synchronized void stop() {
+        if (running) {
+            running = false;
+            thread.stop();
+        }
     }
 
     public boolean out(String data, String host, int port) throws UnknownHostException {

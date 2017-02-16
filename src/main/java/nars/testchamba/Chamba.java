@@ -4,10 +4,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.ConsoleAppender;
-import com.codegame.codeseries.notreal2d.Body;
 import nars.net.JsServer;
-import nars.testchamba.state.Hauto;
-import nars.testchamba.state.Spatial;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
@@ -44,7 +41,7 @@ public class Chamba extends View {
         }
     }
 
-    private final JsServer<Client> js;
+    protected final JsServer<Client> js;
 
     int renderPeriodMS = 25;
     int updatePeriodMS = 25;

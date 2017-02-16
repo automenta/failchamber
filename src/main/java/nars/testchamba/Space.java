@@ -1,10 +1,9 @@
 package nars.testchamba;
 
-import com.codegame.codeseries.notreal2d.Body;
 import com.codegame.codeseries.notreal2d.Defaults;
 import com.codegame.codeseries.notreal2d.World;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
-import nars.testchamba.agent.GridAgent;
+import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.state.Effect;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.ParticleSystem;
@@ -75,8 +74,8 @@ public class Space extends World {
                 Spatial g = (Spatial) b;
                 g.update(view, dt);
 
-                if (g instanceof GridAgent) {
-                    GridAgent gg = (GridAgent) g;
+                if (g instanceof PacManAgent) {
+                    PacManAgent gg = (PacManAgent) g;
                     if (!gg.actions.isEmpty()) {
                         nars.testchamba.state.Action a = gg.actions.pop();
                         //if (a != null) {
@@ -98,7 +97,7 @@ public class Space extends World {
     }
 
 
-    static void process(GridAgent agent, nars.testchamba.state.Action action, View view) {
+    static void process(PacManAgent agent, nars.testchamba.state.Action action, View view) {
         Effect e = action.process(view, agent);
         if (e != null) {
             agent.perceive(e);

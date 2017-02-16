@@ -1,6 +1,6 @@
 package nars.testchamba;
 
-import nars.testchamba.agent.GridAgent;
+import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.particle.Particle;
 import nars.testchamba.state.Cell;
 import nars.testchamba.state.Hauto;
@@ -76,7 +76,7 @@ public class View extends PApplet {
         return path;
     }
 
-    public static List<PVector> pathShortest(View s, GridAgent a, PVector start, PVector target) {
+    public static List<PVector> pathShortest(View s, PacManAgent a, PVector start, PVector target) {
         Set<PVector> avoid = new HashSet<>();
         Map<PVector, PVector> parent = new HashMap<>();
         ArrayDeque<PVector> queue = new ArrayDeque<>();
@@ -316,7 +316,7 @@ public class View extends PApplet {
         return realtime;
     }
 
-    public String whyNonTraversible(GridAgent agent, int x, int y, int tx, int ty) {
+    public String whyNonTraversible(PacManAgent agent, int x, int y, int tx, int ty) {
 
         Hauto cells = space.cells;
 

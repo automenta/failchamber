@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.Executor;
@@ -14,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
-public class JsServer<A> extends SessionUDP {
+public class JsServer<A> extends SessionUDP<JsServer<A>.JsSession> {
 
     private static final Logger logger = LoggerFactory.getLogger(JsServer.class);
 
@@ -35,6 +37,7 @@ public class JsServer<A> extends SessionUDP {
         return new JsSession(a, api.get());
     }
 
+
     class JsSession extends SimpleBindings implements Consumer<byte[]> {
 
         private final A context;
@@ -50,6 +53,21 @@ public class JsServer<A> extends SessionUDP {
         @Override
         public void accept(byte[] codeByte) {
             String code = new String(codeByte);
+
+            //END signal
+            if (code.equals(";")) {
+                if (end(this)) {
+                    if (context instanceof Closeable) {
+                        try {
+                            ((Closeable) context).close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return;
+            }
+
             exe.execute(() -> {
                 Object result = eval(code, this, JS);
                 //System.out.println(result + " " + result.getClass());

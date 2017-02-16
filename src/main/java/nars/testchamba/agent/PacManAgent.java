@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayDeque;
 
 
-public class GridAgent extends Geometric.Circle {
+public class PacManAgent extends Geometric.Circle {
 
     public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
     public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -18,7 +18,7 @@ public class GridAgent extends Geometric.Circle {
     //final float animationLerpRate = 0.5f; //LERP interpolation rate
 
 
-    public GridAgent(double rad, double x, double y) {
+    public PacManAgent(double rad, double x, double y) {
         super(rad, x, y);
         color(250, 120, 0);
     }
