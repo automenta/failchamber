@@ -27,15 +27,15 @@ public class LineAndRectangleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.LINE && bodyB.form().shape == Shape.RECTANGLE;
+        return bodyA.geom().shape == Shape.LINE && bodyB.geom().shape == Shape.RECTANGLE;
     }
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        LinearGeom linearFormA = (LinearGeom) bodyA.form();
-        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.form();
+        LinearGeom linearFormA = (LinearGeom) bodyA.geom();
+        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.geom();
 
         Point2D point1A = linearFormA.getPoint1(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D point2A = linearFormA.getPoint2(bodyA.pos(), bodyA.angle(), epsilon);
@@ -160,9 +160,10 @@ public class LineAndRectangleCollider extends ColliderBase {
             double averageIntersectionX = 0.0D;
             double averageIntersectionY = 0.0D;
 
-            for (Point2D intersectionPoint : intersectionPoints) {
-                averageIntersectionX += intersectionPoint.getX() / intersectionPoints.size();
-                averageIntersectionY += intersectionPoint.getY() / intersectionPoints.size();
+            for (int i = 0, intersectionPointsSize = intersectionPoints.size(); i < intersectionPointsSize; i++) {
+                Point2D intersectionPoint = intersectionPoints.get(i);
+                averageIntersectionX += intersectionPoint.getX() / intersectionPointsSize;
+                averageIntersectionY += intersectionPoint.getY() / intersectionPointsSize;
             }
 
             return new CollisionInfo(

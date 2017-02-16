@@ -21,14 +21,14 @@ public class RectangleAndRectangleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.RECTANGLE && bodyB.form().shape == Shape.RECTANGLE;
+        return bodyA.geom().shape == Shape.RECTANGLE && bodyB.geom().shape == Shape.RECTANGLE;
     }
 
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
-        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.geom();
+        RectangularGeom rectangularFormB = (RectangularGeom) bodyB.geom();
 
         Point2D[] pointsA = rectangularFormA.getPoints(bodyA.pos(), bodyA.angle(), epsilon);
         Point2D[] pointsB = rectangularFormB.getPoints(bodyB.pos(), bodyB.angle(), epsilon);
@@ -73,7 +73,7 @@ public class RectangleAndRectangleCollider extends ColliderBase {
             if (lineA.getSignedDistanceFrom(bodyA.pos()) > -epsilon) {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Geom.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.geom()), bodyA
                 ));
             }
 

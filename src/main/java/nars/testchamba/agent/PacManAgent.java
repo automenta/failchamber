@@ -18,8 +18,8 @@ public class PacManAgent extends Geometric.Circle {
     //final float animationLerpRate = 0.5f; //LERP interpolation rate
 
 
-    public PacManAgent(double rad, double x, double y) {
-        super(rad, x, y);
+    public PacManAgent(double rad) {
+        super(rad);
         color(250, 120, 0);
     }
 
@@ -66,7 +66,7 @@ public class PacManAgent extends Geometric.Circle {
 
         view.fill(Color.BLUE.getRGB(), 255);
 
-        float R = (float) form().radius();
+        float R = (float) geom().radius();
         float r = R / 2f;
         view.ellipse(R * 0.5f, 0.5f * R, r, r);
         view.ellipse(R * 0.5f, -0.5f * R, r, r);

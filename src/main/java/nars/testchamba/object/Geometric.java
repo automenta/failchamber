@@ -16,6 +16,9 @@ public abstract class Geometric<F extends Geom> extends Spatial {
 
     protected float r, g, b;
 
+    public Geometric(F f) {
+        super(f);
+    }
     public Geometric(F f, double x, double y) {
         super(f, x, y);
     }
@@ -51,8 +54,8 @@ public abstract class Geometric<F extends Geom> extends Spatial {
     }
 
     @Override
-    public F form() {
-        return (F) super.form();
+    public F geom() {
+        return (F) super.geom();
     }
 
     protected abstract void drawShape(View view);
@@ -74,7 +77,7 @@ public abstract class Geometric<F extends Geom> extends Spatial {
 
         @Override
         protected void drawShape(View view) {
-            RectangularGeom rr = form();
+            RectangularGeom rr = geom();
             float w = (float) rr.width;
             float h = (float) rr.height;
             view.rect(-w/2f, -h/2f, w, h);
@@ -83,13 +86,13 @@ public abstract class Geometric<F extends Geom> extends Spatial {
 
     public static class Circle extends Geometric<CircularGeom> {
 
-        public Circle(double radius, double x, double y) {
-            super(new CircularGeom(radius), x, y);
+        public Circle(double radius) {
+            super(new CircularGeom(radius));
         }
 
         @Override
         protected void drawShape(View view) {
-            CircularGeom rr = form();
+            CircularGeom rr = geom();
             float d = (float) rr.radius()*2f;
             view.ellipse(0, 0, d, d);
         }

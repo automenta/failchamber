@@ -115,20 +115,22 @@ public class SimpleBodyList implements BodyList {
     @Override
     public List<Body> getPotentialIntersections(@NotNull Body body) {
 
-        double bRad = body.form().radius();
+        double bRad = body.geom().radius();
 
         List<Body> potentialIntersections = new ArrayList<>();
+
+        boolean statik = body.isStatic();
 
         for (Body otherBody : bodies) {
             if (otherBody.equals(body)) {
                 continue;
             }
 
-            if (body.isStatic() && otherBody.isStatic()) {
+            if (statik && otherBody.isStatic()) {
                 continue;
             }
 
-            if (sqr(otherBody.form().radius() + bRad)
+            if (sqr(otherBody.geom().radius() + bRad)
                     < otherBody.getSquaredDistanceTo(body)) {
                 continue;
             }

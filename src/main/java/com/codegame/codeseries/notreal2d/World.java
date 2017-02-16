@@ -8,10 +8,11 @@ import com.codeforces.commons.process.ThreadUtil;
 import com.codegame.codeseries.notreal2d.bodylist.BodyList;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
 import com.codegame.codeseries.notreal2d.collision.*;
-import com.codegame.codeseries.notreal2d.form.ArcGeom;
 import com.codegame.codeseries.notreal2d.form.LinearGeom;
+import com.codegame.codeseries.notreal2d.form.Shape;
 import com.codegame.codeseries.notreal2d.listener.CollisionListener;
 import com.codegame.codeseries.notreal2d.provider.MomentumTransferFactorProvider;
+import nars.testchamba.object.Geometric;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,6 +60,7 @@ public class World {
 
     private final Map<String, CollisionListenerEntry> collisionListenerEntryByName = new LinkedHashMap<>();
     private final SortedSet<CollisionListenerEntry> collisionListenerEntries = new TreeSet<>(CollisionListenerEntry.comparator);
+    private final Collider[] lineColliders;
 
     public World() {
         this(Defaults.ITERATION_COUNT_PER_STEP);
@@ -119,10 +121,11 @@ public class World {
         registerCollider(new ArcAndArcCollider(epsilon));
         registerCollider(new ArcAndCircleCollider(epsilon));
         registerCollider(new CircleAndCircleCollider(epsilon));
-        registerCollider(new LineAndArcCollider(epsilon));
-        registerCollider(new LineAndCircleCollider(epsilon));
-        registerCollider(new LineAndLineCollider(epsilon));
-        registerCollider(new LineAndRectangleCollider(epsilon));
+        lineColliders = registerColliders(
+                new LineAndArcCollider(epsilon),
+                new LineAndCircleCollider(epsilon),
+                new LineAndLineCollider(epsilon),
+                new LineAndRectangleCollider(epsilon));
         registerCollider(new RectangleAndArcCollider(epsilon));
         registerCollider(new RectangleAndCircleCollider(epsilon));
         registerCollider(new RectangleAndRectangleCollider(epsilon));
@@ -141,7 +144,7 @@ public class World {
     }
 
     public void add(@NotNull Body body) {
-        if (body.form() == null || body.mass() == 0.0D) {
+        if (body.geom() == null) {
             throw new IllegalArgumentException("Specify form and mass of 'body' before adding to the world.");
         }
 
@@ -213,6 +216,72 @@ public class World {
 //    }
 
     @NotNull
+    public List<CollisionInfo> getCollisionInfos(@NotNull Point2D a, Point2D b, @Nullable Body excludeFromCollisionTest) {
+
+        double epsilon = 0.01;
+        LineAndLineCollider llc = new LineAndLineCollider(epsilon);
+        LineAndCircleCollider lcc = new LineAndCircleCollider(epsilon);
+        LineAndRectangleCollider lrc = new LineAndRectangleCollider(epsilon);
+
+        Point2D mid = new Point2D(0.5 * (a.getX() + b.getX() ),  0.5 * (a.getY() + b.getY()) );
+
+        List<Body> pot = getPotentialIntersections(mid, a.getDistanceTo(b), excludeFromCollisionTest);
+        if (pot.isEmpty())
+            return Collections.emptyList();
+
+        List<CollisionInfo> r = new ArrayList<>();
+
+        Body x = LinearGeom.line(a.getX(), a.getY(), b.getX(), b.getY());
+        for (Body y : pot) {
+            CollisionInfo ci = null;
+
+            Shape shape = y.geom().shape;
+            switch (shape) {
+                case LINE:
+                    ci = llc.collide(x, y);
+                    break;
+                case CIRCLE:
+                    ci = lcc.collide(x, y);
+                    break;
+                case RECTANGLE:
+                    ci = lrc.collide(x, y);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("TODO");
+            }
+            if (ci!=null)
+                r.add(ci);
+        }
+
+        return r;
+    }
+
+    /** broaphase */
+    public List<Body> getPotentialIntersections(Point2D center, double maxDist, @Nullable Body exclude) {
+
+        List<Body> potentialIntersections = new ArrayList<>();
+
+        for (Body otherBody : all()) {
+            if (exclude!=null && otherBody.equals(exclude))
+                continue;
+
+            if (sqr(otherBody.geom().radius() + maxDist)
+                    < otherBody.getSquaredDistanceTo(center)) {
+                continue;
+            }
+
+            potentialIntersections.add(otherBody);
+        }
+
+//        if (!exists) {
+//            //throw new IllegalStateException("Can't find " + body + '.');
+//            return Collections.emptyList();
+//        }
+
+        return (potentialIntersections);
+    }
+
+    @NotNull
     public List<CollisionInfo> getCollisionInfos(@NotNull Body body, @Nullable Body excludeFromCollisionTest) {
 //        if (!bodyList.contains(body)) {
 //            return Collections.emptyList();
@@ -231,11 +300,13 @@ public class World {
 
         List<CollisionInfo> collisionInfos = new ArrayList<>();
 
+        boolean bs = body.isStatic();
+
         for (ColliderEntry colliderEntry : colliderEntries) {
 
             for (int intersectionIndex = 0; intersectionIndex < intersectionCount; ++intersectionIndex) {
                 Body otherBody = potentialIntersections.get(intersectionIndex);
-                if (body.isStatic() && otherBody.isStatic()) {
+                if (bs && otherBody.isStatic()) {
                     throw new IllegalArgumentException("Static body pairs are unexpected at this time.");
                 }
 
@@ -666,6 +737,12 @@ public class World {
         registerCollider(collider, collider.getClass().getSimpleName());
     }
 
+    private Collider[] registerColliders(@NotNull Collider... c) {
+        for (Collider x : c)
+            registerCollider(x);
+        return c;
+    }
+
     public void unregisterCollider(@NotNull String name) {
         NamedEntry.validateName(name);
 
@@ -719,8 +796,8 @@ public class World {
     }
 
     private static void logCollision(CollisionInfo collisionInfo) {
-        if (collisionInfo.getDepth() >= collisionInfo.getBodyA().form().radius() * 0.25D
-                || collisionInfo.getDepth() >= collisionInfo.getBodyB().form().radius() * 0.25D) {
+        if (collisionInfo.getDepth() >= collisionInfo.getBodyA().geom().radius() * 0.25D
+                || collisionInfo.getDepth() >= collisionInfo.getBodyB().geom().radius() * 0.25D) {
 //            if (logger.isEnabledFor(Level.WARN)) {
 //                logger.warn("Resolving collision (big depth) " + collisionInfo + '.');
 //            }
@@ -747,13 +824,9 @@ public class World {
     }
 
     public List<CollisionInfo> collisions(Point2D source, double angle, double maxDistance, @Nullable Body excludeFromCollisionTest) {
-        Body b = new Body();
-        LinearGeom lg = new LinearGeom(maxDistance, true);
-        b.form(lg);
-        b.angle(angle);
-        @NotNull Point2D offset = lg.getPoint1(b.pos(), angle, Defaults.EPSILON);
-        b.pos(source.copy().subtract(offset));
-        return getCollisionInfos(b, excludeFromCollisionTest);
+        Point2D target = source.copy();
+        target.add( maxDistance * Math.cos(angle), maxDistance * Math.sin(angle) );
+        return getCollisionInfos(source, target, excludeFromCollisionTest);
     }
 
     @SuppressWarnings("PublicField")

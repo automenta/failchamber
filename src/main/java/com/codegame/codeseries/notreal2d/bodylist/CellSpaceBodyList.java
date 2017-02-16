@@ -67,7 +67,7 @@ public class CellSpaceBodyList implements BodyList {
 //            throw new IllegalStateException(body + " is already added.");
 //        }
 
-        double radius = body.form().radius();
+        double radius = body.geom().radius();
         double diameter = 2.0D * radius;
 
         if (diameter > cellSize && diameter <= maxCellSize) {
@@ -317,7 +317,7 @@ public class CellSpaceBodyList implements BodyList {
             return;
         }
 
-        if (sqr(otherBody.form().radius() + body.form().radius())
+        if (sqr(otherBody.geom().radius() + body.geom().radius())
                 < otherBody.getSquaredDistanceTo(body)) {
             return;
         }
@@ -346,7 +346,7 @@ public class CellSpaceBodyList implements BodyList {
             return;
         }
 
-        if (sqr(otherBody.form().radius() + body.form().radius())
+        if (sqr(otherBody.geom().radius() + body.geom().radius())
                 < otherBody.getSquaredDistanceTo(body)) {
             return;
         }
@@ -371,7 +371,7 @@ public class CellSpaceBodyList implements BodyList {
             return;
         }
 
-        if (sqr(otherBody.form().radius() + body.form().radius())
+        if (sqr(otherBody.geom().radius() + body.geom().radius())
                 < otherBody.getSquaredDistanceTo(body)) {
             return;
         }
@@ -396,7 +396,7 @@ public class CellSpaceBodyList implements BodyList {
             return;
         }
 
-        if (sqr(otherBody.form().radius() + body.form().radius())
+        if (sqr(otherBody.geom().radius() + body.geom().radius())
                 < otherBody.getSquaredDistanceTo(body)) {
             return;
         }
@@ -417,7 +417,7 @@ public class CellSpaceBodyList implements BodyList {
 
     private static void fastAddPotentialIntersectionNotStatic(
             @NotNull Body body, @NotNull Body otherBody, @NotNull List<Body> potentialIntersections) {
-        if (sqr(otherBody.form().radius() + body.form().radius())
+        if (sqr(otherBody.geom().radius() + body.geom().radius())
                 < otherBody.getSquaredDistanceTo(body)) {
             return;
         }
@@ -439,7 +439,7 @@ public class CellSpaceBodyList implements BodyList {
     }
 
     private void addBodyToIndexes(@NotNull Body body) {
-        double radius = body.form().radius();
+        double radius = body.geom().radius();
         double diameter = 2.0D * radius;
 
         if (diameter > cellSize) {
@@ -475,7 +475,7 @@ public class CellSpaceBodyList implements BodyList {
     }
 
     private void removeBodyFromIndexes(@NotNull Body body) {
-        double radius = body.form().radius();
+        double radius = body.geom().radius();
         double diameter = 2.0D * radius;
 
         if (diameter > cellSize) {

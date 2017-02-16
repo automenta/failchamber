@@ -21,7 +21,7 @@ public class WorldTest {
         World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body body = new Body();
-        body.form(new CircularGeom(1.0D));
+        body.geom(new CircularGeom(1.0D));
         body.mass(1.0D);
         world.add(body);
 
@@ -56,11 +56,11 @@ public class WorldTest {
             world.next();
             Assert.assertEquals(
                     "Movement with ground friction. Illegal 'x' after step " + i + '.',
-                    expectedPositionX, body.x(), world.getEpsilon()
+                    expectedPositionX, body.x(), world.getEpsilon()*2
             );
             Assert.assertEquals(
                     "Movement with ground friction. Illegal 'y' after step " + i + '.',
-                    0.0D, body.y(), world.getEpsilon()
+                    0.0D, body.y(), world.getEpsilon()*2
             );
         }
 
@@ -100,7 +100,7 @@ public class WorldTest {
         World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body bodyA = new Body();
-        bodyA.form(new CircularGeom(1.0D));
+        bodyA.geom(new CircularGeom(1.0D));
         bodyA.mass(1.0D);
         bodyA.setMomentumTransferFactor(0.5D);
         world.add(bodyA);
@@ -109,7 +109,7 @@ public class WorldTest {
         bodyA.vel(originalVelocityModule, 0.0D);
 
         Body bodyB = new Body();
-        bodyB.form(new CircularGeom(1.0D));
+        bodyB.geom(new CircularGeom(1.0D));
         bodyB.mass(1.0D);
         bodyB.setMomentumTransferFactor(0.5D);
         world.add(bodyB);

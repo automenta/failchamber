@@ -2,6 +2,7 @@ package com.codegame.codeseries.notreal2d.form;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.text.StringUtil;
+import com.codegame.codeseries.notreal2d.Body;
 import org.jetbrains.annotations.NotNull;
 
 import static com.codeforces.commons.math.Math.*;
@@ -32,6 +33,14 @@ public class LinearGeom extends ThinGeom {
         this.length = length;
         this.halfLength = length / 2.0D;
         this.angularMassFactor = length * length / 12.0D;
+    }
+
+    public static Body line(double x1, double y1, double x2, double y2) {
+        Point2D a = new Point2D(x1, y1);
+        Point2D b = new Point2D(x2, y2);
+        Point2D ab = new Point2D(0.5 * (x1 + x2), 0.5 * (y1 + y2));
+        double ang = Math.atan2( (y2 - y1) , (x2 - x1) );
+        return new Body(new LinearGeom(a.getDistanceTo(b), true), new Point2D(ab), ang);
     }
 
     public LinearGeom(double length) {

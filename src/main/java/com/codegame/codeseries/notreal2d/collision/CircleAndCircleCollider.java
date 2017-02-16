@@ -19,14 +19,14 @@ public class CircleAndCircleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.CIRCLE && bodyB.form().shape == Shape.CIRCLE;
+        return bodyA.geom().shape == Shape.CIRCLE && bodyB.geom().shape == Shape.CIRCLE;
     }
 
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        CircularGeom circularFormA = (CircularGeom) bodyA.form();
-        CircularGeom circularFormB = (CircularGeom) bodyB.form();
+        CircularGeom circularFormA = (CircularGeom) bodyA.geom();
+        CircularGeom circularFormB = (CircularGeom) bodyB.geom();
 
         double radiusA = circularFormA.getRadius();
         double radiusB = circularFormB.getRadius();

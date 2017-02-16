@@ -16,7 +16,7 @@ public class ArcAndArcCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.ARC && bodyB.form().shape == Shape.ARC;
+        return bodyA.geom().shape == Shape.ARC && bodyB.geom().shape == Shape.ARC;
     }
 
     @Nullable

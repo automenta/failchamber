@@ -24,15 +24,15 @@ public class ArcAndCircleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.ARC && bodyB.form().shape == Shape.CIRCLE;
+        return bodyA.geom().shape == Shape.ARC && bodyB.geom().shape == Shape.CIRCLE;
     }
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        ArcGeom arcFormA = (ArcGeom) bodyA.form();
-        CircularGeom circularFormB = (CircularGeom) bodyB.form();
+        ArcGeom arcFormA = (ArcGeom) bodyA.geom();
+        CircularGeom circularFormB = (CircularGeom) bodyB.geom();
 
         double radiusA = arcFormA.getRadius();
         double radiusB = circularFormB.getRadius();

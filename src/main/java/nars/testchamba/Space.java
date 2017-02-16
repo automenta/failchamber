@@ -2,9 +2,11 @@ package nars.testchamba;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.pair.DoublePair;
+import com.codegame.codeseries.notreal2d.Body;
 import com.codegame.codeseries.notreal2d.Defaults;
 import com.codegame.codeseries.notreal2d.World;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
+import com.codegame.codeseries.notreal2d.form.LinearGeom;
 import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.state.Effect;
 import nars.testchamba.state.Hauto;
@@ -25,15 +27,26 @@ public class Space extends World {
 
     public final Hauto cells;
     public final ParticleSystem particles;
+    double boundsX, boundsY;
 
     public Space(Hauto cells) {
-        super(Defaults.ITERATION_COUNT_PER_STEP, 60, Defaults.EPSILON,
+        super(5, 60, 1E-4,
             //new CellSpaceBodyList(2, 4) //not working yet
             new SimpleBodyList()
         );
 
         this.cells = cells;
         this.particles = new ParticleSystem(cells);
+
+        boundsX = cells.w;
+        boundsY = cells.h;
+
+        add(LinearGeom.line(0, 0, boundsX, 0).statik());
+        add(LinearGeom.line(0, boundsY, boundsX, boundsY).statik());
+        add(LinearGeom.line(0, 0, 0, boundsY).statik());
+        add(LinearGeom.line(boundsX, 0, boundsX, boundsY).statik());
+
+
 
 
 //        Body body = new Body();
@@ -142,6 +155,10 @@ public class Space extends World {
 //        }
         return "";
 
+    }
+
+    public Point2D spawnPoint() {
+        return new Point2D(Math.random()*boundsX, Math.random()*boundsY);
     }
 
 //    public void operate(String arg, String opnamer) {

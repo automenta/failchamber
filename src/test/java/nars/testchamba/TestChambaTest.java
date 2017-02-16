@@ -68,7 +68,7 @@ public class TestChambaTest {
 
         new Chamba(space, true, 10000);
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 4; i++) {
             newDummyClient(15000 + i);
         }
     }
@@ -78,13 +78,14 @@ public class TestChambaTest {
 
         UDP u = new AgentClient(port, "localhost", 10000) {
 
+            double scanAngle = 0;
             @Override
             public void run() {
                 while (running) {
 
                     switch (random.nextInt(3)) {
                         case 0:
-                            float x = 10;// * random.nextFloat();
+                            float x = 30;// * random.nextFloat();
                             float y = 0; //100 * random.nextFloat();
                             force(x, y);
                             break;
@@ -92,10 +93,12 @@ public class TestChambaTest {
                             float t = 16 * (random.nextFloat() - 0.5f);
                             torque(t);
                             break;
-                        case 2:
-                            this.see((float)(Math.random() * Math.PI * 2f), 5f);
-                            break;
+
                     }
+
+                    this.see((float)scanAngle, 25);
+                    scanAngle += 0.05;
+
                     pause(50);
                 }
             }
@@ -113,7 +116,7 @@ public class TestChambaTest {
     }
 
     protected static PacManAgent newDummy() {
-        PacManAgent a = new PacManAgent(0.5 + 2 * Math.random(), 5 + Math.random() * 8, 5 + Math.random() * 8) {
+        PacManAgent a = new PacManAgent(1) {
 
             @Override
             public void update(View space, double dt) {

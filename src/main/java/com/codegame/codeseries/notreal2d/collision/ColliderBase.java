@@ -39,7 +39,7 @@ public abstract class ColliderBase implements Collider {
 
         throw new IllegalArgumentException(String.format(
                 "Unsupported %s of %s or %s of %s.",
-                Geom.toString(bodyA.form()), bodyA, Geom.toString(bodyB.form()), bodyB
+                Geom.toString(bodyA.geom()), bodyA, Geom.toString(bodyB.geom()), bodyB
         ));
     }
 

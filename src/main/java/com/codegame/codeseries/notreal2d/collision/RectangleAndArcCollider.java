@@ -32,15 +32,15 @@ public class RectangleAndArcCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.RECTANGLE && bodyB.form().shape == Shape.ARC;
+        return bodyA.geom().shape == Shape.RECTANGLE && bodyB.geom().shape == Shape.ARC;
     }
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "ConstantConditions"})
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
-        ArcGeom arcFormB = (ArcGeom) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.geom();
+        ArcGeom arcFormB = (ArcGeom) bodyB.geom();
 
         double radiusA = rectangularFormA.radius();
         double radiusB = arcFormB.getRadius();
@@ -76,7 +76,7 @@ public class RectangleAndArcCollider extends ColliderBase {
             if (lineA.getSignedDistanceFrom(bodyA.pos()) > -epsilon) {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Geom.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.geom()), bodyA
                 ));
             }
 
@@ -166,7 +166,7 @@ public class RectangleAndArcCollider extends ColliderBase {
             } else {
                 throw new IllegalStateException(String.format("%s of %s is too small, " +
                                 "does not represent a convex polygon, or its points are going in wrong order.",
-                        Geom.toString(bodyA.form()), bodyA
+                        Geom.toString(bodyA.geom()), bodyA
                 ));
             }
         } else {

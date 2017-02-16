@@ -102,6 +102,25 @@ public class Body {
 
     private final int hashCode = Long.hashCode(id);
 
+    public Body() {
+
+    }
+
+    public Body(Geom f) {
+        this();
+        geom(f);
+    }
+
+    public Body(Geom f, Point2D p) {
+        this(f);
+        pos(p);
+    }
+
+    public Body(Geom f, Point2D p, double ang) {
+        this(f, p);
+        angle(ang);
+    }
+
     public String getName() {
         return name;
     }
@@ -110,16 +129,21 @@ public class Body {
         this.name = name;
     }
 
-    public Geom form() {
+    public Geom geom() {
         return geom;
     }
 
-    public void form(Geom geom) {
+    public void geom(Geom geom) {
         this.geom = geom;
     }
 
     public double mass() {
         return mass;
+    }
+
+    public Body statik() {
+        mass(Double.POSITIVE_INFINITY);
+        return this;
     }
 
     public void mass(double mass) {

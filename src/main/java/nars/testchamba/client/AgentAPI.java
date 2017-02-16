@@ -26,7 +26,8 @@ public class AgentAPI implements Closeable {
         this.addr = a;
         this.space = s;
 
-        this.agent = new PacManAgent(1f, 0, 0);
+        this.agent = new PacManAgent(1f);
+        agent.pos(s.spawnPoint());
         s.add(agent);
     }
 
@@ -85,8 +86,9 @@ public class AgentAPI implements Closeable {
 
             float opacity = 1f;
             double ang = angleRelativeToForward;
-            double dx = Math.cos(ang) * maxDistance;
-            double dy = Math.sin(ang) * maxDistance;
+            double dist = result!=null ? result.getPoint().getDistanceTo(agent.pos()) : maxDistance;
+            double dx = Math.cos(ang) * dist;
+            double dy = Math.sin(ang) * dist;
 
             float r = result!=null ? 0f : 200f;
             float g = result!=null ? 200f : 0f;

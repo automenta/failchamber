@@ -22,15 +22,15 @@ public class RectangleAndCircleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.RECTANGLE && bodyB.form().shape == Shape.CIRCLE;
+        return bodyA.geom().shape == Shape.RECTANGLE && bodyB.geom().shape == Shape.CIRCLE;
     }
 
     @SuppressWarnings("OverlyLongMethod")
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.form();
-        CircularGeom circularFormB = (CircularGeom) bodyB.form();
+        RectangularGeom rectangularFormA = (RectangularGeom) bodyA.geom();
+        CircularGeom circularFormB = (CircularGeom) bodyB.geom();
 
         Point2D[] pointsA = rectangularFormA.getPoints(bodyA.pos(), bodyA.angle(), epsilon);
         int pointACount = pointsA.length;

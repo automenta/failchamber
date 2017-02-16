@@ -6,10 +6,8 @@ import com.codegame.codeseries.notreal2d.form.Geom;
 import nars.testchamba.View;
 import nars.testchamba.util.Animation;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * GridObject with a specific position
@@ -24,16 +22,19 @@ public abstract class Spatial extends Body {
         this(new CircularGeom(0.5f), x, y);
     }
 
-    public Spatial(Geom geom, double x, double y) {
+    public Spatial(Geom geom) {
         super();
 
-        form(geom);
+        geom(geom);
         mass(1);
-        pos(x, y);
 
-        setMovementFrictionFactor(0.9f);
+        setMovementFrictionFactor(0.5f);
         //setMomentumTransferFactor(0.5D);
+    }
 
+    public Spatial(Geom geom, double x, double y) {
+        this(geom);
+        pos(x, y);
     }
 
 

@@ -24,14 +24,14 @@ public class LineAndCircleCollider extends ColliderBase {
 
     @Override
     protected boolean matchesOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        return bodyA.form().shape == Shape.LINE && bodyB.form().shape == Shape.CIRCLE;
+        return bodyA.geom().shape == Shape.LINE && bodyB.geom().shape == Shape.CIRCLE;
     }
 
     @Nullable
     @Override
     protected CollisionInfo collideOneWay(@NotNull Body bodyA, @NotNull Body bodyB) {
-        LinearGeom linearFormA = (LinearGeom) bodyA.form();
-        CircularGeom circularFormB = (CircularGeom) bodyB.form();
+        LinearGeom linearFormA = (LinearGeom) bodyA.geom();
+        CircularGeom circularFormB = (CircularGeom) bodyB.geom();
 
         Point2D baPos = bodyA.pos();
         double baAngle = bodyA.angle();
