@@ -1,6 +1,6 @@
 package nars.testchamba;
 
-import nars.net.UDP;
+import jcog.net.UDP;
 import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.client.AgentClient;
 import nars.testchamba.map.Maze;

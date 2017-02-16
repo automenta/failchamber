@@ -4,10 +4,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.ConsoleAppender;
-import nars.net.JsServer;
 import nars.testchamba.client.AgentAPI;
 import org.slf4j.LoggerFactory;
-
+import jcog.net.JsUDPServer;
 import java.net.SocketException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,7 +41,7 @@ public class Chamba extends View {
         }
     }
 
-    protected final JsServer<AgentAPI> js;
+    protected final JsUDPServer<AgentAPI> js;
 
     int renderPeriodMS = 25;
     int updatePeriodMS = 25;
@@ -53,7 +52,7 @@ public class Chamba extends View {
         initSurface();
         startSurface();
 
-        js = new JsServer<>(port, a -> new AgentAPI(a, this.space));
+        js = new JsUDPServer<>(port, a -> new AgentAPI(a, this.space));
 
         frameRate(1000f/renderPeriodMS);
         setup();

@@ -2,23 +2,14 @@ package nars.testchamba;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.pair.DoublePair;
-import com.codegame.codeseries.notreal2d.Body;
-import com.codegame.codeseries.notreal2d.Defaults;
-import com.codegame.codeseries.notreal2d.World;
-import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
-import com.codegame.codeseries.notreal2d.form.LinearGeom;
+import notreal.World;
+import notreal.bodylist.SimpleBodyList;
+import notreal.form.LinearGeom;
 import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.state.Effect;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.ParticleSystem;
 import nars.testchamba.state.Spatial;
-import nars.testchamba.util.Animation;
-
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created by me on 2/15/17.

@@ -1,6 +1,6 @@
 package nars.testchamba.client;
 
-import com.codegame.codeseries.notreal2d.collision.CollisionInfo;
+import notreal.collision.CollisionInfo;
 import nars.testchamba.Space;
 import nars.testchamba.View;
 import nars.testchamba.agent.PacManAgent;

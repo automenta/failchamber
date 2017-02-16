@@ -1,6 +1,6 @@
 package nars.testchamba.client;
 
-import nars.net.UDP;
+import jcog.net.UDP;
 
 import java.net.SocketAddress;
 import java.net.SocketException;

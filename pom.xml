@@ -12,17 +12,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
     </properties>
 
     <dependencies>
 
         <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>2.3.5</version>
+            <groupId>automenta</groupId>
+            <artifactId>jcog</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.msgpack/msgpack-core -->
         <dependency>
             <groupId>org.msgpack</groupId>
@@ -56,23 +57,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>21.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.22</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.processing/core -->
         <dependency>
@@ -80,11 +64,7 @@
             <artifactId>core</artifactId>
             <version>3.2.3</version>
         </dependency>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-            <version>12.0</version>
-        </dependency>
+
 
     </dependencies>
 

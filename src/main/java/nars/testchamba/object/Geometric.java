@@ -1,8 +1,8 @@
 package nars.testchamba.object;
 
-import com.codegame.codeseries.notreal2d.form.CircularGeom;
-import com.codegame.codeseries.notreal2d.form.Geom;
-import com.codegame.codeseries.notreal2d.form.RectangularGeom;
+import notreal.form.CircularGeom;
+import notreal.form.Geom;
+import notreal.form.RectangularGeom;
 import nars.testchamba.View;
 import nars.testchamba.state.Spatial;
 import nars.testchamba.util.Animation;
