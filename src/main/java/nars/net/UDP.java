@@ -26,7 +26,11 @@ public abstract class UDP implements Runnable {
 
     public UDP(int port) throws SocketException {
         in = new DatagramSocket(port);
+
         this.thread = new Thread(this);
+
+        logger.info("{} start on port", this, port);
+
         thread.start();
     }
 
