@@ -20,7 +20,7 @@ public class Key extends Spatial {
 
 
     @Override
-    public void draw(View space) {
+    public void draw(View space, long rt) {
         float scale = (float) Math.sin(space.getTime() / 7f) * 0.05f + 1.0f;
         float a = space.getTime() / 10;
 

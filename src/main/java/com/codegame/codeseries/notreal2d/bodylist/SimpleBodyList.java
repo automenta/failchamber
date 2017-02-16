@@ -115,12 +115,12 @@ public class SimpleBodyList implements BodyList {
     @Override
     public List<Body> getPotentialIntersections(@NotNull Body body) {
 
+        double bRad = body.form().radius();
+
         List<Body> potentialIntersections = new ArrayList<>();
-        boolean exists = false;
 
         for (Body otherBody : bodies) {
             if (otherBody.equals(body)) {
-                exists = true;
                 continue;
             }
 
@@ -128,7 +128,7 @@ public class SimpleBodyList implements BodyList {
                 continue;
             }
 
-            if (sqr(otherBody.form().radius() + body.form().radius())
+            if (sqr(otherBody.form().radius() + bRad)
                     < otherBody.getSquaredDistanceTo(body)) {
                 continue;
             }
@@ -136,12 +136,12 @@ public class SimpleBodyList implements BodyList {
             potentialIntersections.add(otherBody);
         }
 
-        if (!exists) {
-            //throw new IllegalStateException("Can't find " + body + '.');
-            return Collections.emptyList();
-        }
+//        if (!exists) {
+//            //throw new IllegalStateException("Can't find " + body + '.');
+//            return Collections.emptyList();
+//        }
 
-        return Collections.unmodifiableList(potentialIntersections);
+        return (potentialIntersections);
     }
 
     @Override

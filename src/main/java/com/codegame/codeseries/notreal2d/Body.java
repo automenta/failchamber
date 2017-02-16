@@ -290,6 +290,11 @@ public class Body {
         return currentState.pos();
     }
 
+    /** hack */
+    public void pos(Vector2D v) {
+        pos(v.getX(), v.getY());
+    }
+
     public void pos(Point2D position) {
         currentState.pos(position);
     }
@@ -634,7 +639,10 @@ public class Body {
     @NotNull
     @Override
     public String toString() {
-        return getName(); /*toString(this);*/
+        String n = getName(); /*toString(this);*/
+        if (n == null)
+            n = "#" + Long.toString(id);
+        return getClass().getSimpleName() + "@" + n;
     }
 
     @NotNull

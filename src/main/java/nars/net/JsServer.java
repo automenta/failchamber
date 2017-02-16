@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
-import java.io.Closeable;
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.Executor;
@@ -17,6 +15,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
+/**
+ *
+ * @param <A> API interface class
+ */
 public class JsServer<A> extends SessionUDP<JsServer<A>.JsSession> {
 
     private static final Logger logger = LoggerFactory.getLogger(JsServer.class);
@@ -26,20 +28,20 @@ public class JsServer<A> extends SessionUDP<JsServer<A>.JsSession> {
     static transient final ScriptEngineManager engineManager = new ScriptEngineManager();
     static transient final NashornScriptEngine JS = (NashornScriptEngine) engineManager.getEngineByName("nashorn");
 
-    private final Function<SocketAddress, A> api;
+    private final Function<SocketAddress, A> apiBuilder;
 
-    public JsServer(int port, Supplier<A> api) throws SocketException {
-        this(port, (a) -> api.get());
+    public JsServer(int port, Supplier<A> apiBuilder) throws SocketException {
+        this(port, (a) -> apiBuilder.get());
     }
 
-    public JsServer(int port, Function<SocketAddress, A> api) throws SocketException {
+    public JsServer(int port, Function<SocketAddress, A> apiBuilder) throws SocketException {
         super(port);
-        this.api = api;
+        this.apiBuilder = apiBuilder;
     }
 
     @Override
     protected JsSession get(SocketAddress a) {
-        return new JsSession(a, api.apply(a));
+        return new JsSession(a, apiBuilder.apply(a));
     }
 
 
@@ -61,15 +63,7 @@ public class JsServer<A> extends SessionUDP<JsServer<A>.JsSession> {
 
             //END signal
             if (code.equals(";")) {
-                if (end(this)) {
-                    if (context instanceof Closeable) {
-                        try {
-                            ((Closeable) context).close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+                end(this, true);
                 return;
             }
 

@@ -33,8 +33,10 @@ public class LineAndCircleCollider extends ColliderBase {
         LinearGeom linearFormA = (LinearGeom) bodyA.form();
         CircularGeom circularFormB = (CircularGeom) bodyB.form();
 
-        Point2D point1A = linearFormA.getPoint1(bodyA.pos(), bodyA.angle(), epsilon);
-        Point2D point2A = linearFormA.getPoint2(bodyA.pos(), bodyA.angle(), epsilon);
+        Point2D baPos = bodyA.pos();
+        double baAngle = bodyA.angle();
+        Point2D point1A = linearFormA.getPoint1(baPos, baAngle, epsilon);
+        Point2D point2A = linearFormA.getPoint2(baPos, baAngle, epsilon);
 
         return collideOneWay(bodyA, bodyB, point1A, point2A, circularFormB, epsilon);
     }

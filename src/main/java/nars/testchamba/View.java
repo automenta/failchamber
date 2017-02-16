@@ -7,6 +7,7 @@ import nars.testchamba.state.Hauto;
 import nars.testchamba.state.ParticleSystem;
 import nars.testchamba.util.NWindow;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 import javax.swing.*;
@@ -267,6 +268,8 @@ public class View extends PApplet {
 
     @Override
     public void draw() {
+
+        strokeCap(PConstants.MITER);
 
         {
             fade();

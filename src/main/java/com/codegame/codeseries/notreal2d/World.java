@@ -8,6 +8,8 @@ import com.codeforces.commons.process.ThreadUtil;
 import com.codegame.codeseries.notreal2d.bodylist.BodyList;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
 import com.codegame.codeseries.notreal2d.collision.*;
+import com.codegame.codeseries.notreal2d.form.ArcGeom;
+import com.codegame.codeseries.notreal2d.form.LinearGeom;
 import com.codegame.codeseries.notreal2d.listener.CollisionListener;
 import com.codegame.codeseries.notreal2d.provider.MomentumTransferFactorProvider;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -52,10 +54,10 @@ public class World {
     @Nullable
     private final ExecutorService parallelTaskExecutor;
 
-    private final Map<String, ColliderEntry> colliderEntryByName = new HashMap<>();
+    private final Map<String, ColliderEntry> colliderEntryByName = new LinkedHashMap<>();
     private final SortedSet<ColliderEntry> colliderEntries = new TreeSet<>(ColliderEntry.comparator);
 
-    private final Map<String, CollisionListenerEntry> collisionListenerEntryByName = new HashMap<>();
+    private final Map<String, CollisionListenerEntry> collisionListenerEntryByName = new LinkedHashMap<>();
     private final SortedSet<CollisionListenerEntry> collisionListenerEntries = new TreeSet<>(CollisionListenerEntry.comparator);
 
     public World() {
@@ -174,49 +176,53 @@ public class World {
         return bodyList.getBody(id);
     }
 
-    public boolean isColliding(@NotNull Body body) {
-        return getCollisionInfo(body) != null;
-    }
+//    public boolean isColliding(@NotNull Body body) {
+//        return getCollisionInfo(body) != null;
+//    }
 
-    public Collection<Body> getAll() {
+    public Collection<Body> all() {
         return bodyList.getBodies();
     }
     public void forEach(Consumer<Body> each) {
         bodyList.forEach(each);
     }
 
-    @Nullable
-    public CollisionInfo getCollisionInfo(@NotNull Body body) {
-        if (!bodyList.contains(body)) {
-            return null;
-        }
-
-        List<Body> potentialIntersections = bodyList.getPotentialIntersections(body);
-        int intersectionCount = potentialIntersections.size();
-
-        for (int intersectionIndex = 0; intersectionIndex < intersectionCount; ++intersectionIndex) {
-            Body otherBody = potentialIntersections.get(intersectionIndex);
-            if (body.isStatic() && otherBody.isStatic()) {
-                throw new IllegalArgumentException("Static body pairs are unexpected at this time.");
-            }
-
-            for (ColliderEntry colliderEntry : colliderEntries) {
-                if (colliderEntry.collider.matches(body, otherBody)) {
-                    return colliderEntry.collider.collide(body, otherBody);
-                }
-            }
-        }
-
-        return null;
-    }
+//    @Nullable
+//    public CollisionInfo getCollisionInfo(@NotNull Body body) {
+////        if (!bodyList.contains(body)) {
+////            return null;
+////        }
+//
+//        List<Body> potentialIntersections = bodyList.getPotentialIntersections(body);
+//        int intersectionCount = potentialIntersections.size();
+//
+//        for (int intersectionIndex = 0; intersectionIndex < intersectionCount; ++intersectionIndex) {
+//            Body otherBody = potentialIntersections.get(intersectionIndex);
+//            if (body.isStatic() && otherBody.isStatic()) {
+//                throw new IllegalArgumentException("Static body pairs are unexpected at this time.");
+//            }
+//
+//            for (ColliderEntry colliderEntry : colliderEntries) {
+//                if (colliderEntry.collider.matches(body, otherBody)) {
+//                    return colliderEntry.collider.collide(body, otherBody);
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
     @NotNull
-    public List<CollisionInfo> getCollisionInfos(@NotNull Body body) {
-        if (!bodyList.contains(body)) {
-            return Collections.emptyList();
-        }
+    public List<CollisionInfo> getCollisionInfos(@NotNull Body body, @Nullable Body excludeFromCollisionTest) {
+//        if (!bodyList.contains(body)) {
+//            return Collections.emptyList();
+//        }
 
         List<Body> potentialIntersections = bodyList.getPotentialIntersections(body);
+
+        if (excludeFromCollisionTest!=null)
+            potentialIntersections.remove(excludeFromCollisionTest);
+
         int intersectionCount = potentialIntersections.size();
 
         if (intersectionCount == 0) {
@@ -225,13 +231,14 @@ public class World {
 
         List<CollisionInfo> collisionInfos = new ArrayList<>();
 
-        for (int intersectionIndex = 0; intersectionIndex < intersectionCount; ++intersectionIndex) {
-            Body otherBody = potentialIntersections.get(intersectionIndex);
-            if (body.isStatic() && otherBody.isStatic()) {
-                throw new IllegalArgumentException("Static body pairs are unexpected at this time.");
-            }
+        for (ColliderEntry colliderEntry : colliderEntries) {
 
-            for (ColliderEntry colliderEntry : colliderEntries) {
+            for (int intersectionIndex = 0; intersectionIndex < intersectionCount; ++intersectionIndex) {
+                Body otherBody = potentialIntersections.get(intersectionIndex);
+                if (body.isStatic() && otherBody.isStatic()) {
+                    throw new IllegalArgumentException("Static body pairs are unexpected at this time.");
+                }
+
                 if (colliderEntry.collider.matches(body, otherBody)) {
                     CollisionInfo collisionInfo = colliderEntry.collider.collide(body, otherBody);
                     if (collisionInfo != null) {
@@ -242,14 +249,14 @@ public class World {
             }
         }
 
-        return Collections.unmodifiableList(collisionInfos);
+        return (collisionInfos);
     }
 
     private Body[] bodies = new Body[0];
 
     @SuppressWarnings("ForLoopWithMissingComponent")
     public void next() {
-        Collection<Body> bodyCollection = getAll();
+        Collection<Body> bodyCollection = all();
         int bodyCount = bodyCollection.size();
         if (bodies.length != bodyCount)
             bodies = new Body[bodyCount];
@@ -321,6 +328,9 @@ public class World {
     private void beforeIteration(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
         for (int bodyIndex = leftIndex; bodyIndex < rightIndex; ++bodyIndex) {
             Body body = bodies[bodyIndex];
+            if (body == null)
+                continue;
+
 //            if (!contains(body)) {
 //                continue;
 //            }
@@ -336,19 +346,11 @@ public class World {
 
         for (int bodyIndex = 0, bodyCount = bodies.length; bodyIndex < bodyCount; ++bodyIndex) {
             Body body = bodies[bodyIndex];
-            if (body.isStatic() /*|| !contains(body)*/) {
+            if (body == null || body.isStatic() /*|| !contains(body)*/) {
                 continue;
             }
 
-            for (Body otherBody : bodyList.getPotentialIntersections(body)) {
-//                if (!contains(body)) {
-//                    break;
-//                }
-
-                //if (contains(otherBody)) {
-                    collide(body, otherBody, collisionInfoByBodyIdsPair);
-                //}
-            }
+            bodyList.getPotentialIntersections(body).forEach(otherBody -> collide(body, otherBody, collisionInfoByBodyIdsPair));
         }
     }
 
@@ -742,6 +744,16 @@ public class World {
     @NotNull
     private static Vector3D toVector3D(@NotNull Point2D point1, @NotNull Point2D point2) {
         return toVector3D(new Vector2D(point1, point2));
+    }
+
+    public List<CollisionInfo> collisions(Point2D source, double angle, double maxDistance, @Nullable Body excludeFromCollisionTest) {
+        Body b = new Body();
+        LinearGeom lg = new LinearGeom(maxDistance, true);
+        b.form(lg);
+        b.angle(angle);
+        @NotNull Point2D offset = lg.getPoint1(b.pos(), angle, Defaults.EPSILON);
+        b.pos(source.copy().subtract(offset));
+        return getCollisionInfos(b, excludeFromCollisionTest);
     }
 
     @SuppressWarnings("PublicField")

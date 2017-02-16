@@ -1,5 +1,7 @@
 package nars.net;
 
+import org.jetbrains.annotations.Nullable;
+import org.msgpack.core.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +12,7 @@ import java.util.Arrays;
 /**
  * Created by me on 2/15/17.
  */
-public abstract class UDP implements Runnable {
+public abstract class UDP  {
 
     /** in bytes */
     static final int MAX_PACKET_SIZE = 4096;
@@ -22,18 +24,26 @@ public abstract class UDP implements Runnable {
 
     //final BidiMap<UUID,IntObjectPair<InetAddress>> who = new DualHashBidiMap<>();
 
-    public UDP(int port) throws SocketException {
-        in = new DatagramSocket(port);
+    public UDP(String host, int port) throws SocketException, UnknownHostException {
+        this(InetAddress.getByName(host), port);
+    }
 
-        this.thread = new Thread(this);
+    public UDP(int port) throws SocketException {
+        this((InetAddress)null, port);
+    }
+
+    public UDP(@Nullable InetAddress a, int port) throws SocketException {
+        in = a!=null ? new DatagramSocket(port, a) : new DatagramSocket(port);
+
+        this.thread = new Thread(this::recv);
 
         logger.info("{} started {} {}", this, in, in.getLocalSocketAddress());
 
         thread.start();
     }
 
-    @Override
-    public void run() {
+
+    protected void recv() {
         byte[] receiveData = new byte[MAX_PACKET_SIZE];
 
         onStart();
@@ -60,8 +70,13 @@ public abstract class UDP implements Runnable {
         }
     }
 
-    public boolean out(String data, String host, int port) throws UnknownHostException {
-        return out(data.getBytes(), host, port);
+    public boolean out(String data, String host, int port)  {
+        try {
+            return out(data.getBytes(), host, port);
+        } catch (UnknownHostException e) {
+            logger.error("{}", e.getMessage());
+            return false;
+        }
     }
 
 
@@ -112,3 +127,59 @@ public abstract class UDP implements Runnable {
 //        }
 //    }
 }
+
+
+///** https://github.com/msgpack/msgpack-java */
+//abstract public class ObjectUDP extends UDP {
+//
+//    private static final Logger logger = LoggerFactory.getLogger(ObjectUDP.class);
+//
+//
+//
+//    public ObjectUDP(String host, int port) throws SocketException, UnknownHostException {
+//        super(host, port);
+//    }
+//
+////
+////    public boolean out(Object x, String host, int port)  {
+////        try {
+////            return out(toBytes(x), host, port);
+////        } catch (IOException e) {
+////            logger.error("{}", e);
+////            return false;
+////        }
+////    }
+//
+////    protected byte[] toBytes(Object x) throws IOException {
+////        return msgpack.write(x);
+////    }
+////
+////    protected <X> byte[] toBytes(X x, Template<X> t) throws IOException {
+////        return msgpack.write(x, t);
+////    }
+//
+//
+//    protected String stringFromBytes(byte[] x) {
+//        try {
+//            return MessagePack.newDefaultUnpacker(x).unpackString();
+//        } catch (IOException e) {
+//            logger.error("{}", e);
+//            return null;
+//        }
+//
+//        //Templates.tList(Templates.TString)
+////        System.out.println(dst1.get(0));
+////        System.out.println(dst1.get(1));
+////        System.out.println(dst1.get(2));
+////
+////// Or, Deserialze to Value then convert type.
+////        Value dynamic = msgpack.read(raw);
+////        List<String> dst2 = new Converter(dynamic)
+////                .read(Templates.tList(Templates.TString));
+////        System.out.println(dst2.get(0));
+////        System.out.println(dst2.get(1));
+////        System.out.println(dst2.get(2));
+//
+//    }
+//
+//}

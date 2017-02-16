@@ -10,6 +10,13 @@ import nars.testchamba.state.Effect;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.ParticleSystem;
 import nars.testchamba.state.Spatial;
+import nars.testchamba.util.Animation;
+
+import java.util.Collection;
+import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Created by me on 2/15/17.
@@ -63,6 +70,7 @@ public class Space extends World {
 
     public void update(View view, double dt) {
 
+
         //realtime = System.nanoTime() / 1.0e9;
 
         //if (time % automataPeriod == 0 || Chamba.executed) {
@@ -112,10 +120,12 @@ public class Space extends World {
 
     //public void forEach(Consumer<Spatial> s)
     public void draw(View v) {
+        long rt = System.nanoTime();
+
+
         forEach(o -> {
             if (o instanceof Spatial) {
-                Spatial s = (Spatial) o;
-                s.draw(v);
+                ((Spatial) o).draw(v, rt);
             }
         });
     }

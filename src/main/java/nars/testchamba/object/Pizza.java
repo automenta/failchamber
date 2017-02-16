@@ -18,7 +18,7 @@ public class Pizza extends Spatial {
     }
 
     @Override
-    public void draw(View v) {
+    public void draw(View v, long rt) {
         String n = getName();
 
         //cx = (cx * (1.0f - animationLerpRate)) + (x * animationLerpRate);

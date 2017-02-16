@@ -5,6 +5,9 @@ import com.codegame.codeseries.notreal2d.form.Geom;
 import com.codegame.codeseries.notreal2d.form.RectangularGeom;
 import nars.testchamba.View;
 import nars.testchamba.state.Spatial;
+import nars.testchamba.util.Animation;
+
+import java.util.Iterator;
 
 /**
  * Created by me on 2/15/17.
@@ -22,20 +25,29 @@ public abstract class Geometric<F extends Geom> extends Spatial {
     }
 
     @Override
-    public void draw(View view) {
+    public void draw(View v, long rt) {
 
 
 
         //normalizeAngle();
-        view.pushMatrix();
-        view.translate(xF(), yF());
-        view.rotate((float)angle());
+        v.pushMatrix();
+        v.translate(xF(), yF());
+        v.rotate((float)angle());
 
-        view.fill(r, g, b);
+        v.fill(r, g, b);
 
-        drawShape(view);
+        if (!animations.isEmpty()) {
+            Iterator<Animation> ii = animations.iterator();
+            while (ii.hasNext()) {
+                Animation x = ii.next();
+                if (!x.draw(v, rt))
+                    ii.remove();
+            }
+        }
 
-        view.popMatrix();
+        drawShape(v);
+
+        v.popMatrix();
     }
 
     @Override

@@ -2,14 +2,15 @@ package nars.testchamba;
 
 import nars.net.UDP;
 import nars.testchamba.agent.PacManAgent;
+import nars.testchamba.client.AgentClient;
 import nars.testchamba.map.Maze;
 import nars.testchamba.state.Cell;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.SimplexNoise;
 import nars.testchamba.util.Video;
 
-import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 
@@ -42,7 +43,6 @@ public class TestChambaTest {
 //        new NARSwing(nar);
 
 
-
         int w = 50;
         int h = 50;
         int water_threshold = 30;
@@ -66,66 +66,59 @@ public class TestChambaTest {
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Cell.Material.DirtFloor));
 
 
-
         new Chamba(space, true, 10000);
 
         for (int i = 0; i < 16; i++) {
-            newDummyClient(15000+i);
+            newDummyClient(15000 + i);
         }
     }
 
-    protected static void newDummyClient(int port) {
+    protected static void newDummyClient(int port) throws SocketException, UnknownHostException {
         Random random = new Random();
-        try {
-            UDP u = new UDP(port) {
-                @Override protected void onStart() {
-                    new Thread(()->{
-                        out("i.pos()", 10000);
 
-                        while (running) {
+        UDP u = new AgentClient(port, "localhost", 10000) {
 
-                            switch (random.nextInt(3)) {
-                                case 0:
-                                    float x = 100;// * random.nextFloat();
-                                    float y = 0; //100 * random.nextFloat();
-                                    out("i.force(" + x + "," + y + ")", 10000);
-                                    break;
-                                case 1:
-                                    float t = 16 * (random.nextFloat() - 0.5f);
-                                    out("i.torque(" + t + ")", 10000);
-                                    break;
-                            }
-                            pause(500);
-                        }
-                        //pause((long) (5000 + 1000 * 12 * Math.random()));
+            @Override
+            public void run() {
+                while (running) {
 
-                        //out(";", 10000); //close connection
-                    }).start();
+                    switch (random.nextInt(3)) {
+                        case 0:
+                            float x = 10;// * random.nextFloat();
+                            float y = 0; //100 * random.nextFloat();
+                            force(x, y);
+                            break;
+                        case 1:
+                            float t = 16 * (random.nextFloat() - 0.5f);
+                            torque(t);
+                            break;
+                        case 2:
+                            this.see((float)(Math.random() * Math.PI * 2f), 5f);
+                            break;
+                    }
+                    pause(50);
                 }
+            }
 
-                @Override
-                protected void in(byte[] data, SocketAddress from) {
-                    System.out.println(from + ": " + new String(data));
-                }
-            };
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+
+        };
+
     }
 
-    private static void pause(long millis) {
+    public static void pause(long millis) {
         try {
             Thread.sleep(millis);
-        } catch (InterruptedException e) {                    }
+        } catch (InterruptedException e) {
+        }
     }
 
     protected static PacManAgent newDummy() {
-        PacManAgent a = new PacManAgent(0.5 + 2 * Math.random(), 5 + Math.random()*8, 5 + Math.random()*8) {
+        PacManAgent a = new PacManAgent(0.5 + 2 * Math.random(), 5 + Math.random() * 8, 5 + Math.random() * 8) {
 
             @Override
             public void update(View space, double dt) {
-                vel(6.5 * (Math.random()-0.5), 4.5 * (Math.random()-0.5) );
-                torque(1.9f * (Math.random()-0.5f));
+                vel(6.5 * (Math.random() - 0.5), 4.5 * (Math.random() - 0.5));
+                torque(1.9f * (Math.random() - 0.5f));
             }
 
 

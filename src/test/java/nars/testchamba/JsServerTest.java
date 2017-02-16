@@ -1,7 +1,7 @@
 package nars.testchamba;
 
 import nars.net.JsServer;
-import nars.net.ObjectUDP;
+import nars.net.UDP;
 
 import java.net.SocketAddress;
 import java.net.SocketException;
@@ -16,7 +16,7 @@ public class JsServerTest {
 
         JsServer<Runtime> server = new JsServer<Runtime>(10000, Runtime::getRuntime);
 
-        ObjectUDP client = new ObjectUDP(10001) {
+        UDP client = new UDP(10001) {
             @Override protected void in(byte[] data, SocketAddress from) {
                 System.out.println(from + ": " + data.length + " \"" + new String(data) + "\" = bytes:" + Arrays.toString(data) );
             }
