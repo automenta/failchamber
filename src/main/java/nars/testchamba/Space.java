@@ -1,10 +1,14 @@
 package nars.testchamba;
 
+import com.codegame.codeseries.notreal2d.Body;
 import com.codegame.codeseries.notreal2d.Defaults;
 import com.codegame.codeseries.notreal2d.World;
 import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
 import nars.testchamba.agent.GridAgent;
-import nars.testchamba.state.*;
+import nars.testchamba.state.Effect;
+import nars.testchamba.state.Hauto;
+import nars.testchamba.state.ParticleSystem;
+import nars.testchamba.state.Spatial;
 
 /**
  * Created by me on 2/15/17.
@@ -124,4 +128,27 @@ public class Space extends World {
         return "";
 
     }
+
+//    public void operate(String arg, String opnamer) {
+//        opname = opnamer;
+//        Hauto cells = this.space.cells;
+//        goal = arg;
+//        for (int i = 0; i < cells.w; i++) {
+//            for (int j = 0; j < cells.h; j++) {
+//                if (cells.read[i][j].name.equals(arg)) {
+//                    if (opname.equals("go-to"))
+//                        this.target.set(i, j);
+//                }
+//            }
+//        }
+//        //if("pick".equals(opname)) {
+//        for (Body gridi : this.space.getAll()) {
+//            if (gridi instanceof Spatial && gridi.getName().equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
+//                Spatial gridu = (Spatial) gridi;
+//                if (opname.equals("go-to"))
+//                    this.target.set((float)gridu.x(), (float)gridu.y());
+//            }
+//        }
+//        //}
+//    }
 }

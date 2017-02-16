@@ -1,7 +1,6 @@
 package nars.testchamba.object;
 
 import nars.testchamba.View;
-import nars.testchamba.state.Effect;
 import nars.testchamba.state.Spatial;
 
 import java.awt.*;

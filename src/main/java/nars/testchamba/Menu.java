@@ -145,34 +145,34 @@ public class Menu extends JPopupMenu {
             }
         });
 
-        mindSettings.add(new EditorMode("Tell object categories") {
-            @Override
-            public void run() {
-                Chamba.staticInformation = true;
-            }
-        });
+//        mindSettings.add(new EditorMode("Tell object categories") {
+//            @Override
+//            public void run() {
+//                Chamba.staticInformation = true;
+//            }
+//        });
+//
+//        mindSettings.add(new EditorMode("Don't tell object categories") {
+//            @Override
+//            public void run() {
+//                Chamba.staticInformation = false;
+//            }
+//        });
 
-        mindSettings.add(new EditorMode("Don't tell object categories") {
-            @Override
-            public void run() {
-                Chamba.staticInformation = false;
-            }
-        });
 
-
-        mindSettings.add(new EditorMode("Use complex feedback") {
-            @Override
-            public void run() {
-                Chamba.ComplexFeedback = true;
-            }
-        });
-
-        mindSettings.add(new EditorMode("Don't use complex feedback") {
-            @Override
-            public void run() {
-                Chamba.ComplexFeedback = false;
-            }
-        });
+//        mindSettings.add(new EditorMode("Use complex feedback") {
+//            @Override
+//            public void run() {
+//                Chamba.ComplexFeedback = true;
+//            }
+//        });
+//
+//        mindSettings.add(new EditorMode("Don't use complex feedback") {
+//            @Override
+//            public void run() {
+//                Chamba.ComplexFeedback = false;
+//            }
+//        });
 
         //ComplexFeedback
 
@@ -561,7 +561,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 view.space.cells.click("", "go-to", "");
-                Chamba.active = true;
+                
             }
         });
 
@@ -569,7 +569,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 view.space.cells.click("", "pick", "");
-                Chamba.active = true;
+                
             }
         });
 
@@ -577,7 +577,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 view.space.cells.click("", "activate", "");
-                Chamba.active = true;
+                
             }
         });
 
@@ -585,7 +585,7 @@ public class Menu extends JPopupMenu {
             @Override
             public void run() {
                 view.space.cells.click("", "deactivate", "");
-                Chamba.active = true;
+                
             }
         });
 
@@ -644,7 +644,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("be somewhere") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "at");
             }
         });
@@ -652,7 +652,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("hold something") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "hold");
             }
         });
@@ -660,7 +660,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("make switched on") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "on");
             }
         });
@@ -668,7 +668,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("make switched off") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "off");
             }
         });
@@ -676,7 +676,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("make opened") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "opened");
             }
         });
@@ -684,7 +684,7 @@ public class Menu extends JPopupMenu {
         goalMenu.add(new EditorMode("make closed") {
             @Override
             public void run() {
-                Chamba.active = true;
+                
                 view.space.cells.click("", "", "closed");
             }
         });

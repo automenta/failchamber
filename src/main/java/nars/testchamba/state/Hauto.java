@@ -177,10 +177,10 @@ public class Hauto {
 //                    nar.addInput("<"+r.name+" --> [opened]>. :|:");
                 }
             } else {
-                if (!r.solid && Chamba.keyn != doornumber(r)) {
-                    w.solid = true;
-//                    nar.addInput("(--,<"+r.name+" --> [opened]>). :|: %1.00;0.90%");
-                }
+//                if (!r.solid && Chamba.keyn != doornumber(r)) {
+//                    w.solid = true;
+////                    nar.addInput("(--,<"+r.name+" --> [opened]>). :|: %1.00;0.90%");
+//                }
             }
         }
         //////// WIRE / CURRENT PULSE FLOW /////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ public class Hauto {
         if (oper.equals("perceive")) {
             read[x][y].name = "place" + entityID.toString();
             write[x][y].name = "place" + entityID.toString();
-            if (Chamba.staticInformation)
+
             /*
             nar.addInput("<"+"{place"+entityID.toString()+"} --> place>.");
 
@@ -267,7 +267,7 @@ public class Hauto {
                 space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
             }
             */
-                entityID.getAndIncrement();
+            //    entityID.getAndIncrement();
             return;
         }
 

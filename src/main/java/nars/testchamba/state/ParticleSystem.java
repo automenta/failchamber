@@ -1,6 +1,5 @@
 package nars.testchamba.state;
 
-import nars.testchamba.View;
 import nars.testchamba.particle.Graviton;
 import nars.testchamba.particle.Particle;
 

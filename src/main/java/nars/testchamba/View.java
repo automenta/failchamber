@@ -2,10 +2,11 @@ package nars.testchamba;
 
 import nars.testchamba.agent.GridAgent;
 import nars.testchamba.particle.Particle;
-import nars.testchamba.state.*;
+import nars.testchamba.state.Cell;
+import nars.testchamba.state.Hauto;
+import nars.testchamba.state.ParticleSystem;
 import nars.testchamba.util.NWindow;
 import processing.core.PApplet;
-import processing.core.PFont;
 import processing.core.PVector;
 
 import javax.swing.*;
@@ -46,14 +47,18 @@ public class View extends PApplet {
     public View(Space space) {
         super();
 
-        this.space = space;
-
         initSurface();
-        startSurface();
 
-        textAlign(CENTER);
-        textFont(new PFont(new Font(Font.MONOSPACED, Font.BOLD, 12), true));
+        this.space = space;
     }
+
+//    public void start() {
+//        startSurface();
+//
+//        textAlign(CENTER);
+//        //textFont(new PFont(new Font(Font.MONOSPACED, Font.BOLD, 12), true));
+//
+//    }
 
 
     public String what(int x, int y) {

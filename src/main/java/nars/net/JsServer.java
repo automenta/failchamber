@@ -1,14 +1,11 @@
 package nars.net;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.Executor;
@@ -16,9 +13,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * Created by me on 2/15/17.
- */
+
 public class JsServer<A> extends SessionUDP {
 
     private static final Logger logger = LoggerFactory.getLogger(JsServer.class);
@@ -57,7 +52,7 @@ public class JsServer<A> extends SessionUDP {
             String code = new String(codeByte);
             exe.execute(() -> {
                 Object result = eval(code, this, JS);
-                System.out.println(result + " " + result.getClass());
+                //System.out.println(result + " " + result.getClass());
                 if (result != null) {
 
 //                    try {

@@ -6,11 +6,9 @@ import nars.net.ObjectUDP;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
-public class Net {
+public class JsServerTest {
 
 
 

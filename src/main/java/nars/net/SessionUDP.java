@@ -6,7 +6,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * javascript UDP context

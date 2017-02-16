@@ -10,7 +10,6 @@ import com.codegame.codeseries.notreal2d.bodylist.SimpleBodyList;
 import com.codegame.codeseries.notreal2d.collision.*;
 import com.codegame.codeseries.notreal2d.listener.CollisionListener;
 import com.codegame.codeseries.notreal2d.provider.MomentumTransferFactorProvider;
-
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -304,7 +303,7 @@ public class World {
         }
     }
 
-    private void beforeStep(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
+    private static void beforeStep(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
         for (int bodyIndex = leftIndex; bodyIndex < rightIndex; ++bodyIndex) {
             Body body = bodies[bodyIndex];
 //            if (!contains(body)) {
@@ -350,7 +349,7 @@ public class World {
         }
     }
 
-    private void afterStep(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
+    private static void afterStep(@NotNull Body[] bodies, int leftIndex, int rightIndex) {
         for (int bodyIndex = leftIndex; bodyIndex < rightIndex; ++bodyIndex) {
             Body body = bodies[bodyIndex];
 //            if (!contains(body)) {

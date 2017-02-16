@@ -2,7 +2,6 @@ package com.codegame.codeseries.notreal2d.form;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codegame.codeseries.notreal2d.Body;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

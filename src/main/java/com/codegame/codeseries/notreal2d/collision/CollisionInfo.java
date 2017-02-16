@@ -4,14 +4,16 @@ import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
 import com.codeforces.commons.text.StringUtil;
 import com.codegame.codeseries.notreal2d.Body;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 08.06.2015
  */
 public class CollisionInfo {
-    private static final Logger logger = Logger.getLogger(CollisionInfo.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollisionInfo.class);
 
     private final Body bodyA;
     private final Body bodyB;

@@ -3,9 +3,7 @@ package nars.net;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.*;
 import java.util.Arrays;
 
@@ -29,7 +27,7 @@ public abstract class UDP implements Runnable {
 
         this.thread = new Thread(this);
 
-        logger.info("{} start on port", this, port);
+        logger.info("{} started {} {}", this, in, in.getLocalSocketAddress());
 
         thread.start();
     }
