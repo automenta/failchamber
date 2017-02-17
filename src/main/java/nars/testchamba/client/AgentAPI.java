@@ -1,17 +1,17 @@
 package nars.testchamba.client;
 
+import nars.testchamba.object.VisionRayAnimation;
 import notreal.collision.CollisionInfo;
 import nars.testchamba.Space;
-import nars.testchamba.View;
 import nars.testchamba.agent.PacManAgent;
-import nars.testchamba.util.Animation;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.net.SocketAddress;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.DoubleStream;
 
-import static nars.testchamba.Space.f;
+import static nars.testchamba.Space.ff;
 
 /**
  * client API (accessible thru JsServer)
@@ -27,88 +27,51 @@ public class AgentAPI implements Closeable {
         this.space = s;
 
         this.agent = new PacManAgent(1f);
-        agent.pos(s.spawnPoint());
+        agent.pos(s.whereSpawns());
         s.add(agent);
     }
 
-    public float[] pos() { return f(agent.pos()); }
-    public float[] vel() { return f(agent.vel()); }
+    public float[] pos() { return ff(agent.pos()); }
+
+    public float[] vel() { return ff(agent.vel()); }
+
     public void force(float x, float y) { agent.forceLocal(x, y);     }
+
     public void torque(float t) { agent.torque(t);     }
 
-//    public static class VisionRay {
-//        public final String seen;
-//        public final float distance;
-//
-//        public VisionRay(String seen, float distance) {
-//            this.seen = seen;
-//            this.distance = distance;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "VisionRay{" +
-//                    "seen='" + seen + '\'' +
-//                    ", distance=" + distance +
-//                    '}';
-//        }
-//    }
 
-    @Nullable
-    public CollisionInfo see(float angleRelativeToForward, float maxDistance) {
-        double ang = agent.angle() + angleRelativeToForward;
+    public CollisionInfo[] see(double maxDistance, double[] angles) {
+        return DoubleStream.of(angles).mapToObj( a-> {
+            double ang = agent.angle() + a;
 
-        List<CollisionInfo> c = space.collisions(agent.pos(), ang, maxDistance, agent);
+            List<CollisionInfo> c = space.collisions(agent.pos(), ang, maxDistance, agent);
 
-        CollisionInfo result;
+            CollisionInfo result;
 
-        if (!c.isEmpty()) {
-            if (c.size() > 1) {
-                double X = agent.x();
-                double Y = agent.y();
+            if (!c.isEmpty()) {
+                if (c.size() > 1) {
+                    double X = agent.x();
+                    double Y = agent.y();
 
-                //sort by nearest
-                c.sort((a, b) -> {
-                    double aDist = a.getPoint().getSquaredDistanceTo(X, Y);
-                    double bDist = b.getPoint().getSquaredDistanceTo(X, Y);
-                    return Double.compare(aDist, bDist);
-                });
+                    //sort by nearest
+                    c.sort((e, f) -> {
+                        double aDist = e.getPoint().getSquaredDistanceTo(X, Y);
+                        double bDist = f.getPoint().getSquaredDistanceTo(X, Y);
+                        return Double.compare(aDist, bDist);
+                    });
+                }
+
+                //System.out.println(agent + "\n" + Joiner.on('\n').join(c) + "\n");
+
+                result = c.get(0);
+            } else {
+                result = null;
             }
 
-            //System.out.println(agent + "\n" + Joiner.on('\n').join(c) + "\n");
+            agent.animate(new VisionRayAnimation(agent, (float)a, result, (float)maxDistance));
 
-            result = c.get(0);
-        } else {
-            result = null;
-        }
-
-        agent.animate(new Animation() {
-
-            float opacity = 1f;
-            double ang = angleRelativeToForward;
-            double dist = result!=null ? result.getPoint().getDistanceTo(agent.pos()) : maxDistance;
-            double dx = Math.cos(ang) * dist;
-            double dy = Math.sin(ang) * dist;
-
-            float r = result!=null ? 0f : 200f;
-            float g = result!=null ? 200f : 0f;
-
-            @Override
-            public boolean draw(View v, double rt) {
-
-                v.stroke(r, g, 10, 180 * opacity);
-                opacity -= 0.1f;
-
-                v.strokeWeight(0.1f);
-
-                v.line( 0, 0, (float)dx, (float)dy );
-                v.noStroke();
-
-                return (opacity > 0);
-            }
-        });
-
-        return result;
+            return result;
+        }).filter(Objects::nonNull).toArray(CollisionInfo[]::new);
     }
 
     @Override

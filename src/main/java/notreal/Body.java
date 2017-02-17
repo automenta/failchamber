@@ -315,12 +315,14 @@ public class Body {
     }
 
     /** hack */
-    public void pos(Vector2D v) {
+    public Body pos(Vector2D v) {
         pos(v.getX(), v.getY());
+        return this;
     }
 
-    public void pos(Point2D position) {
+    public Body pos(Point2D position) {
         currentState.pos(position);
+        return this;
     }
 
     public void pos(double x, double y) {

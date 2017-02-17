@@ -3,6 +3,7 @@ package nars.testchamba;
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.pair.DoublePair;
 import notreal.World;
+import notreal.bodylist.CellSpaceBodyList;
 import notreal.bodylist.SimpleBodyList;
 import notreal.form.LinearGeom;
 import nars.testchamba.agent.PacManAgent;
@@ -22,8 +23,8 @@ public class Space extends World {
 
     public Space(Hauto cells) {
         super(5, 60, 1E-4,
-            //new CellSpaceBodyList(2, 4) //not working yet
-            new SimpleBodyList()
+            new CellSpaceBodyList(8, 8)
+            //new SimpleBodyList()
         );
 
         this.cells = cells;
@@ -110,7 +111,7 @@ public class Space extends World {
 
     }
 
-    public static float[] f(DoublePair pos) {
+    public static float[] ff(DoublePair pos) {
         return new float[] { (float) pos.getFirst(), (float) pos.getSecond()};
     }
 
@@ -148,7 +149,7 @@ public class Space extends World {
 
     }
 
-    public Point2D spawnPoint() {
+    public Point2D whereSpawns() {
         return new Point2D(Math.random()*boundsX, Math.random()*boundsY);
     }
 

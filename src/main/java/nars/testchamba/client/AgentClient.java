@@ -5,6 +5,7 @@ import jcog.net.UDP;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * Created by me on 2/15/17.
@@ -30,8 +31,8 @@ public class AgentClient extends UDP implements Runnable {
         out("i.torque(" + t + ")");
     }
 
-    public void see(float angle, float distance) {
-        out("i.see(" + angle + ',' + distance + ")" );
+    public void see(double distance, double... angles) {
+        out("i.see(" + distance + ',' + Arrays.toString(angles) + ")" );
     }
 
 

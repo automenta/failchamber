@@ -1,9 +1,11 @@
 package nars.testchamba;
 
+import jcog.Util;
 import jcog.net.UDP;
 import nars.testchamba.agent.PacManAgent;
 import nars.testchamba.client.AgentClient;
 import nars.testchamba.map.Maze;
+import nars.testchamba.object.Herb;
 import nars.testchamba.state.Cell;
 import nars.testchamba.state.Hauto;
 import nars.testchamba.state.SimplexNoise;
@@ -12,41 +14,22 @@ import nars.testchamba.util.Video;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 
-public class TestChambaTest {
+public class DemoWorld extends Space {
 
     static {
         Video.init(); //hack for processing's bad parsing of JDK version
     }
 
-    public static void main(String[] args) throws Exception {
+    static final int w = 50;
+    static final int h = 50;
+    static final int water_threshold = 30;
 
-        //set NAR architecture parameters:
-        //builder...
-//        Parameters.CONSIDER_NEW_OPERATION_BIAS = 1.0f; //not that much events in testchamber anyway
-//        Parameters.SEQUENCE_BAG_SIZE = 100; //but many possible different ways to achieve certain things
-//        NAR nar = new NAR();
-//        nar.param.decisionThreshold.set(0.51);
-        //set NAR runtime parmeters:
+    public DemoWorld() {
+        super(new Hauto(w, h));
 
-        /*for(NAR.PluginState pluginstate : nar.getPlugins()) {
-            if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
-                nar.removePlugin(pluginstate);
-            }
-        }*/
-
-        //nar.addPlugin(new TemporalParticlePlanner());
-
-        //(nar.param).duration.set(10);
-//        (nar.param).noiseLevel.set(0);
-//        new NARSwing(nar);
-
-
-        int w = 50;
-        int h = 50;
-        int water_threshold = 30;
-        Hauto cells = new Hauto(w, h);
         cells.forEach(0, 0, w, h, c -> {
 ///c.setHeight((int)(Math.random() * 12 + 1));
             float smoothness = 10f;
@@ -59,28 +42,34 @@ public class TestChambaTest {
         });
 
 
-        Space space = new Space(cells);
-
-        Maze.buildMaze(space, 3, 3, 23, 23);
+        Maze.buildMaze(this, 3, 3, 23, 23);
 
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Cell.Material.DirtFloor));
 
-
-        new Chamba(space, true, 10000);
-
-        for (int i = 0; i < 4; i++) {
-            newDummyClient(15000 + i);
+        for (int i = 0; i < 20; i++) {
+            add(new Herb.Cannanip(0.5f + Math.random() * 0.05f).pos(whereSpawns()));
         }
     }
 
-    protected static void newDummyClient(int port) throws SocketException, UnknownHostException {
+    public static void main(String[] args) throws Exception {
+        new Chamba(
+                new DemoWorld(),
+                true,
+                10000);
+
+        for (int i = 0; i < 4; i++) {
+            newDummyAgent(15000 + i);
+        }
+    }
+
+    protected static void newDummyAgent(int port) throws SocketException, UnknownHostException {
         Random random = new Random();
 
         UDP u = new AgentClient(port, "localhost", 10000) {
 
-            double scanAngle = 0;
-            @Override
-            public void run() {
+            double lookAngle = 0;
+
+            @Override public void run() {
                 while (running) {
 
                     switch (random.nextInt(3)) {
@@ -96,23 +85,16 @@ public class TestChambaTest {
 
                     }
 
-                    this.see((float)scanAngle, 25);
-                    scanAngle += 0.05;
+                    see(25.0, IntStream.range(-5, 5).mapToDouble(i -> lookAngle + i * 0.1).toArray());
 
-                    pause(50);
+                    lookAngle += 0.05;
+
+                    Util.pause(100);
                 }
             }
 
-
         };
 
-    }
-
-    public static void pause(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-        }
     }
 
     protected static PacManAgent newDummy() {

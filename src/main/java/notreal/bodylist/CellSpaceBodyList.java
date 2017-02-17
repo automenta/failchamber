@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -21,7 +22,6 @@ import static com.codeforces.commons.math.Math.floor;
 import static com.codeforces.commons.math.Math.sqr;
 
 /**
- * I BROKE IT -seh
  *
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
@@ -36,6 +36,10 @@ public class CellSpaceBodyList implements BodyList {
     private static final int MAX_FAST_BODY_ID = 9999;
 
     private final Map<Long, Body> bodyById = new ConcurrentHashMap<>();
+    //TODO use long instead of IntPair
+    private final Map<IntPair, Body[]> bodiesByCell = new ConcurrentHashMap<>();
+
+    private final Set<Body> cellExceedingBodies = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private final Body[] fastBodies = new Body[MAX_FAST_BODY_ID + 1];
     private final int[] fastCellXByBodyId = new int[MAX_FAST_BODY_ID + 1];
@@ -44,11 +48,6 @@ public class CellSpaceBodyList implements BodyList {
     private final Point2D[] fastCellRightBottomByBodyId = new Point2D[MAX_FAST_BODY_ID + 1];
 
     private final Body[][][] bodiesByCellXY = new Body[MAX_FAST_X - MIN_FAST_X + 1][MAX_FAST_Y - MIN_FAST_Y + 1][];
-
-    //TODO use long instead of IntPair
-    private final Map<IntPair, Body[]> bodiesByCell = new HashMap<>();
-
-    private final Set<Body> cellExceedingBodies = new HashSet<>();
 
     private double cellSize;
     private final double maxCellSize;
@@ -425,17 +424,20 @@ public class CellSpaceBodyList implements BodyList {
         potentialIntersections.add(otherBody);
     }
 
+    final AtomicBoolean busyRebuild = new AtomicBoolean(false);
+
     private void rebuildIndexes() {
-        for (int cellX = MIN_FAST_X; cellX <= MAX_FAST_X; ++cellX) {
-            for (int cellY = MIN_FAST_Y; cellY <= MAX_FAST_Y; ++cellY) {
-                bodiesByCellXY[cellX - MIN_FAST_X][cellY - MIN_FAST_Y] = null;
-            }
+        if (busyRebuild.compareAndSet(false, true)) {
+
+            for (Body[][] x : bodiesByCellXY)
+                for (Body[] y : x)
+                    Arrays.fill(y, null);
+
+            bodiesByCell.clear();
+            cellExceedingBodies.clear();
+
+            bodyById.values().forEach(this::addBodyToIndexes);
         }
-
-        bodiesByCell.clear();
-        cellExceedingBodies.clear();
-
-        bodyById.values().forEach(this::addBodyToIndexes);
     }
 
     private void addBodyToIndexes(@NotNull Body body) {
@@ -558,226 +560,4 @@ public class CellSpaceBodyList implements BodyList {
         return NumberUtil.toInt(floor(y / cellSize));
     }
 
-    private static final class UnmodifiableCollectionWrapperList<E> implements List<E> {
-        private final Collection<E> collection;
-
-        private UnmodifiableCollectionWrapperList(Collection<E> collection) {
-            this.collection = collection;
-        }
-
-        @Override
-        public int size() {
-            return collection.size();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return collection.isEmpty();
-        }
-
-        @Override
-        public boolean contains(Object object) {
-            return collection.contains(object);
-        }
-
-        @NotNull
-        @Override
-        public Iterator<E> iterator() {
-            Iterator<E> iterator = collection.iterator();
-
-            return new MyUnmodifiableIterator<>(iterator);
-        }
-
-        @NotNull
-        @Override
-        public Object[] toArray() {
-            return collection.toArray();
-        }
-
-        @SuppressWarnings("SuspiciousToArrayCall")
-        @NotNull
-        @Override
-        public <T> T[] toArray(@NotNull T[] array) {
-            return collection.toArray(array);
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public boolean add(E element) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public boolean remove(Object object) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean containsAll(@NotNull Collection<?> collection) {
-            return this.collection.containsAll(collection);
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public boolean addAll(@NotNull Collection<? extends E> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_, _ -> fail")
-        @Override
-        public boolean addAll(int index, @NotNull Collection<? extends E> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public boolean removeAll(@NotNull Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public boolean retainAll(@NotNull Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract(" -> fail")
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public E get(int index) {
-            if (collection instanceof List) {
-                return ((List<E>) collection).get(index);
-            }
-
-            if (index < 0 || index >= collection.size()) {
-                throw new IndexOutOfBoundsException("Illegal index: " + index + ", size: " + collection.size() + '.');
-            }
-
-            Iterator<E> iterator = collection.iterator();
-
-            for (int i = 0; i < index; ++i) {
-                iterator.next();
-            }
-
-            return iterator.next();
-        }
-
-        //@Contract("_, _ -> fail")
-        @Override
-        public E set(int index, E element) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_, _ -> fail")
-        @Override
-        public void add(int index, E element) {
-            throw new UnsupportedOperationException();
-        }
-
-        //@Contract("_ -> fail")
-        @Override
-        public E remove(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int indexOf(Object o) {
-            Iterator<E> iterator = collection.iterator();
-            int index = 0;
-
-            if (o == null) {
-                while (iterator.hasNext()) {
-                    if (iterator.next() == null) {
-                        return index;
-                    }
-                    ++index;
-                }
-            } else {
-                while (iterator.hasNext()) {
-                    if (o.equals(iterator.next())) {
-                        return index;
-                    }
-                    ++index;
-                }
-            }
-
-            return -1;
-        }
-
-        @Override
-        public int lastIndexOf(Object o) {
-            if (collection instanceof List) {
-                return ((List) collection).lastIndexOf(o);
-            }
-
-            Iterator<E> iterator = collection.iterator();
-            int index = 0;
-            int lastIndex = -1;
-
-            if (o == null) {
-                while (iterator.hasNext()) {
-                    if (iterator.next() == null) {
-                        lastIndex = index;
-                    }
-                    ++index;
-                }
-            } else {
-                while (iterator.hasNext()) {
-                    if (o.equals(iterator.next())) {
-                        lastIndex = index;
-                    }
-                    ++index;
-                }
-            }
-
-            return lastIndex;
-        }
-
-        @NotNull
-        @Override
-        public ListIterator<E> listIterator() {
-            return collection instanceof List
-                    ? Collections.unmodifiableList((List<E>) collection).listIterator()
-                    : Collections.unmodifiableList(new ArrayList<>(collection)).listIterator();
-        }
-
-        @NotNull
-        @Override
-        public ListIterator<E> listIterator(int index) {
-            return collection instanceof List
-                    ? Collections.unmodifiableList((List<E>) collection).listIterator(index)
-                    : Collections.unmodifiableList(new ArrayList<>(collection)).listIterator(index);
-        }
-
-        @NotNull
-        @Override
-        public List<E> subList(int fromIndex, int toIndex) {
-            return collection instanceof List
-                    ? Collections.unmodifiableList(((List<E>) collection).subList(fromIndex, toIndex))
-                    : Collections.unmodifiableList(new ArrayList<>(collection)).subList(fromIndex, toIndex);
-        }
-
-        private static class MyUnmodifiableIterator<E> extends UnmodifiableIterator<E> {
-            private final Iterator<E> iterator;
-
-            public MyUnmodifiableIterator(Iterator<E> iterator) {
-                this.iterator = iterator;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public E next() {
-                return iterator.next();
-            }
-        }
-    }
 }
