@@ -2,7 +2,7 @@ package nars.testchamba;
 
 import jcog.Util;
 import jcog.net.UDP;
-import nars.testchamba.agent.PacManAgent;
+import nars.testchamba.object.Pacman;
 import nars.testchamba.client.AgentClient;
 import nars.testchamba.map.Maze;
 import nars.testchamba.object.Herb;
@@ -19,9 +19,6 @@ import java.util.stream.IntStream;
 
 public class DemoWorld extends Space {
 
-    static {
-        Video.init(); //hack for processing's bad parsing of JDK version
-    }
 
     static final int w = 50;
     static final int h = 50;
@@ -46,8 +43,8 @@ public class DemoWorld extends Space {
 
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Cell.Material.DirtFloor));
 
-        for (int i = 0; i < 20; i++) {
-            add(new Herb.Cannanip(0.5f + Math.random() * 0.05f).pos(whereSpawns()));
+        for (int i = 0; i < 75; i++) {
+            add(new Herb.Cannanip(0.5f + Math.random() * 0.5f).pos(whereSpawns()));
         }
     }
 
@@ -97,8 +94,8 @@ public class DemoWorld extends Space {
 
     }
 
-    protected static PacManAgent newDummy() {
-        PacManAgent a = new PacManAgent(1) {
+    protected static Pacman newDummy() {
+        Pacman a = new Pacman(1) {
 
             @Override
             public void update(View space, double dt) {

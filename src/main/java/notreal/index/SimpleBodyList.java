@@ -1,4 +1,4 @@
-package notreal.bodylist;
+package notreal.index;
 
 import notreal.Body;
 import org.jetbrains.annotations.NotNull;
@@ -14,69 +14,38 @@ import static com.codeforces.commons.math.Math.sqr;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public class SimpleBodyList implements BodyList {
+public class SimpleBodyList implements SpatialIndex {
 
     //TODO just use Map<Long,Body> and this will give faster lookups
 
     private final Set<Body> bodies = Collections.newSetFromMap(new ConcurrentHashMap());
 
     @Override
-    public void addBody(@NotNull Body body) {
+    public boolean addBody(@NotNull Body body) {
 
         if (bodies.contains(body)) {
             throw new IllegalStateException(body + " is already added.");
         }
 
-        bodies.add(body);
+        return bodies.add(body);
     }
 
     @Override
-    public void removeBody(@NotNull Body body) {
-
-        for (Iterator<Body> bodyIterator = bodies.iterator(); bodyIterator.hasNext(); ) {
-            if (bodyIterator.next().equals(body)) {
-                bodyIterator.remove();
-                return;
-            }
-        }
-
-        throw new IllegalStateException("Can't find " + body + '.');
+    public boolean removeBody(@NotNull Body body) {
+        return bodies.remove(body);
     }
 
     @Override
-    public void removeBody(long id) {
+    public boolean removeBody(long id) {
         for (Iterator<Body> bodyIterator = bodies.iterator(); bodyIterator.hasNext(); ) {
             if (bodyIterator.next().id == id) {
                 bodyIterator.remove();
-                return;
+                return true;
             }
         }
 
-        throw new IllegalStateException("Can't find Body {id=" + id + "}.");
-    }
-
-    @Override
-    public void removeBodyQuietly(@Nullable Body body) {
-        if (body == null) {
-            return;
-        }
-
-        for (Iterator<Body> bodyIterator = bodies.iterator(); bodyIterator.hasNext(); ) {
-            if (bodyIterator.next().equals(body)) {
-                bodyIterator.remove();
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void removeBodyQuietly(long id) {
-        for (Iterator<Body> bodyIterator = bodies.iterator(); bodyIterator.hasNext(); ) {
-            if (bodyIterator.next().id == id) {
-                bodyIterator.remove();
-                return;
-            }
-        }
+        //throw new IllegalStateException("Can't find Body {id=" + id + "}.");
+        return false;
     }
 
     @Override

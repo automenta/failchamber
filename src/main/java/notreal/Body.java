@@ -608,7 +608,7 @@ public class Body {
     }
 
     @SuppressWarnings("FloatingPointEquality")
-    void applyMovementAirFriction(double updateFactor) {
+    public void applyMovementAirFriction(double updateFactor) {
         if (lastMovementTransferFactor == null
                 || movementAirFrictionFactor != lastMovementAirFrictionFactor
                 || updateFactor != lastMovementUpdateFactor) {
@@ -621,7 +621,7 @@ public class Body {
     }
 
     @SuppressWarnings("FloatingPointEquality")
-    void applyRotationAirFriction(double updateFactor) {
+    public void applyRotationAirFriction(double updateFactor) {
         if (lastRotationTransferFactor == null
                 || rotationAirFrictionFactor != lastRotationAirFrictionFactor
                 || updateFactor != lastRotationUpdateFactor) {

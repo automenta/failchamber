@@ -1,5 +1,6 @@
 package notreal;
 
+import nars.testchamba.Space;
 import notreal.form.CircularGeom;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class WorldTest {
         int iterationCountPerStep = Defaults.ITERATION_COUNT_PER_STEP;
         int stepCountPerTimeUnit = 10;
 
-        World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
+        Space world = new Space(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body body = new Body();
         body.geom(new CircularGeom(1.0D));
@@ -97,7 +98,7 @@ public class WorldTest {
 
         double originalVelocityModule = 0.1D;
 
-        World world = new World(iterationCountPerStep, stepCountPerTimeUnit);
+        Space world = new Space(iterationCountPerStep, stepCountPerTimeUnit);
 
         Body bodyA = new Body();
         bodyA.geom(new CircularGeom(1.0D));

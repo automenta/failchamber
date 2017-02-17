@@ -1,4 +1,4 @@
-package nars.testchamba.agent;
+package nars.testchamba.object;
 
 import nars.testchamba.View;
 import nars.testchamba.object.Geometric;
@@ -9,53 +9,23 @@ import java.awt.*;
 import java.util.ArrayDeque;
 
 
-public class PacManAgent extends Geometric.Circle {
+public class Pacman extends Geometric.Circle {
 
-    public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
-    public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
+//    public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
+//    public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
     //public final Set<Object> inventory = new HashSet();
 
     //final float animationLerpRate = 0.5f; //LERP interpolation rate
 
 
-    public PacManAgent(double rad) {
+    public Pacman(double rad) {
         super(rad);
         color(250, 120, 0);
     }
 
-
-
-    public void act(Action a) {
-        actions.add(a);
-    }
-
-    public void perceive(Effect e) {
-        effects.add(e);
-    }
-
-    public Effect perceiveNext() {
-        if (effects.isEmpty())
-            return null;
-
-        return effects.pop();
-    }
-
-    public void forward(int steps) {
-        act(new Action.Forward(steps));
-    }
-
-    public void turn(int angle) {
-        act(new Action.Turn(angle));
-    }
-
-    public void update(Effect nextEffect, View space) {
-
-    }
-
     @Override
     public void update(View view, double dt) {
-        Effect e = perceiveNext();
-        update(e, view);
+
     }
 
     @Override
@@ -72,7 +42,23 @@ public class PacManAgent extends Geometric.Circle {
         view.ellipse(R * 0.5f, -0.5f * R, r, r);
     }
 
-    //    @Override
+//    public void act(Action a) {
+//        actions.add(a);
+//    }
+//
+//    public void perceive(Effect e) {
+//        effects.add(e);
+//    }
+//
+//    public Effect perceiveNext() {
+//        if (effects.isEmpty())
+//            return null;
+//
+//        return effects.pop();
+//    }
+
+
+        //    @Override
 //    public void draw(View space) {
 //
 ////        cx = (cx * (1.0f - animationLerpRate)) + (x * animationLerpRate);

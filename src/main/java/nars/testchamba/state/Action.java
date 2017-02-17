@@ -1,7 +1,7 @@
 package nars.testchamba.state;
 
 import nars.testchamba.View;
-import nars.testchamba.agent.PacManAgent;
+import nars.testchamba.object.Pacman;
 
 /**
  * Defines an action that may or may not be allowed by the game engine.
@@ -13,7 +13,7 @@ abstract public class Action {
     int expiresAt = -1; //allows an agent to set a time limit on the action
 
 
-    public Effect process(View p, PacManAgent a) {
+    public Effect process(View p, Pacman a) {
         return null;
     }
 
@@ -38,7 +38,7 @@ abstract public class Action {
          * rounds to the nearest cardinal direction and moves. steps can be postive or negative
          */
         @Override
-        public Effect process(View p, PacManAgent a) {
+        public Effect process(View p, Pacman a) {
             int tx = (int) Math.round(a.x());
             int ty = (int) Math.round(a.y());
             double angle = a.angle();
@@ -112,7 +112,7 @@ abstract public class Action {
         }
 
         @Override
-        public Effect process(View p, PacManAgent a) {
+        public Effect process(View p, Pacman a) {
             a.angle(angle);
             return new Effect(this, true, p.getTime());
         }

@@ -7,26 +7,29 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
  * @author me
  */
-public class Menu extends JPopupMenu {
+public class Menu extends JDialog  {
 
     //final String levelPath = "./nars_lab/nars/lab/grid2d/level/";
 
-    public Menu(final View s) {
-        //super(new BorderLayout());
-        super();
+    public Menu(View view, Point clicked) {
+        super(view.frame, true);
 
 
-        setOpaque(false);
-        setBorderPainted(false);
+        setUndecorated(true);
+        setOpacity(0.5f);
+        setBackground(null);
+        setDefaultLookAndFeelDecorated(false);
 
 
-        TreeNode root = build(s);
+        TreeNode root = build(view);
 
         DefaultTreeModel model = new DefaultTreeModel(root);
 
@@ -54,33 +57,59 @@ public class Menu extends JPopupMenu {
         toolTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
+                boolean hide = false;
+
                 if (e.getClickCount() == 2) {
                     Object o = toolTree.getLastSelectedPathComponent();
 
-                    boolean hide = false;
                     if (o instanceof DefaultMutableTreeNode) {
                         if (((DefaultMutableTreeNode) o).getChildCount() == 0) { //leaf
                             hide = true;
                         }
                     }
 
-                    if (hide) {
-                        SwingUtilities.invokeLater(() ->
-                                Menu.this.setVisible(false)
-                        );
-                    }
                 }
+
+                if (e.getButton()==MouseEvent.BUTTON3) {
+                    hide = true;
+                }
+
+                if (hide) {
+                    //SwingUtilities.invokeLater(() ->
+                    close();
+                    //);
+                }
+
             }
 
         });
 
-    }
 
-    public void popup(Component component, Point point) {
+        setMinimumSize(new Dimension(view.getWidth()/2, view.getHeight()/2));
+
         int w = (int) getPreferredSize().getWidth();
         int h = (int) getPreferredSize().getHeight();
-        this.show(component, (int) point.getX() - w / 2, (int) point.getY() - h / 2);
+
+        //Point sp = view.component().getLocationOnScreen();
+
+        setLocation( (int) clicked.getX() - w / 2,  (int) clicked.getY() - h / 2);
+        setVisible(true);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton()==MouseEvent.BUTTON3) {
+                    close();
+                }
+            }
+        });
     }
+
+    public void close() {
+        setVisible(false);
+        this.dispose();
+    }
+
 
     private TreeNode build(View view) {
 
@@ -770,6 +799,7 @@ public class Menu extends JPopupMenu {
 
         return root;
     }
+
 
     abstract public static class EditorMode extends DefaultMutableTreeNode {
 

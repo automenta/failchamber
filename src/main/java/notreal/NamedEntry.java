@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 26.08.2015
  */
-class NamedEntry {
+public class NamedEntry {
     public final String name;
 
-    NamedEntry(String name) {
+    protected NamedEntry(String name) {
         this.name = name;
     }
 
@@ -36,7 +36,7 @@ class NamedEntry {
     }
 
     //@Contract("null -> fail")
-    static void validateName(@NotNull String name) {
+    public static void validateName(@NotNull String name) {
         if (StringUtil.isBlank(name)) {
             throw new IllegalArgumentException("Argument 'name' is blank.");
         }

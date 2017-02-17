@@ -1,11 +1,10 @@
-package notreal.bodylist;
+package notreal.index;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.math.NumberUtil;
 import com.codeforces.commons.pair.IntPair;
 import notreal.Body;
 import notreal.listener.PositionListenerAdapter;
-import com.google.common.collect.UnmodifiableIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,7 @@ import static com.codeforces.commons.math.Math.sqr;
  *         Date: 02.06.2015
  */
 @NotThreadSafe
-public class CellSpaceBodyList implements BodyList {
+public class CellSpaceBodyList implements SpatialIndex {
     private static final int MIN_FAST_X = -1000;
     private static final int MAX_FAST_X = 1000;
     private static final int MIN_FAST_Y = -1000;
@@ -58,9 +57,11 @@ public class CellSpaceBodyList implements BodyList {
     }
 
     @Override
-    public void addBody(@NotNull Body body) {
+    public boolean addBody(@NotNull Body body) {
 
         long id = body.id;
+        if (bodyById.putIfAbsent(id, body)!=null)
+            return false;
 
 //        if (contains(id)) {
 //            throw new IllegalStateException(body + " is already added.");
@@ -74,7 +75,6 @@ public class CellSpaceBodyList implements BodyList {
             rebuildIndexes();
         }
 
-        bodyById.put(id, body);
         addBodyToIndexes(body);
 
         if (id >= 0L && id <= MAX_FAST_BODY_ID) {
@@ -145,21 +145,24 @@ public class CellSpaceBodyList implements BodyList {
                 }
             }, getClass().getSimpleName() + "Listener");
         }
+
+        return true;
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
-    public void removeBody(@NotNull Body body) {
-        removeBody(body.id);
+    public boolean removeBody(@NotNull Body body) {
+        return removeBody(body.id);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
-    public void removeBody(long id) {
+    public boolean removeBody(long id) {
         Body body;
 
         if ((body = bodyById.remove(id)) == null) {
-            throw new IllegalStateException("Can't find Body {id=" + id + "}.");
+            //throw new IllegalStateException("Can't find Body {id=" + id + "}.");
+            return false;
         }
 
         removeBodyFromIndexes(body);
@@ -167,42 +170,8 @@ public class CellSpaceBodyList implements BodyList {
         if (id >= 0L && id <= MAX_FAST_BODY_ID) {
             fastBodies[(int) id] = null;
         }
-    }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    @Override
-    public void removeBodyQuietly(@Nullable Body body) {
-        if (body == null) {
-            return;
-        }
-
-        long id = body.id;
-
-        if (bodyById.remove(id) == null) {
-            return;
-        }
-
-        removeBodyFromIndexes(body);
-
-        if (id >= 0L && id <= MAX_FAST_BODY_ID) {
-            fastBodies[(int) id] = null;
-        }
-    }
-
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    @Override
-    public void removeBodyQuietly(long id) {
-        Body body;
-
-        if ((body = bodyById.remove(id)) == null) {
-            return;
-        }
-
-        removeBodyFromIndexes(body);
-
-        if (id >= 0L && id <= MAX_FAST_BODY_ID) {
-            fastBodies[(int) id] = null;
-        }
+        return true;
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -242,9 +211,9 @@ public class CellSpaceBodyList implements BodyList {
     public List<Body> getPotentialIntersections(@NotNull Body body) {
         long id = body.id;
 
-        if (!contains(id)) {
-            throw new IllegalStateException("Can't find " + body + '.');
-        }
+//        if (!contains(id)) {
+//            throw new IllegalStateException("Can't find " + body + '.');
+//        }
 
         List<Body> potentialIntersections = new ArrayList<>();
 

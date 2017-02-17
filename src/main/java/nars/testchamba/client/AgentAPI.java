@@ -3,7 +3,7 @@ package nars.testchamba.client;
 import nars.testchamba.object.VisionRayAnimation;
 import notreal.collision.CollisionInfo;
 import nars.testchamba.Space;
-import nars.testchamba.agent.PacManAgent;
+import nars.testchamba.object.Pacman;
 
 import java.io.Closeable;
 import java.net.SocketAddress;
@@ -19,14 +19,14 @@ import static nars.testchamba.Space.ff;
 public class AgentAPI implements Closeable {
 
     private final Space space;
-    private final PacManAgent agent;
+    private final Pacman agent;
     private final SocketAddress addr;
 
     public AgentAPI(SocketAddress a, Space s) {
         this.addr = a;
         this.space = s;
 
-        this.agent = new PacManAgent(1f);
+        this.agent = new Pacman(1f);
         agent.pos(s.whereSpawns());
         s.add(agent);
     }

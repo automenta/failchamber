@@ -1,5 +1,6 @@
 package notreal.listener;
 
+import nars.testchamba.Space;
 import notreal.Body;
 import notreal.collision.CollisionInfo;
 import org.jetbrains.annotations.NotNull;
@@ -9,18 +10,19 @@ import org.jetbrains.annotations.NotNull;
  *         Date: 11.06.2015
  */
 public class CollisionListenerAdapter implements CollisionListener {
+
     @Override
-    public boolean beforeStartingCollision(@NotNull Body bodyA, @NotNull Body bodyB) {
+    public boolean beforeCollision(@NotNull CollisionInfo collisionInfo) {
         return true;
     }
 
     @Override
-    public boolean beforeResolvingCollision(@NotNull CollisionInfo collisionInfo) {
-        return true;
+    public void afterCollision(@NotNull CollisionInfo collisionInfo) {
+
     }
 
     @Override
-    public void afterResolvingCollision(@NotNull CollisionInfo collisionInfo) {
-        // No operations.
+    public boolean collide(@NotNull Body them, Space where, @NotNull Body me) {
+        return true;
     }
 }

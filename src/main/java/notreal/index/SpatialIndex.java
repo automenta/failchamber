@@ -1,4 +1,4 @@
-package notreal.bodylist;
+package notreal.index;
 
 import notreal.Body;
 import org.jetbrains.annotations.NotNull;
@@ -12,13 +12,11 @@ import java.util.function.Consumer;
  * @author Maxim Shipko (sladethe@gmail.com)
  *         Date: 02.06.2015
  */
-public interface BodyList {
-    void addBody(@NotNull Body body);
+public interface SpatialIndex {
+    boolean addBody(@NotNull Body body);
 
-    void removeBody(@NotNull Body body);
-    void removeBody(long id);
-    void removeBodyQuietly(@Nullable Body body);
-    void removeBodyQuietly(long id);
+    boolean removeBody(@NotNull Body body);
+    boolean removeBody(long id);
 
     boolean contains(@NotNull Body body);
     boolean contains(long id);

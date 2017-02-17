@@ -1,6 +1,6 @@
 package nars.testchamba;
 
-import nars.testchamba.agent.PacManAgent;
+import nars.testchamba.object.Pacman;
 import nars.testchamba.particle.Particle;
 import nars.testchamba.state.Cell;
 import nars.testchamba.state.Hauto;
@@ -9,6 +9,7 @@ import nars.testchamba.util.NWindow;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,6 @@ public class View extends PApplet {
     public final PVector target = new PVector(25, 25); //need to be init equal else feedback will
     public final PVector current = new PVector(0, 0);
 
-    private Menu editor;
 
     final Hnav hnav = new Hnav();
     final Hsim hsim = new Hsim();
@@ -77,7 +77,7 @@ public class View extends PApplet {
         return path;
     }
 
-    public static List<PVector> pathShortest(View s, PacManAgent a, PVector start, PVector target) {
+    public static List<PVector> pathShortest(View s, Pacman a, PVector start, PVector target) {
         Set<PVector> avoid = new HashSet<>();
         Map<PVector, PVector> parent = new HashMap<>();
         ArrayDeque<PVector> queue = new ArrayDeque<>();
@@ -167,7 +167,6 @@ public class View extends PApplet {
         menu.add(syntaxEnable);
          */
 
-        editor = new Menu(this);
 //        NWindow editorWindow = new NWindow("Edit", editor);
 //        editorWindow.setSize(200, 400);
 //        editorWindow.setVisible(true);
@@ -191,7 +190,7 @@ public class View extends PApplet {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    editor.popup(component(), e.getPoint());
+                    new Menu(View.this, e.getLocationOnScreen());
                 }
             }
         });
@@ -208,7 +207,7 @@ public class View extends PApplet {
         getSurface().setSize(bounds.getWidth(), bounds.getHeight());
     }
 
-    private Component component() {
+    public Component component() {
         return (Component) (getSurface().getNative());
     }
 
@@ -245,7 +244,7 @@ public class View extends PApplet {
     }
 
     private boolean mouseActive() {
-        return !editor.isVisible();
+        return true;
     }
 
     public void automataclicked(float x, float y) {
@@ -319,7 +318,7 @@ public class View extends PApplet {
         return realtime;
     }
 
-    public String whyNonTraversible(PacManAgent agent, int x, int y, int tx, int ty) {
+    public String whyNonTraversible(Pacman agent, int x, int y, int tx, int ty) {
 
         Hauto cells = space.cells;
 

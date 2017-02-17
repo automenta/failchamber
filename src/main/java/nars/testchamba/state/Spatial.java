@@ -1,5 +1,6 @@
 package nars.testchamba.state;
 
+import nars.testchamba.Space;
 import notreal.Body;
 import notreal.form.CircularGeom;
 import notreal.form.Geom;
@@ -37,6 +38,13 @@ public abstract class Spatial extends Body {
         pos(x, y);
     }
 
+    public void start(Space space) {
+
+    }
+
+    public void stop(Space space) {
+        
+    }
 
     abstract public void draw(View v, long rt);
 
