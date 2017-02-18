@@ -1,6 +1,6 @@
 package notreal;
 
-import nars.testchamba.Space;
+import nars.failchamber.Space;
 import notreal.form.CircularGeom;
 import org.junit.Assert;
 import org.junit.Test;

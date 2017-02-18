@@ -1,6 +1,6 @@
 package notreal.listener;
 
-import nars.testchamba.Space;
+import nars.failchamber.Space;
 import notreal.Body;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>opennars</groupId>
-    <artifactId>testchamba</artifactId>
+    <artifactId>failchamber</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>testchamba</name>
+    <name>failchamber</name>
     <url>http://github.com/opennars</url>
 
     <properties>
@@ -57,14 +57,12 @@
             </exclusions>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/org.processing/core -->
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
             <version>3.2.3</version>
         </dependency>
-
 
     </dependencies>
 

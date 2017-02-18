@@ -1,6 +1,6 @@
 package notreal.listener;
 
-import nars.testchamba.Space;
+import nars.failchamber.Space;
 import notreal.Body;
 import notreal.collision.CollisionInfo;
 import org.jetbrains.annotations.NotNull;
