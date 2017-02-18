@@ -29,10 +29,10 @@ public abstract class Spatial extends Body {
         geom(geom);
         mass(1);
 
-        setMovementFrictionFactor(0.5f);
-        setMovementAirFrictionFactor(0.5f);
-        setRotationFrictionFactor(0.5f);
-        setRotationAirFrictionFactor(0.5f);
+        setMovementFrictionFactor(0.75f);
+        setMovementAirFrictionFactor(0.75f);
+        setRotationFrictionFactor(0.75f);
+        setRotationAirFrictionFactor(0.75f);
 
         //setMomentumTransferFactor(0.5D);
     }

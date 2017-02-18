@@ -33,9 +33,9 @@ public class SimpleHaiQClient extends AgentClient {
     double SEE_DIST = 25.0;
 
 
-    int retinas = 5;
+    int retinas = 11;
     int outputs = 4; //LRUD
-    private short whatBits = 8;
+    private short whatBits = 6;
 
     private float rewardDecay = 0.9f;
 
@@ -109,7 +109,14 @@ public class SimpleHaiQClient extends AgentClient {
         while (true) {
 
             double lookAngle = 0;
-            see(SEE_DIST, IntStream.range(-2, 2 + 1).mapToDouble(i -> lookAngle + i * 0.3).toArray());
+            double angleSep = 0.15;
+
+            int retinasHalf = retinas / 2;
+            if ((retinasHalf * 2 + 1 /* 0 */) != retinas) {
+                throw new RuntimeException("invalid # retinas");
+            }
+
+            see(SEE_DIST, IntStream.range(-retinasHalf, retinasHalf+1).mapToDouble(i -> lookAngle + i * angleSep).toArray());
 
             Util.pause(updatePeriodMS);
 
