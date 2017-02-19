@@ -1,12 +1,11 @@
 package nars.failchamber.client;
 
+import com.codeforces.commons.geometry.Point2D;
 import jcog.Texts;
 import jcog.net.UDP;
-import nars.failchamber.object.Herb;
-import nars.failchamber.object.VisionRayAnimation;
+import nars.failchamber.object.*;
 import notreal.collision.CollisionInfo;
 import nars.failchamber.Space;
-import nars.failchamber.object.Pacman;
 
 import java.io.Closeable;
 import java.net.InetSocketAddress;
@@ -33,11 +32,11 @@ public class AgentAPI implements Closeable {
         this.space = s;
 
         this.agent = new Pacman(1f) {
-            @Override
-            public boolean canEat(Herb.Cannanip what) {
-                udp.outBytes(("[\"eat\",\"" + what.getClass().getSimpleName() + "\"]").getBytes(), remote);
-                return true;
+
+            @Override protected void digest(Edible.Ingest e) {
+                udp.outBytes(("[\"eat\",\"" + e.what.getClass().getSimpleName() + "\"]").getBytes(), remote);
             }
+
         };
         agent.pos(s.whereSpawns());
         s.add(agent);
@@ -53,6 +52,23 @@ public class AgentAPI implements Closeable {
     public void torque(float t) { agent.torque(t);     }
 
 
+    public void fire() {
+
+        double radStart = agent.geom().radius() * 1.5f;
+
+        float forward = (float)Math.random() * 0.05f;
+
+        Point2D start = agent.posAt(radStart,
+                forward /* forward */);
+
+        Ammo.Bullet a = new Ammo.Bullet( start.getX(), start.getY(), 0.25f, 0.25f);
+        a.angle(agent.angle());
+        float speed = 32f;
+        a.vel( agent.posAt(speed, 0).subtract(agent.pos()) );
+        //a.vel( agent.posAt(1f, 0) );
+
+        space.add(a);
+    }
 
     public Object see(double maxDistance, double[] angles) {
 

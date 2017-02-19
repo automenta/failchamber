@@ -2,6 +2,7 @@ package notreal;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
+import com.codeforces.commons.pair.DoublePair;
 
 /**
  * @author Maxim Shipko (sladethe@gmail.com)
@@ -45,8 +46,8 @@ public class DynamicState extends StaticState {
         return velocity;
     }
 
-    public void vel(Vector2D velocity) {
-        this.velocity = velocity.copy();
+    public void vel(DoublePair velocity) {
+        this.velocity = new Vector2D(velocity.getFirst(), velocity.getSecond());
     }
 
     public Vector2D getMedianVelocity() {

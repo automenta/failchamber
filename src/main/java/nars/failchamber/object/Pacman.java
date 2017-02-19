@@ -1,11 +1,15 @@
 package nars.failchamber.object;
 
+import nars.failchamber.Space;
 import nars.failchamber.View;
+import notreal.Body;
+import notreal.listener.CollisionAware;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 
-public class Pacman extends Geometric.Circle {
+public class Pacman extends Geometric.Circle implements CollisionAware {
 
 //    public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
 //    public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -38,8 +42,19 @@ public class Pacman extends Geometric.Circle {
         view.ellipse(R * 0.5f, -0.5f * R, r, r);
     }
 
-    public boolean canEat(Herb.Cannanip cannanip) {
+
+    @Override
+    public boolean collide(@NotNull Body them, Space in, @NotNull Body me) {
+        if (them instanceof Edible) {
+            Edible.Ingest e = ((Edible) them).eat(in);
+            if (e!=null)
+                digest(e);
+        }
         return true;
+    }
+
+    protected void digest(Edible.Ingest e) {
+
     }
 
 //    public void act(Action a) {

@@ -16,7 +16,7 @@ public class Herb {
 
     }
 
-    public static class Cannanip extends Geometric.Circle implements CollisionAware {
+    public static class Cannanip extends Geometric.Circle implements Edible {
 
         float nutrients = 1;
 
@@ -32,23 +32,15 @@ public class Herb {
             this.g = 220 * nutrients;
         }
 
-
         @Override
-        public boolean collide(@NotNull Body them, Space s, @NotNull Body me) {
-
-            if (them instanceof Pacman) { //HACK
-                if (nutrients > 0.1f) {
-                    synchronized (this) {
-                        //System.err.println(this + " EATEN by " + them);
-                        if (((Pacman) them).canEat(this)) {
-                            nutrients *= 0.5f;
-                            s.remove(this);
-                        }
-                    }
-                }
+        public Edible.Ingest eat(Space s) {
+            if (nutrients > 0.1f) {
+                nutrients -= 0.25f;
+                return new Edible.Ingest(this, 0.5f, 0);
+            } else {
+                s.remove(this);
+                return null;
             }
-
-            return true;
         }
     }
 

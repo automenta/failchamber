@@ -461,8 +461,10 @@ public class CellSpaceBodyList implements SpatialIndex {
     private void removeBodyFromIndexes(@NotNull Body body, int cellX, int cellY) {
         if (cellX >= MIN_FAST_X && cellX <= MAX_FAST_X && cellY >= MIN_FAST_Y && cellY <= MAX_FAST_Y) {
             Body[] cellBodies = bodiesByCellXY[cellX - MIN_FAST_X][cellY - MIN_FAST_Y];
-            cellBodies = removeBodyFromCell(cellBodies, body);
-            bodiesByCellXY[cellX - MIN_FAST_X][cellY - MIN_FAST_Y] = cellBodies;
+            if (cellBodies!=null) {
+                cellBodies = removeBodyFromCell(cellBodies, body);
+                bodiesByCellXY[cellX - MIN_FAST_X][cellY - MIN_FAST_Y] = cellBodies;
+            }
         } else {
             IntPair cell = new IntPair(cellX, cellY);
             Body[] cellBodies = bodiesByCell.get(cell);
@@ -498,7 +500,8 @@ public class CellSpaceBodyList implements SpatialIndex {
     private static Body[] removeBodyFromCell(@NotNull Body[] cellBodies, @NotNull Body body) {
         int bodyIndex = ArrayUtils.indexOf(cellBodies, body);
         if (bodyIndex == ArrayUtils.INDEX_NOT_FOUND) {
-            throw new IllegalStateException("Can't remove Body {id=" + body.id + "} from index.");
+            //throw new IllegalStateException("Can't remove Body {id=" + body.id + "} from index.");
+            return null;
         }
 
         int bodyCount = cellBodies.length;

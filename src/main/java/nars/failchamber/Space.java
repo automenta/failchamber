@@ -557,16 +557,7 @@ public class Space {
             bodyB = otherBody;
         }
 
-        boolean ok = true;
-        if (bodyA instanceof CollisionAware) {
-            ok &= ((CollisionAware)bodyA).collide(bodyB, this, bodyA);
-        }
-        if (bodyB instanceof CollisionAware) {
-            ok &= ((CollisionAware)bodyB).collide(bodyA, this, bodyB);
-        }
-        if (!ok) {
-            return;
-        }
+
 
         LongPair bodyIdsPair = new LongPair(bodyA.id, bodyB.id);
 
@@ -596,8 +587,21 @@ public class Space {
         if (collisionInfo == null) {
             collisionInfoByBodyIdsPair.put(bodyIdsPair, NULL_COLLISION_INFO);
         } else {
-            collisionInfoByBodyIdsPair.put(bodyIdsPair, collisionInfo);
-            resolveCollision(collisionInfo);
+
+
+            boolean ok = true;
+            if (bodyA instanceof CollisionAware) {
+                ok &= ((CollisionAware)bodyA).collide(bodyB, this, bodyA);
+            }
+            if (ok && bodyB instanceof CollisionAware) {
+                ok &= ((CollisionAware)bodyB).collide(bodyA, this, bodyB);
+            }
+            if (ok) {
+                collisionInfoByBodyIdsPair.put(bodyIdsPair, collisionInfo);
+                resolveCollision(collisionInfo);
+            } else {
+                collisionInfoByBodyIdsPair.put(bodyIdsPair, NULL_COLLISION_INFO);
+            }
         }
     }
 

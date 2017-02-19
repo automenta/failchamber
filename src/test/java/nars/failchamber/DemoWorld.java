@@ -2,6 +2,7 @@ package nars.failchamber;
 
 import jcog.Util;
 import jcog.net.UDP;
+import nars.failchamber.agent.SimpleHaiQClient;
 import nars.failchamber.object.Pacman;
 import nars.failchamber.client.AgentClient;
 import nars.failchamber.map.Maze;
@@ -23,7 +24,7 @@ public class DemoWorld extends Space {
     static final int h = 50;
     static final int water_threshold = 30;
 
-    public DemoWorld() {
+    public DemoWorld() throws SocketException, UnknownHostException {
         super(new Hauto(w, h));
 
         cells.forEach(0, 0, w, h, c -> {
@@ -42,6 +43,7 @@ public class DemoWorld extends Space {
 
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Cell.Material.DirtFloor));
 
+
         for (int i = 0; i < 75; i++) {
             add(new Herb.Cannanip(0.5f + Math.random() * 0.5f).pos(whereSpawns()));
         }
@@ -52,6 +54,8 @@ public class DemoWorld extends Space {
                 new DemoWorld(),
                 true,
                 10000);
+
+        new SimpleHaiQClient(15000, "localhost", 10000);
 
 //        for (int i = 0; i < 4; i++) {
 //            newDummyAgent(15000 + i);

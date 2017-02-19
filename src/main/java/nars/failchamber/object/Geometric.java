@@ -14,7 +14,7 @@ import java.util.Iterator;
  */
 public abstract class Geometric<F extends Geom> extends Spatial {
 
-    protected float r, g, b;
+    protected float r, g, b, a = 255f;
 
     public Geometric(F f) {
         super(f);
@@ -37,7 +37,7 @@ public abstract class Geometric<F extends Geom> extends Spatial {
         v.translate(xF(), yF());
         v.rotate((float)angle());
 
-        v.fill(r, g, b);
+        v.fill(r, g, b, a);
 
         if (!animations.isEmpty()) {
             Iterator<Animation> ii = animations.iterator();

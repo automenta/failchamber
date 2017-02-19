@@ -3,19 +3,14 @@ package nars.failchamber.agent;
 import com.google.gson.JsonSyntaxException;
 import jcog.Util;
 import jcog.learn.ql.HaiQAgent;
-import nars.failchamber.Space;
 import nars.failchamber.client.AgentClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -34,7 +29,7 @@ public class SimpleHaiQClient extends AgentClient {
 
 
     int retinas = 11;
-    int outputs = 4; //LRUD
+    int actions = 6; //LRUD
     private short whatBits = 6;
 
     private float rewardDecay = 0.9f;
@@ -49,7 +44,7 @@ public class SimpleHaiQClient extends AgentClient {
         hai = new jcog.learn.ql.HaiQAgent();
         hai.setQ(0.05F, 0.5F, 0.9F, 0.05F);
 
-        hai.start(inputs, outputs);
+        hai.start(inputs, actions);
     }
 
 
@@ -142,10 +137,15 @@ public class SimpleHaiQClient extends AgentClient {
                 case 4:
                     force(-60, 0);
                     break;
+
+                case 5:
+                    fire();
+                    break;
             }
 
         }
     }
+
 
     public static void main(String[] args) throws SocketException, UnknownHostException {
         new SimpleHaiQClient(16661, "localhost", 10000);

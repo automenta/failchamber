@@ -35,6 +35,10 @@ public class AgentClient extends UDP implements Runnable {
         out("i.see(" + distance + ',' + Arrays.toString(angles) + ")" );
     }
 
+    public void fire() {
+        out("i.fire()");
+    }
+
     public void out(String s) {
         out(s, remoteHost, remotePort);
     }

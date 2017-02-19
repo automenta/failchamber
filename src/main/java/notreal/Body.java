@@ -2,6 +2,7 @@ package notreal;
 
 import com.codeforces.commons.geometry.Point2D;
 import com.codeforces.commons.geometry.Vector2D;
+import com.codeforces.commons.pair.DoublePair;
 import com.codeforces.commons.text.StringUtil;
 import notreal.form.Geom;
 import notreal.provider.ConstantMovementFrictionProvider;
@@ -144,6 +145,11 @@ public class Body {
     public Body statik() {
         mass(Double.POSITIVE_INFINITY);
         return this;
+    }
+
+    public Point2D posAt(double radius, double angleRelative) {
+        double ang = angle() + angleRelative;
+        return pos().copy().add(Math.cos(ang) * radius, Math.sin(ang) * radius);
     }
 
     public void mass(double mass) {
@@ -375,7 +381,7 @@ public class Body {
         return currentState.vel();
     }
 
-    public void vel(Vector2D velocity) {
+    public void vel(DoublePair velocity) {
         currentState.vel(velocity);
     }
 
