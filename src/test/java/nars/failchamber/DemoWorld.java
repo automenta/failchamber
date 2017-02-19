@@ -7,6 +7,7 @@ import nars.failchamber.object.Pacman;
 import nars.failchamber.client.AgentClient;
 import nars.failchamber.map.Maze;
 import nars.failchamber.object.Herb;
+import nars.failchamber.object.Poison;
 import nars.failchamber.state.Cell;
 import nars.failchamber.state.Hauto;
 import nars.failchamber.state.SimplexNoise;
@@ -46,6 +47,7 @@ public class DemoWorld extends Space {
 
         for (int i = 0; i < 75; i++) {
             add(new Herb.Cannanip(0.5f + Math.random() * 0.5f).pos(whereSpawns()));
+            add(new Poison.Plutonium(0.5f + Math.random() * 0.5f).pos(whereSpawns()));
         }
     }
 
@@ -56,6 +58,7 @@ public class DemoWorld extends Space {
                 10000);
 
         new SimpleHaiQClient(15000, "localhost", 10000);
+        new SimpleHaiQClient(15001, "localhost", 10000);
 
 //        for (int i = 0; i < 4; i++) {
 //            newDummyAgent(15000 + i);

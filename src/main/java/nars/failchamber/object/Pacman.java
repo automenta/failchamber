@@ -3,13 +3,13 @@ package nars.failchamber.object;
 import nars.failchamber.Space;
 import nars.failchamber.View;
 import notreal.Body;
-import notreal.listener.CollisionAware;
+import notreal.listener.Collides;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 
-public class Pacman extends Geometric.Circle implements CollisionAware {
+public class Pacman extends Geometric.Circle implements Collides, Burnable {
 
 //    public final ArrayDeque<Action> actions = new ArrayDeque(); //pending
 //    public final ArrayDeque<Effect> effects = new ArrayDeque(); //results
@@ -54,6 +54,11 @@ public class Pacman extends Geometric.Circle implements CollisionAware {
     }
 
     protected void digest(Edible.Ingest e) {
+
+    }
+
+    @Override
+    public void burn(float temperature) {
 
     }
 

@@ -451,7 +451,7 @@ public class CellSpaceBodyList implements SpatialIndex {
 
         if (diameter > cellSize) {
             if (!cellExceedingBodies.remove(body)) {
-                throw new IllegalStateException("Can't remove Body {id=" + body.id + "} from index.");
+                //throw new IllegalStateException("Can't remove Body {id=" + body.id + "} from index.");
             }
         } else {
             removeBodyFromIndexes(body, getCellX(body.x()), getCellY(body.y()));

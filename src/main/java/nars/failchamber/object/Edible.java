@@ -13,6 +13,7 @@ public interface Edible {
         public final float nutrients;
         public final float toxins;
 
+        /** both values should be non-negative */
         public Ingest(Edible what, float nutrients, float toxins) {
             this.what = what;
             this.nutrients = nutrients;

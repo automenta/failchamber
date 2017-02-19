@@ -5,7 +5,7 @@ import notreal.Body;
 import org.jetbrains.annotations.NotNull;
 
 
-public interface CollisionAware {
+public interface Collides {
     /**
      * Physics engine iterates over all registered collision listeners in some order and invokes this method before
      * gathering any collision information. Is is not guaranteed at this stage that bodies are really intersect. If any

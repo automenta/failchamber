@@ -230,7 +230,7 @@ public class Cell {
                     break;
                 case Turret:
                     if (charge > 0)
-                        view.space.particles.emitParticles(0.5f, 0.2f, view.getTime() / 20f, 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
+                        view.space.particles.emitParticles(0.5f, 0.2f, (float) (view.getTime() / 20f), 0.07f, state.x + 0.5f, state.y + 0.5f, 1);
                     break;
             }
         }

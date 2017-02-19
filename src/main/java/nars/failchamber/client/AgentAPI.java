@@ -34,9 +34,15 @@ public class AgentAPI implements Closeable {
         this.agent = new Pacman(1f) {
 
             @Override protected void digest(Edible.Ingest e) {
-                udp.outBytes(("[\"eat\",\"" + e.what.getClass().getSimpleName() + "\"]").getBytes(), remote);
+                udp.outBytes(("[\"eat\",\"" + e.what.getClass().getSimpleName() + "\"," +
+                        Texts.n2(e.nutrients) + ",-" + Texts.n2(e.toxins) +
+                "]").getBytes(), remote);
             }
 
+            @Override public void burn(float temperature) {
+                udp.outBytes(("[\"burn\"," + Texts.n2(temperature) + "]").getBytes(), remote);
+                super.burn(temperature);
+            }
         };
         agent.pos(s.whereSpawns());
         s.add(agent);

@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
  *         Date: 02.06.2015
  */
 public class CircularGeom extends Geom {
-    private final double radius;
-    private final double angularMassFactor;
+
+    private double radius;
+    private double angularMassFactor;
 
     public CircularGeom(double radius) {
         super(Shape.CIRCLE);
@@ -21,6 +22,10 @@ public class CircularGeom extends Geom {
             ));
         }
 
+        setRadius(radius);
+    }
+
+    public void setRadius(double radius) {
         this.radius = radius;
         this.angularMassFactor = radius * radius / 2.0D;
     }

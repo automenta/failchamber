@@ -22,11 +22,11 @@ public class Key extends Spatial {
     @Override
     public void draw(View space, long rt) {
         float scale = (float) Math.sin(space.getTime() / 7f) * 0.05f + 1.0f;
-        float a = space.getTime() / 10;
+        double a = space.getTime() / 10;
 
 
         space.pushMatrix();
-        space.rotate(a);
+        space.rotate((float) a);
         space.scale(scale * 0.8f);
 
         space.fill(Color.GREEN.getRGB());

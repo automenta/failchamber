@@ -2,7 +2,7 @@ package nars.failchamber.object;
 
 import nars.failchamber.Space;
 import notreal.Body;
-import notreal.listener.CollisionAware;
+import notreal.listener.Collides;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Ammo {
 
-    public static class Bullet extends Geometric.Rectangle implements CollisionAware {
+    public static class Bullet extends Geometric.Rectangle implements Collides {
 
         float power;
 
@@ -38,7 +38,8 @@ public class Ammo {
                 power = 0;
 
                 //create pressure wave
-                Explosion e = new Explosion(geom().radius() * 4);
+                double rad = geom().radius();
+                Explosion e = new Explosion(mass(),1.5f, rad, rad * 20);
                 e.pos(pos());
                 s.add(e);
             }

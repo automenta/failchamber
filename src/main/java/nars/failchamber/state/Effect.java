@@ -8,16 +8,16 @@ public class Effect {
     public final Action action;
     public final String description;
     public final boolean success;
-    public final long when;
+    public final double when;
 
-    public Effect(Action a, boolean success, long when, String description) {
+    public Effect(Action a, boolean success, double when, String description) {
         this.when = when;
         this.action = a;
         this.success = success;
         this.description = description;
     }
 
-    public Effect(Action a, boolean success, long when) {
+    public Effect(Action a, boolean success, double when) {
         this.action = a;
         this.when = when;
         this.success = success;

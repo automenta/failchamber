@@ -19,7 +19,7 @@ import nars.failchamber.state.Hauto;
 import nars.failchamber.state.ParticleSystem;
 import nars.failchamber.state.Spatial;
 import notreal.form.Shape;
-import notreal.listener.CollisionAware;
+import notreal.listener.Collides;
 import notreal.listener.CollisionListener;
 import notreal.provider.MomentumTransferFactorProvider;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -590,11 +590,11 @@ public class Space {
 
 
             boolean ok = true;
-            if (bodyA instanceof CollisionAware) {
-                ok &= ((CollisionAware)bodyA).collide(bodyB, this, bodyA);
+            if (bodyA instanceof Collides) {
+                ok &= ((Collides)bodyA).collide(bodyB, this, bodyA);
             }
-            if (ok && bodyB instanceof CollisionAware) {
-                ok &= ((CollisionAware)bodyB).collide(bodyA, this, bodyB);
+            if (ok && bodyB instanceof Collides) {
+                ok &= ((Collides)bodyB).collide(bodyA, this, bodyB);
             }
             if (ok) {
                 collisionInfoByBodyIdsPair.put(bodyIdsPair, collisionInfo);

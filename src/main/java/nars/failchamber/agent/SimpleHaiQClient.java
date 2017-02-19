@@ -57,13 +57,19 @@ public class SimpleHaiQClient extends AgentClient {
             Object[] m = this.json.fromJson(s, Object[].class);
 
             switch (m[0].toString()) {
-//                case "reward":
-//                    reward = Float.parseFloat(m[1].toString());
-//                    break;
+
+                case "burn":
+                    double damage = d(m[1]);
+                    System.out.println("BURN " + damage);
+                    reward -= damage;
+                    break;
 
                 case "eat":
-                    System.out.println("EAT");
-                    reward += 1f;
+                    Object eaten = m[1];
+                    double nutrient = d(m[2]);
+                    double toxin = d(m[3]);
+                    System.out.println("EAT " + eaten + " nutrient=" + nutrient + " toxin=" + toxin);
+                    reward += nutrient - toxin;
                     break;
 
                 case "see":
@@ -99,6 +105,10 @@ public class SimpleHaiQClient extends AgentClient {
         }
     }
 
+    private double d(Object o) {
+        return Double.parseDouble(o.toString());
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -117,7 +127,8 @@ public class SimpleHaiQClient extends AgentClient {
 
             int a = hai.act(reward, input);
 
-            reward *= rewardDecay;
+            //reward *= rewardDecay;
+            reward = 0;
 
             //System.out.println(Arrays.toString(input) + " ==> " + a);
 

@@ -2,9 +2,6 @@ package nars.failchamber.object;
 
 import nars.failchamber.Space;
 import nars.failchamber.View;
-import notreal.Body;
-import notreal.listener.CollisionAware;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author me

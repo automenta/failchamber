@@ -35,7 +35,7 @@ public class View extends PApplet {
 
     final float cellSize = 1;
 
-    public int time = 0;
+    public double time = 0;
 
     int mouseScroll = 0;
 
@@ -262,6 +262,7 @@ public class View extends PApplet {
     }
 
     public void update(double dt /* seconds */) {
+        time += dt;
         space.update(this, dt);
     }
 
@@ -310,7 +311,7 @@ public class View extends PApplet {
 //        Moved, PainfullyMoved, TooHigh, TooSolid /* collision, impenetrable, bump */, Stuck /* flypaper, quicksand */, TooFar
 //    }
 
-    public int getTime() {
+    public double getTime() {
         return time;
     }
 
@@ -377,7 +378,6 @@ public class View extends PApplet {
     }
 
     public void drawGround() {
-        time++;
 
         //for speed:
         //strokeCap(SQUARE);
